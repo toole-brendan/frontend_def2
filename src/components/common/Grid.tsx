@@ -75,13 +75,13 @@ const StyledGrid = styled(MuiGrid, {
 });
 
 export const Grid = React.forwardRef<HTMLDivElement, GridProps>(
-  ({ container, item, spacing = 3, glassEffect = false, noBorder = false, ...rest }, ref) => {
+  ({ container, item, spacing, glassEffect = false, noBorder = false, ...rest }, ref) => {
     return (
       <StyledGrid
         ref={ref}
         container={container}
         item={item}
-        spacing={spacing}
+        spacing={container ? spacing : undefined}
         glassEffect={glassEffect}
         noBorder={noBorder}
         {...rest}

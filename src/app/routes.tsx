@@ -4,14 +4,14 @@ import { icons } from '../components/layout/Sidebar';
 
 // Lazy load pages
 const Dashboard = React.lazy(() => import('../pages/Dashboard'));
-const MyProperty = React.lazy(() => import('../pages/MyProperty'));
-const UnitInventory = React.lazy(() => import('../pages/UnitInventory'));
+const MyProperty = React.lazy(() => import('../pages/Property'));
+const UnitInventory = React.lazy(() => import('../pages/UnitInventory/index'));
 const Transfers = React.lazy(() => import('../pages/Transfers'));
 const Maintenance = React.lazy(() => import('../pages/Maintenance/index'));
 const QrManagement = React.lazy(() => import('../pages/QrManagement/index'));
 const Reports = React.lazy(() => import('../pages/Reports/index'));
-const UserManagement = React.lazy(() => import('../pages/UserManagement'));
-const Settings = React.lazy(() => import('../pages/Settings'));
+const UserManagement = React.lazy(() => import('../pages/UserManagement/index'));
+const Settings = React.lazy(() => import('../pages/Settings/index'));
 const Profile = React.lazy(() => import('../pages/Profile'));
 
 export const ROUTES = {
