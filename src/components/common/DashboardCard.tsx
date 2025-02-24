@@ -1,27 +1,41 @@
 import React from 'react';
-import { Paper, styled } from '@mui/material';
+import { Box, Card, Typography, SxProps, Theme } from '@mui/material';
 
-const StyledCard = styled(Paper)(({ theme }) => ({
-  borderRadius: theme.shape.borderRadius,
-  boxShadow: theme.shadows[2],
-  '.card-header': {
-    padding: theme.spacing(2),
-    borderBottom: `1px solid ${theme.palette.divider}`,
-  },
-  '.card-content': {
-    padding: theme.spacing(2),
-  },
-}));
-
-interface DashboardCardProps {
-  children: React.ReactNode;
-  className?: string;
+export interface DashboardCardProps {
+  title: string;
+  content: React.ReactNode;
+  sx?: SxProps<Theme>;
 }
 
-export const DashboardCard: React.FC<DashboardCardProps> = ({ children, className }) => {
+export const DashboardCard: React.FC<DashboardCardProps> = ({ title, content, sx }) => {
   return (
-    <StyledCard className={className}>
-      {children}
-    </StyledCard>
+    <Card 
+      sx={{ 
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        ...sx 
+      }}
+    >
+      <Box 
+        sx={{ 
+          p: 2, 
+          borderBottom: 1, 
+          borderColor: 'divider',
+          backgroundColor: (theme) => theme.palette.background.default,
+        }}
+      >
+        <Typography variant="h6">{title}</Typography>
+      </Box>
+      <Box 
+        sx={{ 
+          flex: 1,
+          minHeight: 0,
+          overflowY: 'auto',
+        }}
+      >
+        {content}
+      </Box>
+    </Card>
   );
 }; 

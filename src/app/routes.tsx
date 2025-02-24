@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { icons } from '../components/layout/Sidebar';
 
 // Lazy load pages
-const Dashboard = React.lazy(() => import('../pages/Dashboard'));
+const Dashboard = React.lazy(() => import('../pages/Dashboard/index'));
 const MyProperty = React.lazy(() => import('../pages/Property'));
 const UnitInventory = React.lazy(() => import('../pages/UnitInventory/index'));
 const Transfers = React.lazy(() => import('../pages/Transfers'));
