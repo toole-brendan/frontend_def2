@@ -1,8 +1,5 @@
 import React from 'react';
 import {
-  Card,
-  CardHeader,
-  CardContent,
   Table,
   TableBody,
   TableCell,
@@ -15,9 +12,33 @@ import {
   Box,
   Tooltip,
   IconButton,
+  styled,
+  Paper,
 } from '@mui/material';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import WarningIcon from '@mui/icons-material/Warning';
+
+const DashboardCard = styled(Paper)(({ theme }) => ({
+  height: '100%',
+  backgroundColor: theme.palette.background.paper,
+  borderRadius: 0,
+  border: `1px solid ${theme.palette.divider}`,
+  '& .card-header': {
+    padding: theme.spacing(2),
+    borderBottom: `1px solid ${theme.palette.divider}`,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    '& h6': {
+      fontWeight: 600,
+      textTransform: 'uppercase',
+      letterSpacing: '0.1em',
+    },
+  },
+  '& .card-content': {
+    padding: theme.spacing(2),
+  },
+}));
 
 interface Certification {
   id: string;
@@ -61,35 +82,34 @@ const CertificationsAndTraining: React.FC<CertificationsAndTrainingProps> = ({
   };
 
   return (
-    <Card>
-      <CardHeader
-        title="Certifications and Training"
-        action={
-          <Tooltip title="Your certifications may affect your permissions in the system">
-            <IconButton size="small">
-              <HelpOutlineIcon />
-            </IconButton>
-          </Tooltip>
-        }
-      />
-      <CardContent>
+    <DashboardCard>
+      <Box className="card-header">
+        <Typography variant="h6">CERTIFICATIONS & TRAINING</Typography>
+        <Tooltip title="Your certifications may affect your permissions in the system">
+          <IconButton size="small">
+            <HelpOutlineIcon />
+          </IconButton>
+        </Tooltip>
+      </Box>
+      
+      <Box className="card-content">
         {hasExpiredCertifications && (
           <Alert
             severity="warning"
             icon={<WarningIcon />}
-            sx={{ mb: 3 }}
+            sx={{ mb: 2 }}
           >
-            You have expired certifications that may affect your system permissions
+            You have expired certifications that require renewal
           </Alert>
         )}
 
         <TableContainer>
-          <Table size="small">
+          <Table>
             <TableHead>
               <TableRow>
                 <TableCell>Certification</TableCell>
                 <TableCell>Issue Date</TableCell>
-                <TableCell>Expiration Date</TableCell>
+                <TableCell>Expiration</TableCell>
                 <TableCell>Status</TableCell>
               </TableRow>
             </TableHead>
@@ -97,30 +117,20 @@ const CertificationsAndTraining: React.FC<CertificationsAndTrainingProps> = ({
               {certifications.map((cert) => (
                 <TableRow key={cert.id}>
                   <TableCell>
-                    <Box>
-                      <Typography variant="body2" fontWeight={500}>
-                        {cert.name}
+                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                      {cert.name}
+                    </Typography>
+                    {cert.description && (
+                      <Typography variant="caption" color="text.secondary" display="block">
+                        {cert.description}
                       </Typography>
-                      {cert.description && (
-                        <Typography
-                          variant="caption"
-                          color="text.secondary"
-                          display="block"
-                        >
-                          {cert.description}
-                        </Typography>
-                      )}
-                    </Box>
+                    )}
                   </TableCell>
+                  <TableCell>{formatDate(cert.issueDate)}</TableCell>
                   <TableCell>
-                    <Typography variant="body2">
-                      {formatDate(cert.issueDate)}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2">
-                      {formatDate(cert.expirationDate)}
-                    </Typography>
+                    {cert.expirationDate === '9999-12-31'
+                      ? 'Never'
+                      : formatDate(cert.expirationDate)}
                   </TableCell>
                   <TableCell>
                     <Chip
@@ -148,8 +158,8 @@ const CertificationsAndTraining: React.FC<CertificationsAndTrainingProps> = ({
         >
           Contact your training officer for certification renewals or updates.
         </Typography>
-      </CardContent>
-    </Card>
+      </Box>
+    </DashboardCard>
   );
 };
 

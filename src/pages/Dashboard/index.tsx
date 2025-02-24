@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Container, Grid } from '@mui/material';
+import { Box, Typography, Container, Grid, styled } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import {
   KeyMetricsCards,
@@ -10,6 +10,11 @@ import {
   RecentActivityFeed,
 } from './components';
 import { mockDashboardData } from './mockData';
+
+const DashboardTitle = styled(Typography)(() => ({
+  fontWeight: 600,
+  textTransform: 'uppercase',
+}));
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -26,9 +31,9 @@ const Dashboard: React.FC = () => {
         <Box sx={{ mb: 4 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <Box>
-              <Typography variant="h4" gutterBottom>
+              <DashboardTitle variant="h4" gutterBottom>
                 CPT DOE, JOHN
-              </Typography>
+              </DashboardTitle>
               <Typography variant="body2" color="text.secondary">
                 C CO, 2-506 IN, 3BCT, 101st ABN DIV (AASLT)
               </Typography>

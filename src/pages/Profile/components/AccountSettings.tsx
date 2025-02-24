@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import {
-  Card,
-  CardHeader,
-  CardContent,
+  Box,
+  Typography,
   List,
   ListItem,
   ListItemIcon,
@@ -15,12 +14,32 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  Box,
   Divider,
+  styled,
+  Paper,
 } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
 import SecurityIcon from '@mui/icons-material/Security';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+
+const DashboardCard = styled(Paper)(({ theme }) => ({
+  height: '100%',
+  backgroundColor: theme.palette.background.paper,
+  borderRadius: 0,
+  border: `1px solid ${theme.palette.divider}`,
+  '& .card-header': {
+    padding: theme.spacing(2),
+    borderBottom: `1px solid ${theme.palette.divider}`,
+    '& h6': {
+      fontWeight: 600,
+      textTransform: 'uppercase',
+      letterSpacing: '0.1em',
+    },
+  },
+  '& .card-content': {
+    padding: theme.spacing(2),
+  },
+}));
 
 interface AccountSettingsProps {
   is2FAEnabled: boolean;
@@ -68,9 +87,12 @@ const AccountSettings: React.FC<AccountSettingsProps> = ({
   };
 
   return (
-    <Card>
-      <CardHeader title="Account Settings" />
-      <CardContent>
+    <DashboardCard>
+      <Box className="card-header">
+        <Typography variant="h6">ACCOUNT SETTINGS</Typography>
+      </Box>
+      
+      <Box className="card-content">
         <List disablePadding>
           <ListItem sx={{ py: 1.5 }}>
             <ListItemIcon>
@@ -267,8 +289,8 @@ const AccountSettings: React.FC<AccountSettingsProps> = ({
             </Button>
           </DialogActions>
         </Dialog>
-      </CardContent>
-    </Card>
+      </Box>
+    </DashboardCard>
   );
 };
 

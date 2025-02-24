@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, Container, Typography } from '@mui/material';
 import {
   Security as SecurityIcon,
   SupervisorAccount as SupervisorAccountIcon,
   Build as BuildIcon,
   Inventory as InventoryIcon,
 } from '@mui/icons-material';
+import PageTitle from '../../components/common/PageTitle';
 import ProfileHeader from './components/ProfileHeader';
 import PersonalInformation from './components/PersonalInformation';
 import AccountSettings from './components/AccountSettings';
@@ -148,48 +149,60 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
-      <ProfileHeader
-        name={userData.name}
-        rank={userData.rank}
-        profilePicture={userData.profilePicture}
-        onPictureChange={handlePictureChange}
-      />
+    <Container maxWidth="xl">
+      <Box sx={{ py: 4 }}>
+        {/* Header Section */}
+        <Box sx={{ mb: 4 }}>
+          <PageTitle variant="h4" gutterBottom>
+            MY PROFILE
+          </PageTitle>
+          <Typography variant="body2" color="text.secondary">
+            View and manage your profile information and account settings
+          </Typography>
+        </Box>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} lg={8}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-            <PersonalInformation
-              dodId={userData.dodId}
-              branch={userData.branch}
-              unit={userData.unit}
-              dutyPosition={userData.dutyPosition}
-              mos={userData.mos}
-              email={userData.email}
-              phone={userData.phone}
-              onContactInfoUpdate={handleContactInfoUpdate}
-            />
-            <RolesAndPermissions roles={userData.roles} />
-            <CertificationsAndTraining certifications={userData.certifications} />
-          </Box>
-        </Grid>
+        <ProfileHeader
+          name={userData.name}
+          rank={userData.rank}
+          profilePicture={userData.profilePicture}
+          onPictureChange={handlePictureChange}
+        />
 
-        <Grid item xs={12} lg={4}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-            <AccountSettings
-              is2FAEnabled={userData.is2FAEnabled}
-              onPasswordChange={handlePasswordChange}
-              onToggle2FA={handleToggle2FA}
-              onNotificationPreferencesChange={handleNotificationPreferencesChange}
-            />
-            <ChainOfCommand
-              supervisor={userData.chainOfCommand.supervisor}
-              subordinates={userData.chainOfCommand.subordinates}
-            />
-          </Box>
+        <Grid container spacing={3}>
+          <Grid item xs={12} lg={8}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <PersonalInformation
+                dodId={userData.dodId}
+                branch={userData.branch}
+                unit={userData.unit}
+                dutyPosition={userData.dutyPosition}
+                mos={userData.mos}
+                email={userData.email}
+                phone={userData.phone}
+                onContactInfoUpdate={handleContactInfoUpdate}
+              />
+              <RolesAndPermissions roles={userData.roles} />
+              <CertificationsAndTraining certifications={userData.certifications} />
+            </Box>
+          </Grid>
+
+          <Grid item xs={12} lg={4}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <AccountSettings
+                is2FAEnabled={userData.is2FAEnabled}
+                onPasswordChange={handlePasswordChange}
+                onToggle2FA={handleToggle2FA}
+                onNotificationPreferencesChange={handleNotificationPreferencesChange}
+              />
+              <ChainOfCommand
+                supervisor={userData.chainOfCommand.supervisor}
+                subordinates={userData.chainOfCommand.subordinates}
+              />
+            </Box>
+          </Grid>
         </Grid>
-      </Grid>
-    </Box>
+      </Box>
+    </Container>
   );
 };
 

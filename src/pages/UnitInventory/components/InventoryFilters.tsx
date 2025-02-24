@@ -7,7 +7,6 @@ import {
   MenuItem,
   TextField,
   IconButton,
-  Paper,
   InputAdornment,
   Tooltip,
   SelectChangeEvent,
@@ -71,84 +70,82 @@ const InventoryFilters: React.FC<InventoryFiltersProps> = ({
   };
 
   return (
-    <Paper sx={{ p: 2, mb: 3 }}>
-      <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-        <FormControl sx={{ flexGrow: 1 }} size="small">
-          <TextField
-            fullWidth
-            size="small"
-            placeholder="Search by Item Name, Serial Number, or NSN..."
-            value={filters.search}
-            onChange={handleTextChange('search')}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </FormControl>
+    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+      <FormControl sx={{ flexGrow: 1 }} size="small">
+        <TextField
+          fullWidth
+          size="small"
+          placeholder="Search by Item Name, Serial Number, or NSN..."
+          value={filters.search}
+          onChange={handleTextChange('search')}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </FormControl>
 
-        <FormControl sx={{ minWidth: 200 }} size="small">
-          <InputLabel>Status</InputLabel>
-          <Select
-            value={filters.status}
-            label="Status"
-            onChange={handleSelectChange('status')}
-          >
-            {STATUS_OPTIONS.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+      <FormControl sx={{ minWidth: 200 }} size="small">
+        <InputLabel>Status</InputLabel>
+        <Select
+          value={filters.status}
+          label="Status"
+          onChange={handleSelectChange('status')}
+        >
+          {STATUS_OPTIONS.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
 
-        <FormControl sx={{ minWidth: 200 }} size="small">
-          <InputLabel>Category</InputLabel>
-          <Select
-            value={filters.category}
-            label="Category"
-            onChange={handleSelectChange('category')}
-          >
-            {CATEGORY_OPTIONS.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+      <FormControl sx={{ minWidth: 200 }} size="small">
+        <InputLabel>Category</InputLabel>
+        <Select
+          value={filters.category}
+          label="Category"
+          onChange={handleSelectChange('category')}
+        >
+          {CATEGORY_OPTIONS.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
 
-        <FormControl sx={{ minWidth: 200 }} size="small">
-          <InputLabel>Location</InputLabel>
-          <Select
-            value={filters.location}
-            label="Location"
-            onChange={handleSelectChange('location')}
-          >
-            {LOCATION_OPTIONS.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+      <FormControl sx={{ minWidth: 200 }} size="small">
+        <InputLabel>Location</InputLabel>
+        <Select
+          value={filters.location}
+          label="Location"
+          onChange={handleSelectChange('location')}
+        >
+          {LOCATION_OPTIONS.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
 
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <Tooltip title="Save current filters">
-            <IconButton onClick={onSaveFilter} color="primary">
-              <SaveIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Clear all filters">
-            <IconButton onClick={onClearFilters} color="error">
-              <ClearIcon />
-            </IconButton>
-          </Tooltip>
-        </Box>
+      <Box sx={{ display: 'flex', gap: 1 }}>
+        <Tooltip title="Save current filters">
+          <IconButton onClick={onSaveFilter} color="primary">
+            <SaveIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Clear all filters">
+          <IconButton onClick={onClearFilters} color="error">
+            <ClearIcon />
+          </IconButton>
+        </Tooltip>
       </Box>
-    </Paper>
+    </Box>
   );
 };
 

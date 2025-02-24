@@ -4,7 +4,6 @@ import {
   Breadcrumbs,
   Link,
   Typography,
-  Paper,
   Divider,
 } from '@mui/material';
 import { TreeView, TreeItem } from '@mui/x-tree-view';
@@ -55,10 +54,7 @@ const UnitHierarchySelector: React.FC<UnitHierarchySelectorProps> = ({
   unitHierarchy,
 }) => {
   return (
-    <Paper sx={{ p: 2, mb: 3 }}>
-      <Typography variant="subtitle1" gutterBottom fontWeight={600}>
-        Unit Breakdown
-      </Typography>
+    <Box>
       <Box sx={{ mb: 2 }}>
         <Breadcrumbs separator="›" aria-label="unit hierarchy breadcrumb">
           {currentUnit.map((unit, index) => {
@@ -112,7 +108,7 @@ const UnitHierarchySelector: React.FC<UnitHierarchySelectorProps> = ({
       >
         {renderTree(unitHierarchy, onUnitSelect)}
       </TreeView>
-    </Paper>
+    </Box>
   );
 };
 

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   Box,
   Typography,
-  Tooltip,
   Button,
   Tab,
   Tabs,
@@ -12,6 +11,8 @@ import {
   useTheme,
   Snackbar,
   Alert,
+  Container,
+  styled,
 } from '@mui/material';
 import {
   Wrench,
@@ -22,6 +23,7 @@ import {
   FileText,
   Plus,
 } from 'lucide-react';
+import PageTitle from '../../components/common/PageTitle';
 
 import { MetricCard } from './components/MetricCard';
 import { MaintenanceFilters } from './components/MaintenanceFilters';
@@ -32,6 +34,29 @@ import { MaintenanceDetailsModal } from './components/MaintenanceDetailsModal';
 import { BlockchainRecordModal } from './components/BlockchainRecordModal';
 import { GenerateDA2404Modal } from './components/GenerateDA2404Modal';
 import { MaintenanceTask, MaintenanceStatus } from './types';
+
+// Base card styling following dashboard pattern
+const DashboardCard = styled(Paper)(({ theme }) => ({
+  height: '100%',
+  backgroundColor: theme.palette.background.paper,
+  borderRadius: 0,
+  border: `1px solid ${theme.palette.divider}`,
+  '& .card-header': {
+    padding: theme.spacing(2),
+    borderBottom: `1px solid ${theme.palette.divider}`,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    '& h6': {
+      fontWeight: 600,
+      textTransform: 'uppercase',
+      letterSpacing: '0.1em',
+    },
+  },
+  '& .card-content': {
+    padding: theme.spacing(2),
+  },
+}));
 
 // Mock data - replace with actual API calls
 const MOCK_METRICS = {
@@ -262,210 +287,186 @@ const Maintenance: React.FC = () => {
     setIsDA2404ModalOpen(true);
   };
 
-  const handleGenerateDA2404ButtonClick = () => {
-    if (!selectedTask) {
-      setShowWarning(true);
-      return;
-    }
-    setIsDA2404ModalOpen(true);
-  };
-
   return (
-    <Box sx={{ p: 3 }}>
-      {/* Header Section */}
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        mb: 4 
-      }}>
-        <Box>
-          <Typography variant="h4">
+    <Container maxWidth="xl">
+      <Box sx={{ py: 4 }}>
+        {/* Header Section */}
+        <Box sx={{ mb: 4 }}>
+          <PageTitle variant="h4" gutterBottom>
             MAINTENANCE
+          </PageTitle>
+          <Typography variant="body2" color="text.secondary">
+            Track and manage equipment maintenance tasks and service records
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Tooltip title="Select a maintenance task first to generate DA 2404">
-            <span>
+
+        {/* Metrics Section */}
+        <Box sx={{ mb: 4 }}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6} md={2.4}>
+              <MetricCard
+                title="Scheduled Tasks"
+                metric={MOCK_METRICS.totalScheduled}
+                icon={<Calendar />}
+                color={theme.palette.info.main}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={2.4}>
+              <MetricCard
+                title="In Progress"
+                metric={MOCK_METRICS.inProgress}
+                icon={<Wrench />}
+                color={theme.palette.warning.main}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={2.4}>
+              <MetricCard
+                title="Completed"
+                metric={MOCK_METRICS.completedThisMonth}
+                icon={<CheckCircle />}
+                color={theme.palette.success.main}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={2.4}>
+              <MetricCard
+                title="Overdue"
+                metric={MOCK_METRICS.overdueTasks}
+                icon={<AlertTriangle />}
+                color={theme.palette.error.main}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={2.4}>
+              <MetricCard
+                title="Avg. Completion Time"
+                metric={MOCK_METRICS.avgCompletionTime}
+                icon={<Clock />}
+                color={theme.palette.primary.main}
+              />
+            </Grid>
+          </Grid>
+        </Box>
+
+        {/* Tabs Section */}
+        <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+          <Tabs value={activeTab} onChange={handleTabChange}>
+            <Tab
+              label={
+                <Badge badgeContent={getStatusCount('pending_approval')} color="warning">
+                  Pending Approval
+                </Badge>
+              }
+            />
+            <Tab
+              label={
+                <Badge badgeContent={getStatusCount('scheduled')} color="info">
+                  Scheduled
+                </Badge>
+              }
+            />
+            <Tab
+              label={
+                <Badge badgeContent={getStatusCount('in_progress')} color="primary">
+                  In Progress
+                </Badge>
+              }
+            />
+            <Tab
+              label={
+                <Badge badgeContent={getStatusCount('completed')} color="success">
+                  Completed
+                </Badge>
+              }
+            />
+          </Tabs>
+        </Box>
+
+        {/* Main Content */}
+        <DashboardCard>
+          <div className="card-header">
+            <Typography variant="h6">MAINTENANCE TASKS</Typography>
+            <Box sx={{ display: 'flex', gap: 2 }}>
               <Button
                 variant="contained"
+                startIcon={<Plus />}
+                onClick={() => setIsRequestModalOpen(true)}
+              >
+                Request Maintenance
+              </Button>
+              <Button
+                variant="outlined"
                 startIcon={<FileText />}
-                onClick={handleGenerateDA2404ButtonClick}
-                disabled={!selectedTask}
+                onClick={() => setIsDA2404ModalOpen(true)}
               >
                 Generate DA 2404
               </Button>
-            </span>
-          </Tooltip>
-          <Button
-            variant="contained"
-            startIcon={<Plus />}
-            onClick={() => setIsRequestModalOpen(true)}
-            sx={{
-              bgcolor: '#2563eb',
-              '&:hover': {
-                bgcolor: '#1d4ed8',
-              },
-            }}
-          >
-            Request Maintenance
-          </Button>
-        </Box>
-      </Box>
+            </Box>
+          </div>
+          <div className="card-content">
+            <MaintenanceFilters
+              filters={{}}
+              onFiltersChange={() => {}}
+            />
+            <Box sx={{ mt: 3 }}>
+              <MaintenanceChart />
+            </Box>
+            <Box sx={{ mt: 3 }}>
+              <MaintenanceTable
+                tasks={getFilteredTasks()}
+                selectedTask={selectedTask}
+                onSelectTask={setSelectedTask}
+                onApprove={(task) => handleMaintenanceAction('approve', task)}
+                onReject={(task) => handleMaintenanceAction('reject', task)}
+                onComplete={(task) => handleMaintenanceAction('complete', task)}
+                onCancel={(task) => handleMaintenanceAction('cancel', task)}
+                onViewDetails={handleViewDetails}
+                onViewBlockchain={handleViewBlockchain}
+                onGenerateDA2404={handleGenerateDA2404}
+              />
+            </Box>
+          </div>
+        </DashboardCard>
 
-      {/* Metrics Section */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={2.4}>
-          <MetricCard
-            title="Total Scheduled"
-            metric={MOCK_METRICS.totalScheduled}
-            icon={<Calendar size={24} />}
-            color={theme.palette.info.main}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={2.4}>
-          <MetricCard
-            title="In Progress"
-            metric={MOCK_METRICS.inProgress}
-            icon={<Wrench size={24} />}
-            color={theme.palette.warning.main}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={2.4}>
-          <MetricCard
-            title="Completed (30d)"
-            metric={MOCK_METRICS.completedThisMonth}
-            icon={<CheckCircle size={24} />}
-            color={theme.palette.success.main}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={2.4}>
-          <MetricCard
-            title="Overdue Tasks"
-            metric={MOCK_METRICS.overdueTasks}
-            icon={<AlertTriangle size={24} />}
-            color={theme.palette.error.main}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={2.4}>
-          <MetricCard
-            title="Avg. Completion"
-            metric={MOCK_METRICS.avgCompletionTime}
-            icon={<Clock size={24} />}
-            color={theme.palette.primary.main}
-          />
-        </Grid>
-      </Grid>
-
-      {/* Tabs Section */}
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-        <Tabs value={activeTab} onChange={handleTabChange}>
-          <Tab 
-            label={
-              <Badge badgeContent={getStatusCount('pending_approval')} color="error">
-                Pending Approvals
-              </Badge>
-            } 
-          />
-          <Tab 
-            label={
-              <Badge badgeContent={getStatusCount('scheduled')} color="warning">
-                Scheduled
-              </Badge>
-            } 
-          />
-          <Tab 
-            label={
-              <Badge badgeContent={getStatusCount('in_progress')} color="info">
-                In Progress
-              </Badge>
-            } 
-          />
-          <Tab 
-            label={
-              <Badge badgeContent={getStatusCount('completed')} color="success">
-                Completed
-              </Badge>
-            } 
-          />
-        </Tabs>
-      </Box>
-
-      {/* Filters Section */}
-      <MaintenanceFilters
-        onFiltersChange={() => {}}
-        filters={{}}
-      />
-
-      {/* Table Section */}
-      <Paper sx={{ mt: 3, mb: 4 }}>
-        <MaintenanceTable
-          tasks={getFilteredTasks()}
-          selectedTask={selectedTask}
-          onSelectTask={setSelectedTask}
-          onApprove={(task) => handleMaintenanceAction('approve', task)}
-          onReject={(task) => handleMaintenanceAction('reject', task)}
-          onComplete={(task) => handleMaintenanceAction('complete', task)}
-          onCancel={(task) => handleMaintenanceAction('cancel', task)}
-          onViewDetails={handleViewDetails}
-          onViewBlockchain={handleViewBlockchain}
-          onGenerateDA2404={handleGenerateDA2404}
+        {/* Modals */}
+        <RequestMaintenanceModal
+          open={isRequestModalOpen}
+          onClose={() => setIsRequestModalOpen(false)}
+          onSubmit={(data) => {
+            console.log('Submit maintenance request:', data);
+            setIsRequestModalOpen(false);
+          }}
         />
-      </Paper>
+        <MaintenanceDetailsModal
+          open={isDetailsModalOpen}
+          onClose={() => setIsDetailsModalOpen(false)}
+          task={selectedTask}
+        />
+        <BlockchainRecordModal
+          open={isBlockchainModalOpen}
+          onClose={() => setIsBlockchainModalOpen(false)}
+          task={selectedTask}
+        />
+        <GenerateDA2404Modal
+          open={isDA2404ModalOpen}
+          onClose={() => setIsDA2404ModalOpen(false)}
+          task={selectedTask}
+          onGenerate={(data) => {
+            console.log('Generate DA 2404:', data);
+            setIsDA2404ModalOpen(false);
+          }}
+        />
 
-      {/* Chart Section */}
-      <Paper sx={{ p: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Maintenance Status Overview
-        </Typography>
-        <MaintenanceChart data={[]} />
-      </Paper>
-
-      {/* Modals */}
-      <RequestMaintenanceModal
-        open={isRequestModalOpen}
-        onClose={() => setIsRequestModalOpen(false)}
-        onSubmit={(data) => {
-          console.log('Submit maintenance request:', data);
-          setIsRequestModalOpen(false);
-        }}
-      />
-      <MaintenanceDetailsModal
-        open={isDetailsModalOpen}
-        task={selectedTask}
-        onClose={() => setIsDetailsModalOpen(false)}
-      />
-      <BlockchainRecordModal
-        open={isBlockchainModalOpen}
-        task={selectedTask}
-        onClose={() => setIsBlockchainModalOpen(false)}
-      />
-      <GenerateDA2404Modal
-        open={isDA2404ModalOpen}
-        task={selectedTask}
-        onClose={() => setIsDA2404ModalOpen(false)}
-        onGenerate={(data) => {
-          console.log('Generate DA 2404:', data);
-          setIsDA2404ModalOpen(false);
-        }}
-      />
-
-      {/* Add Snackbar for warning */}
-      <Snackbar
-        open={showWarning}
-        autoHideDuration={4000}
-        onClose={() => setShowWarning(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert 
-          onClose={() => setShowWarning(false)} 
-          severity="warning"
-          sx={{ width: '100%' }}
+        {/* Snackbar */}
+        <Snackbar
+          open={showWarning}
+          autoHideDuration={6000}
+          onClose={() => setShowWarning(false)}
         >
-          Please select a maintenance task first to generate DA 2404
-        </Alert>
-      </Snackbar>
-    </Box>
+          <Alert severity="warning" onClose={() => setShowWarning(false)}>
+            Some required parts are not available for this maintenance task.
+          </Alert>
+        </Snackbar>
+      </Box>
+    </Container>
   );
 };
 

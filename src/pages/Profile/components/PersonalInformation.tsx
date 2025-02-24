@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Card,
-  CardHeader,
-  CardContent,
-  Grid,
   Typography,
   Button,
   Dialog,
@@ -14,9 +10,34 @@ import {
   TextField,
   Tooltip,
   IconButton,
+  Grid,
+  styled,
+  Paper,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+
+const DashboardCard = styled(Paper)(({ theme }) => ({
+  height: '100%',
+  backgroundColor: theme.palette.background.paper,
+  borderRadius: 0,
+  border: `1px solid ${theme.palette.divider}`,
+  '& .card-header': {
+    padding: theme.spacing(2),
+    borderBottom: `1px solid ${theme.palette.divider}`,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    '& h6': {
+      fontWeight: 600,
+      textTransform: 'uppercase',
+      letterSpacing: '0.1em',
+    },
+  },
+  '& .card-content': {
+    padding: theme.spacing(2),
+  },
+}));
 
 interface PersonalInformationProps {
   dodId: string;
@@ -71,19 +92,19 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({
   );
 
   return (
-    <Card>
-      <CardHeader
-        title="Personal Information"
-        action={
-          <Button
-            startIcon={<EditIcon />}
-            onClick={() => setEditDialogOpen(true)}
-          >
-            Edit Contact Info
-          </Button>
-        }
-      />
-      <CardContent>
+    <DashboardCard>
+      <Box className="card-header">
+        <Typography variant="h6">PERSONAL INFORMATION</Typography>
+        <Button
+          startIcon={<EditIcon />}
+          onClick={() => setEditDialogOpen(true)}
+          size="small"
+        >
+          Edit Contact Info
+        </Button>
+      </Box>
+      
+      <Box className="card-content">
         <InfoRow
           label="DoD ID"
           value={dodId}
@@ -119,7 +140,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({
         <Typography variant="caption" color="text.secondary" sx={{ mt: 3, display: 'block' }}>
           For changes to rank, unit, or other personal details, please contact your unit administrator.
         </Typography>
-      </CardContent>
+      </Box>
 
       {/* Edit Contact Info Dialog */}
       <Dialog
@@ -155,7 +176,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({
           </Button>
         </DialogActions>
       </Dialog>
-    </Card>
+    </DashboardCard>
   );
 };
 

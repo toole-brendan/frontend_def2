@@ -7,7 +7,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Checkbox,
   IconButton,
   Button,
   Typography,
@@ -23,9 +22,8 @@ import {
   PersonAdd as PersonAddIcon,
 } from '@mui/icons-material';
 import { format } from 'date-fns';
-import { User } from '../types';
+import type { User } from '../types';
 import { AddEditUserModal } from './AddEditUserModal';
-import { DashboardCard } from '../../../components/common/DashboardCard';
 
 interface UserTableProps {
   searchQuery: string;
@@ -57,7 +55,6 @@ const mockUsers: User[] = [
   },
 ];
 
-// Helper function to get user initials
 const getInitials = (name: string): string => {
   return name
     .split(' ')
@@ -66,7 +63,6 @@ const getInitials = (name: string): string => {
     .toUpperCase();
 };
 
-// Helper function to get status color
 const getStatusColor = (status: string): "success" | "error" | "warning" => {
   switch (status) {
     case 'Active':
@@ -79,39 +75,10 @@ const getStatusColor = (status: string): "success" | "error" | "warning" => {
 };
 
 export const UserTable: React.FC<UserTableProps> = ({ searchQuery }) => {
-  const [selected, setSelected] = useState<string[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
-
-  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      setSelected(mockUsers.map(user => user.id));
-    } else {
-      setSelected([]);
-    }
-  };
-
-  const handleSelect = (id: string) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected: string[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
-
-    setSelected(newSelected);
-  };
 
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
@@ -132,11 +99,6 @@ export const UserTable: React.FC<UserTableProps> = ({ searchQuery }) => {
     console.log('Deactivating user:', userId);
   };
 
-  const handleDeactivateSelected = () => {
-    // TODO: Implement bulk deactivation with blockchain
-    console.log('Deactivating selected users:', selected);
-  };
-
   const handleAddUser = () => {
     setEditingUser(null);
     setModalOpen(true);
@@ -149,9 +111,9 @@ export const UserTable: React.FC<UserTableProps> = ({ searchQuery }) => {
     user.unit.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const tableContent = (
-    <>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+  return (
+    <Box>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end' }}>
         <Button
           variant="contained"
           color="primary"
@@ -162,34 +124,10 @@ export const UserTable: React.FC<UserTableProps> = ({ searchQuery }) => {
         </Button>
       </Box>
 
-      {selected.length > 0 && (
-        <Box sx={{ mb: 2, p: 2, bgcolor: 'background.paper', borderRadius: 1, display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Typography variant="body2">
-            {selected.length} users selected
-          </Typography>
-          <Button
-            variant="contained"
-            color="error"
-            size="small"
-            startIcon={<BlockIcon />}
-            onClick={handleDeactivateSelected}
-          >
-            Deactivate Selected
-          </Button>
-        </Box>
-      )}
-
       <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell padding="checkbox">
-                <Checkbox
-                  indeterminate={selected.length > 0 && selected.length < mockUsers.length}
-                  checked={selected.length === mockUsers.length}
-                  onChange={handleSelectAll}
-                />
-              </TableCell>
               <TableCell>User</TableCell>
               <TableCell>Rank</TableCell>
               <TableCell>Role</TableCell>
@@ -204,33 +142,39 @@ export const UserTable: React.FC<UserTableProps> = ({ searchQuery }) => {
             {filteredUsers
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((user) => (
-                <TableRow
-                  key={user.id}
-                  hover
-                  selected={selected.indexOf(user.id) !== -1}
-                >
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      checked={selected.indexOf(user.id) !== -1}
-                      onChange={() => handleSelect(user.id)}
-                    />
-                  </TableCell>
+                <TableRow key={user.id}>
                   <TableCell>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                       <Avatar>{getInitials(user.name)}</Avatar>
                       <Typography variant="body2">{user.name}</Typography>
                     </Box>
                   </TableCell>
-                  <TableCell>{user.rank}</TableCell>
-                  <TableCell>{user.role}</TableCell>
-                  <TableCell>{user.unit}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{format(new Date(user.lastActive), 'MMM dd, yyyy')}</TableCell>
+                  <TableCell>
+                    <Typography variant="body2">{user.rank}</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="body2">
+                      {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="body2">{user.unit}</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="body2" color="text.secondary">
+                      {user.email}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="body2">
+                      {format(new Date(user.lastActive), 'MMM dd, yyyy')}
+                    </Typography>
+                  </TableCell>
                   <TableCell>
                     <Chip
                       label={user.status}
-                      color={getStatusColor(user.status)}
                       size="small"
+                      color={getStatusColor(user.status)}
                     />
                   </TableCell>
                   <TableCell align="right">
@@ -269,7 +213,6 @@ export const UserTable: React.FC<UserTableProps> = ({ searchQuery }) => {
         onPageChange={handleChangePage}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPageOptions={[10, 20, 50]}
       />
 
       <AddEditUserModal
@@ -277,13 +220,6 @@ export const UserTable: React.FC<UserTableProps> = ({ searchQuery }) => {
         onClose={() => setModalOpen(false)}
         user={editingUser}
       />
-    </>
-  );
-
-  return (
-    <DashboardCard
-      title="User Management"
-      content={tableContent}
-    />
+    </Box>
   );
 }; 

@@ -6,7 +6,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   Checkbox,
   IconButton,
   Chip,
@@ -99,7 +98,7 @@ const InventoryTable: React.FC<InventoryTableProps> = ({
   };
 
   return (
-    <Paper sx={{ width: '100%', mb: 2 }}>
+    <Box>
       <TableContainer>
         <Table sx={{ minWidth: 750 }} aria-labelledby="inventory table">
           <TableHead>
@@ -199,7 +198,7 @@ const InventoryTable: React.FC<InventoryTableProps> = ({
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-    </Paper>
+    </Box>
   );
 };
 

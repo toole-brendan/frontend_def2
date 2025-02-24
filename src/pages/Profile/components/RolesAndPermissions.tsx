@@ -1,8 +1,5 @@
 import React from 'react';
 import {
-  Card,
-  CardHeader,
-  CardContent,
   Typography,
   Box,
   Chip,
@@ -12,8 +9,32 @@ import {
   Divider,
   Tooltip,
   IconButton,
+  styled,
+  Paper,
 } from '@mui/material';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+
+const DashboardCard = styled(Paper)(({ theme }) => ({
+  height: '100%',
+  backgroundColor: theme.palette.background.paper,
+  borderRadius: 0,
+  border: `1px solid ${theme.palette.divider}`,
+  '& .card-header': {
+    padding: theme.spacing(2),
+    borderBottom: `1px solid ${theme.palette.divider}`,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    '& h6': {
+      fontWeight: 600,
+      textTransform: 'uppercase',
+      letterSpacing: '0.1em',
+    },
+  },
+  '& .card-content': {
+    padding: theme.spacing(2),
+  },
+}));
 
 interface Permission {
   id: string;
@@ -35,18 +56,17 @@ interface RolesAndPermissionsProps {
 
 const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = ({ roles }) => {
   return (
-    <Card>
-      <CardHeader
-        title="Roles and Permissions"
-        action={
-          <Tooltip title="Your roles determine what actions you can perform in the system">
-            <IconButton size="small">
-              <HelpOutlineIcon />
-            </IconButton>
-          </Tooltip>
-        }
-      />
-      <CardContent>
+    <DashboardCard>
+      <Box className="card-header">
+        <Typography variant="h6">ROLES & PERMISSIONS</Typography>
+        <Tooltip title="Your roles determine what actions you can perform in the system">
+          <IconButton size="small">
+            <HelpOutlineIcon />
+          </IconButton>
+        </Tooltip>
+      </Box>
+      
+      <Box className="card-content">
         {roles.map((role, index) => (
           <React.Fragment key={role.id}>
             <Box sx={{ mb: 3 }}>
@@ -114,8 +134,8 @@ const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = ({ roles }) => {
         >
           Roles and permissions are managed by administrators. Contact your admin for changes.
         </Typography>
-      </CardContent>
-    </Card>
+      </Box>
+    </DashboardCard>
   );
 };
 

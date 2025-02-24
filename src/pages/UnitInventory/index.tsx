@@ -5,20 +5,45 @@ import {
   Typography,
   Grid,
   Button,
+  styled,
+  Paper,
 } from '@mui/material';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WarningIcon from '@mui/icons-material/Warning';
 import BuildIcon from '@mui/icons-material/Build';
 import { Add as AddIcon } from '@mui/icons-material';
+import PageTitle from '../../components/common/PageTitle';
 
-import MetricCard from './components/MetricCard';
 import UnitHierarchySelector from './components/UnitHierarchySelector';
 import InventoryFilters from './components/InventoryFilters';
 import InventoryTable from './components/InventoryTable';
 import ItemDetailsDrawer from './components/ItemDetailsDrawer';
 import AddItemModal from './components/AddItemModal';
 import { InventoryItem, InventoryFilters as InventoryFiltersType, UnitHierarchy } from './types';
+
+// Base card styling following dashboard pattern
+const DashboardCard = styled(Paper)(({ theme }) => ({
+  height: '100%',
+  backgroundColor: theme.palette.background.paper,
+  borderRadius: 0,
+  border: `1px solid ${theme.palette.divider}`,
+  '& .card-header': {
+    padding: theme.spacing(2),
+    borderBottom: `1px solid ${theme.palette.divider}`,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    '& h6': {
+      fontWeight: 600,
+      textTransform: 'uppercase',
+      letterSpacing: '0.1em',
+    },
+  },
+  '& .card-content': {
+    padding: theme.spacing(2),
+  },
+}));
 
 // Mock data for initial testing
 const mockUnitHierarchy: UnitHierarchy = {
@@ -229,9 +254,9 @@ const UnitInventory: React.FC = () => {
         <Box sx={{ mb: 4 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
             <Box>
-              <Typography variant="h4" gutterBottom>
+              <PageTitle variant="h4" gutterBottom>
                 UNIT INVENTORY
-              </Typography>
+              </PageTitle>
               <Typography variant="body2" color="text.secondary">
                 {currentUnit[currentUnit.length - 1]}
               </Typography>
@@ -241,12 +266,6 @@ const UnitInventory: React.FC = () => {
               color="primary"
               startIcon={<AddIcon />}
               onClick={() => setIsAddItemModalOpen(true)}
-              sx={{
-                bgcolor: '#2563eb',
-                '&:hover': {
-                  bgcolor: '#1d4ed8',
-                },
-              }}
             >
               Add Item
             </Button>
@@ -256,65 +275,174 @@ const UnitInventory: React.FC = () => {
         {/* Metrics */}
         <Grid container spacing={3} sx={{ mb: 3 }}>
           <Grid item xs={12} sm={6} md={3}>
-            <MetricCard
-              title="Total Items"
-              value={metrics.totalItems}
-              icon={<InventoryIcon />}
-              color="primary"
-            />
+            <DashboardCard>
+              <div className="card-content">
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 48,
+                      height: 48,
+                      borderRadius: '50%',
+                      bgcolor: 'primary.light',
+                      color: 'primary.main',
+                    }}
+                  >
+                    <InventoryIcon />
+                  </Box>
+                  <Box>
+                    <Typography variant="h4" color="primary">
+                      {metrics.totalItems}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Total Items
+                    </Typography>
+                  </Box>
+                </Box>
+              </div>
+            </DashboardCard>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <MetricCard
-              title="Items In Use"
-              value={metrics.itemsInUse}
-              icon={<CheckCircleIcon />}
-              color="warning"
-            />
+            <DashboardCard>
+              <div className="card-content">
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 48,
+                      height: 48,
+                      borderRadius: '50%',
+                      bgcolor: 'warning.light',
+                      color: 'warning.main',
+                    }}
+                  >
+                    <CheckCircleIcon />
+                  </Box>
+                  <Box>
+                    <Typography variant="h4" color="warning.main">
+                      {metrics.itemsInUse}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Items In Use
+                    </Typography>
+                  </Box>
+                </Box>
+              </div>
+            </DashboardCard>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <MetricCard
-              title="Items Available"
-              value={metrics.itemsAvailable}
-              icon={<WarningIcon />}
-              color="success"
-            />
+            <DashboardCard>
+              <div className="card-content">
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 48,
+                      height: 48,
+                      borderRadius: '50%',
+                      bgcolor: 'success.light',
+                      color: 'success.main',
+                    }}
+                  >
+                    <WarningIcon />
+                  </Box>
+                  <Box>
+                    <Typography variant="h4" color="success.main">
+                      {metrics.itemsAvailable}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Items Available
+                    </Typography>
+                  </Box>
+                </Box>
+              </div>
+            </DashboardCard>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <MetricCard
-              title="Under Maintenance"
-              value={metrics.itemsUnderMaintenance}
-              icon={<BuildIcon />}
-              color="error"
-            />
+            <DashboardCard>
+              <div className="card-content">
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 48,
+                      height: 48,
+                      borderRadius: '50%',
+                      bgcolor: 'error.light',
+                      color: 'error.main',
+                    }}
+                  >
+                    <BuildIcon />
+                  </Box>
+                  <Box>
+                    <Typography variant="h4" color="error.main">
+                      {metrics.itemsUnderMaintenance}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Under Maintenance
+                    </Typography>
+                  </Box>
+                </Box>
+              </div>
+            </DashboardCard>
           </Grid>
         </Grid>
 
         {/* Unit Hierarchy Selector */}
-        <UnitHierarchySelector
-          currentUnit={currentUnit}
-          onUnitSelect={handleUnitSelect}
-          unitHierarchy={mockUnitHierarchy}
-        />
+        <DashboardCard sx={{ mb: 3 }}>
+          <div className="card-header">
+            <Typography variant="h6">UNIT BREAKDOWN</Typography>
+          </div>
+          <div className="card-content">
+            <UnitHierarchySelector
+              currentUnit={currentUnit}
+              onUnitSelect={handleUnitSelect}
+              unitHierarchy={mockUnitHierarchy}
+            />
+          </div>
+        </DashboardCard>
 
         {/* Filters */}
-        <InventoryFilters
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          onSaveFilter={handleSaveFilter}
-          onClearFilters={handleClearFilters}
-        />
+        <DashboardCard sx={{ mb: 3 }}>
+          <div className="card-header">
+            <Typography variant="h6">FILTERS</Typography>
+          </div>
+          <div className="card-content">
+            <InventoryFilters
+              filters={filters}
+              onFilterChange={handleFilterChange}
+              onSaveFilter={handleSaveFilter}
+              onClearFilters={handleClearFilters}
+            />
+          </div>
+        </DashboardCard>
 
         {/* Inventory Table */}
-        <InventoryTable
-          items={mockInventoryItems}
-          onViewDetails={handleViewDetails}
-          onTransfer={handleTransfer}
-          onMaintenance={handleMaintenance}
-          onViewQR={handleViewQR}
-          onEdit={handleEdit}
-        />
+        <DashboardCard>
+          <div className="card-header">
+            <Typography variant="h6">INVENTORY ITEMS</Typography>
+          </div>
+          <div className="card-content">
+            <InventoryTable
+              items={mockInventoryItems}
+              onViewDetails={handleViewDetails}
+              onTransfer={handleTransfer}
+              onMaintenance={handleMaintenance}
+              onViewQR={handleViewQR}
+              onEdit={handleEdit}
+            />
+          </div>
+        </DashboardCard>
 
-        {/* Item Details Drawer */}
+        {/* Modals and Drawers */}
         <ItemDetailsDrawer
           open={detailsDrawerOpen}
           onClose={() => setDetailsDrawerOpen(false)}
@@ -324,7 +452,6 @@ const UnitInventory: React.FC = () => {
           onViewQR={handleViewQR}
         />
 
-        {/* Add Item Modal */}
         <AddItemModal
           open={isAddItemModalOpen}
           onClose={() => setIsAddItemModalOpen(false)}

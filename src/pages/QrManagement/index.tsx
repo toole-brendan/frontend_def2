@@ -18,6 +18,7 @@ import { MetricsSection } from './components/MetricsSection';
 import { QRDetailsModal } from './components/QRDetailsModal';
 import { PreviewModal } from './components/PreviewModal';
 import type { QRCodeDetails, GenerateQRFormData, ItemDetails } from './types';
+import PageTitle from '../../components/common/PageTitle';
 
 // Base card styling following dashboard pattern
 const DashboardCard = styled(Paper)(({ theme }) => ({
@@ -93,9 +94,9 @@ const QRManagementPage: React.FC = () => {
         <Box sx={{ mb: 4 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <Box>
-              <Typography variant="h4" gutterBottom>
+              <PageTitle variant="h4" gutterBottom>
                 QR CODE MANAGEMENT
-              </Typography>
+              </PageTitle>
               <Typography variant="body2" color="text.secondary">
                 Generate and manage QR codes for equipment tracking
               </Typography>

@@ -1,8 +1,6 @@
 import React from 'react';
 import {
-  Card,
-  CardHeader,
-  CardContent,
+  Box,
   Typography,
   List,
   ListItem,
@@ -10,12 +8,35 @@ import {
   ListItemText,
   Avatar,
   Divider,
-  Box,
   Tooltip,
   IconButton,
+  styled,
+  Paper,
 } from '@mui/material';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import PersonIcon from '@mui/icons-material/Person';
+
+const DashboardCard = styled(Paper)(({ theme }) => ({
+  height: '100%',
+  backgroundColor: theme.palette.background.paper,
+  borderRadius: 0,
+  border: `1px solid ${theme.palette.divider}`,
+  '& .card-header': {
+    padding: theme.spacing(2),
+    borderBottom: `1px solid ${theme.palette.divider}`,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    '& h6': {
+      fontWeight: 600,
+      textTransform: 'uppercase',
+      letterSpacing: '0.1em',
+    },
+  },
+  '& .card-content': {
+    padding: theme.spacing(2),
+  },
+}));
 
 interface MilitaryPerson {
   id: string;
@@ -57,71 +78,41 @@ const ChainOfCommand: React.FC<ChainOfCommandProps> = ({
   );
 
   return (
-    <Card>
-      <CardHeader
-        title="Chain of Command"
-        action={
-          <Tooltip title="Your direct reporting structure within the unit">
-            <IconButton size="small">
-              <HelpOutlineIcon />
-            </IconButton>
-          </Tooltip>
-        }
-      />
-      <CardContent>
-        <Box sx={{ mb: 3 }}>
-          <Typography
-            variant="subtitle2"
-            color="text.secondary"
-            gutterBottom
-            sx={{ mb: 1 }}
-          >
-            Immediate Supervisor
+    <DashboardCard>
+      <Box className="card-header">
+        <Typography variant="h6">CHAIN OF COMMAND</Typography>
+        <Tooltip title="Your direct reporting structure within the unit">
+          <IconButton size="small">
+            <HelpOutlineIcon />
+          </IconButton>
+        </Tooltip>
+      </Box>
+      
+      <Box className="card-content">
+        <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+          Reports To
+        </Typography>
+        <List disablePadding>
+          <PersonListItem person={supervisor} />
+        </List>
+
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+            Direct Reports
           </Typography>
           <List disablePadding>
-            <PersonListItem person={supervisor} />
+            {subordinates.map((subordinate) => (
+              <React.Fragment key={subordinate.id}>
+                <PersonListItem person={subordinate} />
+                {subordinate.id !== subordinates[subordinates.length - 1].id && (
+                  <Divider component="li" />
+                )}
+              </React.Fragment>
+            ))}
           </List>
         </Box>
-
-        {subordinates.length > 0 && (
-          <>
-            <Divider sx={{ my: 2 }} />
-            <Box>
-              <Typography
-                variant="subtitle2"
-                color="text.secondary"
-                gutterBottom
-                sx={{ mb: 1 }}
-              >
-                Direct Reports
-              </Typography>
-              <List disablePadding>
-                {subordinates.map((subordinate) => (
-                  <PersonListItem
-                    key={subordinate.id}
-                    person={subordinate}
-                  />
-                ))}
-              </List>
-            </Box>
-          </>
-        )}
-
-        <Typography
-          variant="caption"
-          color="text.secondary"
-          sx={{
-            display: 'block',
-            mt: 3,
-            pt: 2,
-            borderTop: '1px dashed',
-            borderColor: 'divider',
-          }}
-        >
-          Chain of command information is synced from personnel records.
-        </Typography>
-      </CardContent>
-    </Card>
+      </Box>
+    </DashboardCard>
   );
 };
 

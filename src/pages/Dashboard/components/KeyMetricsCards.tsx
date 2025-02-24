@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Grid, Typography, styled } from '@mui/material';
+import { Box, Grid, Typography, styled, Paper } from '@mui/material';
 import { 
   Inventory as InventoryIcon,
   CheckCircle as CheckCircleIcon,
@@ -12,79 +12,50 @@ interface MetricCardProps {
   icon: React.ReactNode;
   value: number;
   label: string;
-  color: string;
-  delay?: number;
+  color: 'primary' | 'success' | 'warning' | 'error';
 }
 
-const StyledMetricCard = styled(Box, {
-  shouldForwardProp: (prop) => prop !== 'color' && prop !== 'delay',
-})<{ color: string; delay: number }>(({ theme, color, delay }) => ({
-  backgroundColor: theme.palette.background.paper,
-  border: `1px solid ${color}`,
-  borderRadius: theme.shape.borderRadius,
-  padding: theme.spacing(3),
+const DashboardCard = styled(Paper)(({ theme }) => ({
   height: '100%',
-  transition: 'all 0.2s ease',
-  opacity: 0,
-  animation: 'fadeSlideUp 0.6s forwards',
-  animationDelay: `${delay}ms`,
-  '&:hover': {
-    transform: 'translateY(-2px)',
-    boxShadow: theme.shadows[4],
+  backgroundColor: theme.palette.background.paper,
+  borderRadius: 0,
+  border: `1px solid ${theme.palette.divider}`,
+  '& .card-content': {
+    padding: theme.spacing(2),
   },
-  '@keyframes fadeSlideUp': {
-    from: {
-      opacity: 0,
-      transform: 'translateY(20px)'
-    },
-    to: {
-      opacity: 1,
-      transform: 'translateY(0)'
-    }
-  }
 }));
 
-const IconWrapper = styled(Box, {
-  shouldForwardProp: (prop) => prop !== 'color',
-})<{ color: string }>(({ theme, color }) => ({
-  backgroundColor: `${color}1A`, // 10% opacity
-  borderRadius: theme.shape.borderRadius,
-  padding: theme.spacing(1),
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  marginBottom: theme.spacing(2),
-}));
-
-const MetricValue = styled(Typography)(({ theme }) => ({
-  marginBottom: theme.spacing(1),
-  fontWeight: 500,
-  color: theme.palette.text.primary,
-  letterSpacing: '0.02em',
-}));
-
-const MetricLabel = styled(Typography)(({ theme }) => ({
-  color: theme.palette.text.secondary,
-  textTransform: 'uppercase',
-  letterSpacing: '0.1em',
-  fontWeight: 500,
-  fontSize: '0.75rem',
-}));
-
-const MetricCard: React.FC<MetricCardProps> = ({ icon, value, label, color, delay = 0 }) => (
-  <StyledMetricCard color={color} delay={delay}>
-    <IconWrapper color={color}>
-      {React.cloneElement(icon as React.ReactElement, { 
-        sx: { color, fontSize: 24 } 
-      })}
-    </IconWrapper>
-    <MetricValue variant="h3">
-      {value}
-    </MetricValue>
-    <MetricLabel variant="body2">
-      {label}
-    </MetricLabel>
-  </StyledMetricCard>
+const MetricCard: React.FC<MetricCardProps> = ({ icon, value, label, color }) => (
+  <DashboardCard>
+    <div className="card-content">
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 48,
+            height: 48,
+            borderRadius: '50%',
+            bgcolor: `${color}.light`,
+            color: `${color}.main`,
+          }}
+        >
+          {React.cloneElement(icon as React.ReactElement, { 
+            sx: { fontSize: 24 } 
+          })}
+        </Box>
+        <Box>
+          <Typography variant="h4" color={`${color}.main`}>
+            {value}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {label}
+          </Typography>
+        </Box>
+      </Box>
+    </div>
+  </DashboardCard>
 );
 
 interface KeyMetricsCardsProps {
@@ -103,36 +74,31 @@ export const KeyMetricsCards: React.FC<KeyMetricsCardsProps> = ({ stats }) => {
       icon: <InventoryIcon />,
       value: stats.total,
       label: 'Total Property Items',
-      color: '#2196F3',
-      delay: 0
+      color: 'primary' as const,
     },
     {
       icon: <CheckCircleIcon />,
       value: stats.serviceableItems,
       label: 'Items in Good Condition',
-      color: '#4CAF50',
-      delay: 100
+      color: 'success' as const,
     },
     {
       icon: <BuildIcon />,
       value: stats.maintenanceNeeded,
       label: 'Items Needing Maintenance',
-      color: '#FFC107',
-      delay: 200
+      color: 'warning' as const,
     },
     {
       icon: <SwapHorizIcon />,
       value: stats.pendingTransfers,
       label: 'Pending Transfers',
-      color: '#9C27B0',
-      delay: 300
+      color: 'primary' as const,
     },
     {
       icon: <WarningIcon />,
       value: stats.overdueItems,
       label: 'Overdue Maintenance',
-      color: '#F44336',
-      delay: 400
+      color: 'error' as const,
     }
   ];
 

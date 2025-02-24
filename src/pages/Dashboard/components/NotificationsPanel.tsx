@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, IconButton, alpha, Button, Card } from '@mui/material';
+import { Box, Typography, IconButton, alpha, Button, Card, styled } from '@mui/material';
 import {
   Notifications as NotificationsIcon,
   Circle as CircleIcon,
@@ -16,6 +16,44 @@ interface NotificationsPanelProps {
   }>;
 }
 
+const StyledCard = styled(Card)(({ theme }) => ({
+  height: '100%',
+  backgroundColor: theme.palette.background.paper,
+  borderRadius: 0,
+  border: `1px solid ${theme.palette.divider}`,
+  display: 'flex',
+  flexDirection: 'column',
+  overflow: 'hidden',
+  '& .card-header': {
+    padding: theme.spacing(2),
+    borderBottom: `1px solid ${theme.palette.divider}`,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    '& h6': {
+      fontWeight: 600,
+      textTransform: 'uppercase',
+      letterSpacing: '0.1em',
+    },
+  },
+  '& .card-content': {
+    padding: theme.spacing(2),
+    flex: 1,
+    overflowY: 'auto',
+    minHeight: '250px',
+    '&::-webkit-scrollbar': {
+      width: '6px',
+    },
+    '&::-webkit-scrollbar-track': {
+      background: 'transparent',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: theme.palette.divider,
+      borderRadius: '3px',
+    },
+  },
+}));
+
 const getNotificationColor = (type: NotificationsPanelProps['notifications'][0]['type']) => {
   switch (type) {
     case 'high':
@@ -31,34 +69,12 @@ const getNotificationColor = (type: NotificationsPanelProps['notifications'][0][
 
 export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({ notifications }) => {
   return (
-    <Card
-      sx={{
-        height: '100%',
-        maxHeight: '400px',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        transition: 'all 0.2s ease',
-        '&:hover': {
-          transform: 'translateY(-2px)',
-          boxShadow: (theme) => theme.shadows[4],
-        },
-      }}
-    >
-      {/* Header */}
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          p: 2,
-          borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
-        }}
-      >
+    <StyledCard>
+      <div className="card-header">
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <NotificationsIcon color="primary" />
           <Typography variant="h6">
-            Notifications
+            NOTIFICATIONS
           </Typography>
           <Typography
             variant="caption"
@@ -80,26 +96,9 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({ notifica
         >
           View All
         </Button>
-      </Box>
+      </div>
 
-      {/* Notifications List */}
-      <Box 
-        sx={{ 
-          flex: 1,
-          overflowY: 'auto',
-          minHeight: '250px',
-          '&::-webkit-scrollbar': {
-            width: '6px',
-          },
-          '&::-webkit-scrollbar-track': {
-            background: 'transparent',
-          },
-          '&::-webkit-scrollbar-thumb': {
-            background: (theme) => theme.palette.divider,
-            borderRadius: '3px',
-          },
-        }}
-      >
+      <div className="card-content">
         {notifications.map((notification, index) => (
           <Box
             key={notification.id}
@@ -162,7 +161,7 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({ notifica
             </Box>
           </Box>
         ))}
-      </Box>
-    </Card>
+      </div>
+    </StyledCard>
   );
 }; 

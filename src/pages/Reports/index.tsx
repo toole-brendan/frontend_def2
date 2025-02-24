@@ -34,6 +34,7 @@ import { CustomReportForm } from './components/CustomReportForm';
 import { ReportChart } from './components/ReportChart';
 import { ReportFilters } from './components/ReportFilters';
 import type { ReportType, ReportData } from './types';
+import PageTitle from '../../components/common/PageTitle';
 
 // Styled Components
 const DashboardCard = styled(Paper)(({ theme }) => ({
@@ -176,9 +177,9 @@ const Reports: React.FC = () => {
         <Box sx={{ mb: 4 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <Box>
-              <Typography variant="h4" gutterBottom>
+              <PageTitle variant="h4" gutterBottom>
                 REPORTS
-              </Typography>
+              </PageTitle>
               <Typography variant="body2" color="text.secondary">
                 Generate and manage reports for auditing, compliance, and operational needs
               </Typography>

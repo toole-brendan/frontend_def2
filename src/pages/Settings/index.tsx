@@ -26,6 +26,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import BlockIcon from '@mui/icons-material/Block';
 import QrCodeIcon from '@mui/icons-material/QrCode';
 import InventoryIcon from '@mui/icons-material/Inventory';
+import PageTitle from '../../components/common/PageTitle';
 
 // Base card styling following dashboard pattern
 const DashboardCard = styled(Paper)(({ theme }) => ({
@@ -76,9 +77,9 @@ const Settings: React.FC = () => {
         <Box sx={{ mb: 4 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <Box>
-              <Typography variant="h4" gutterBottom>
+              <PageTitle variant="h4" gutterBottom>
                 SETTINGS
-              </Typography>
+              </PageTitle>
               <Typography variant="body2" color="text.secondary">
                 Configure HandReceipt system preferences and blockchain settings
               </Typography>
