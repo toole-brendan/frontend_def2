@@ -6,13 +6,13 @@ import { icons } from '../components/layout/Sidebar';
 const Dashboard = React.lazy(() => import('../pages/Dashboard/index'));
 const MyProperty = React.lazy(() => import('../pages/Property'));
 const UnitInventory = React.lazy(() => import('../pages/UnitInventory/index'));
-const Transfers = React.lazy(() => import('../pages/Transfers'));
+const Transfers = React.lazy(() => import('../pages/Transfers/index'));
 const Maintenance = React.lazy(() => import('../pages/Maintenance/index'));
 const QrManagement = React.lazy(() => import('../pages/QrManagement/index'));
 const Reports = React.lazy(() => import('../pages/Reports/index'));
 const UserManagement = React.lazy(() => import('../pages/UserManagement/index'));
 const Settings = React.lazy(() => import('../pages/Settings/index'));
-const Profile = React.lazy(() => import('../pages/Profile'));
+const Profile = React.lazy(() => import('../pages/Profile/index'));
 
 export const ROUTES = {
   DASHBOARD: '/defense/dashboard',

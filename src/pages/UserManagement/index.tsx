@@ -98,12 +98,12 @@ const UserManagement: React.FC = () => {
   };
 
   return (
-    <Container>
-      <Box sx={{ py: 3 }}>
-        <Box sx={{ mb: 3 }}>
+    <Container maxWidth="xl">
+      <Box sx={{ py: 4 }}>
+        <Box sx={{ mb: 4 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="h5">
-              User Management
+            <Typography variant="h4">
+              USER MANAGEMENT
             </Typography>
             {tabValue === 0 && (
               <TextField
@@ -123,7 +123,7 @@ const UserManagement: React.FC = () => {
           </Box>
         </Box>
 
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 4 }}>
           <Tabs value={tabValue} onChange={handleTabChange}>
             <Tab label="Users" />
             <Tab label="Activity Logs" />

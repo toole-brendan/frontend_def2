@@ -37,7 +37,7 @@ export const typography = {
   h4: {
     fontFamily: fontFamilies.primary,
     fontWeight: fontWeights.medium,
-    fontSize: '1.25rem', // 20px
+    fontSize: '1.5rem', // 24px
     lineHeight: 1.4,
     letterSpacing: '-0.01em',
   },

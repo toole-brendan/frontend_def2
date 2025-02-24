@@ -177,18 +177,9 @@ const Reports: React.FC = () => {
         <Box sx={{ mb: 4 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Typography variant="h4" gutterBottom>
-                  REPORTS
-                </Typography>
-                <Tooltip title="Last blockchain sync: 1 minute ago">
-                  <Badge color="success" variant="dot">
-                    <IconButton size="small">
-                      <RefreshIcon />
-                    </IconButton>
-                  </Badge>
-                </Tooltip>
-              </Box>
+              <Typography variant="h4" gutterBottom>
+                REPORTS
+              </Typography>
               <Typography variant="body2" color="text.secondary">
                 Generate and manage reports for auditing, compliance, and operational needs
               </Typography>

@@ -282,20 +282,9 @@ const Maintenance: React.FC = () => {
         mb: 4 
       }}>
         <Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-            <Typography variant="h4" sx={{ 
-              fontFamily: 'Poppins, sans-serif',
-              fontSize: '1.75rem',
-              textTransform: 'uppercase'
-            }}>
-              MAINTENANCE
-            </Typography>
-            <Tooltip title="Last synced with blockchain 3 minutes ago">
-              <IconButton size="small">
-                <RefreshCw size={20} />
-              </IconButton>
-            </Tooltip>
-          </Box>
+          <Typography variant="h4">
+            MAINTENANCE
+          </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 2 }}>
           <Tooltip title="Select a maintenance task first to generate DA 2404">
