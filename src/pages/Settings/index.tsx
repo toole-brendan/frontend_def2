@@ -9,7 +9,6 @@ import {
   TextField,
   Button,
   Switch,
-  FormControlLabel,
   Divider,
   List,
   ListItem,
@@ -17,13 +16,12 @@ import {
   ListItemText,
   ListItemSecondaryAction,
 } from '@mui/material';
-import SecurityIcon from '@mui/icons-material/Security';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import StorageIcon from '@mui/icons-material/Storage';
-import LanguageIcon from '@mui/icons-material/Language';
+import {
+  Security as SecurityIcon,
+  Notifications as NotificationsIcon,
+  Language as LanguageIcon,
+} from '@mui/icons-material';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
-import BackupIcon from '@mui/icons-material/Backup';
-import SyncIcon from '@mui/icons-material/Sync';
 import SaveIcon from '@mui/icons-material/Save';
 import BlockIcon from '@mui/icons-material/Block';
 import QrCodeIcon from '@mui/icons-material/QrCode';

@@ -157,7 +157,6 @@ const Transfers: React.FC = () => {
         <ConfirmReceiptTab
           pendingTransfers={mockTransfers.filter(t => t.status === 'PENDING')}
           onConfirmReceipt={handleConfirmTransfer}
-          onViewDetails={handleViewDetails}
         />
       </TabPanel>
 

@@ -21,7 +21,6 @@ import {
   Tooltip,
   Tabs,
   Tab,
-  Badge,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';

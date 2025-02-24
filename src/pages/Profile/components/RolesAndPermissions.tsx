@@ -15,23 +15,11 @@ import {
 } from '@mui/material';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
-const AVAILABLE_PERMISSIONS = [
-  'Manage Users',
-  'Approve Transfers',
-  'View Inventory',
-  'Edit Inventory',
-  'Generate Reports',
-  'Access Sensitive Items',
-  'Manage Roles',
-  'View Audit Logs',
-  'Manage Blockchain Records',
-  'Approve Hand Receipts',
-] as const;
-
 interface Permission {
   id: string;
   name: string;
   description: string;
+  icon: React.ReactNode;
 }
 
 interface Role {

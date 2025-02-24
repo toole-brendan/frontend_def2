@@ -18,8 +18,8 @@ interface UnitHierarchySelectorProps {
   unitHierarchy: UnitHierarchy;
 }
 
-const getLevelColor = (level: string) => {
-  return '#1976d2'; // primary blue for all levels
+const getLevelColor = () => {
+  return '#2196F3'; // Default color
 };
 
 const renderTree = (
@@ -34,7 +34,7 @@ const renderTree = (
       <Typography
         variant="body2"
         sx={{
-          color: getLevelColor(node.level),
+          color: getLevelColor(),
           fontWeight: node.level === 'company' ? 600 : 400,
         }}
       >

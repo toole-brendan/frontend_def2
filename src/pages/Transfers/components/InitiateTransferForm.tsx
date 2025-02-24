@@ -253,7 +253,7 @@ const InitiateTransferForm: React.FC<InitiateTransferFormProps> = ({
       <QRScanner
         open={isQRScannerOpen}
         onClose={() => setIsQRScannerOpen(false)}
-        onScanComplete={handleQRScan}
+        onScan={handleQRScan}
         title="Scan Item QR Code"
       />
     </form>

@@ -10,7 +10,7 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WarningIcon from '@mui/icons-material/Warning';
 import BuildIcon from '@mui/icons-material/Build';
-import AddIcon from '@mui/icons-material/Add';
+import { Add as AddIcon } from '@mui/icons-material';
 
 import MetricCard from './components/MetricCard';
 import UnitHierarchySelector from './components/UnitHierarchySelector';
@@ -18,7 +18,7 @@ import InventoryFilters from './components/InventoryFilters';
 import InventoryTable from './components/InventoryTable';
 import ItemDetailsDrawer from './components/ItemDetailsDrawer';
 import AddItemModal from './components/AddItemModal';
-import { InventoryItem, InventoryFilters as InventoryFiltersType, ItemDetails, UnitHierarchy } from './types';
+import { InventoryItem, InventoryFilters as InventoryFiltersType, UnitHierarchy } from './types';
 
 // Mock data for initial testing
 const mockUnitHierarchy: UnitHierarchy = {
@@ -149,37 +149,6 @@ const mockInventoryItems: InventoryItem[] = [
   // Add more mock items as needed
 ];
 
-const mockItemDetails: ItemDetails = {
-  ...mockInventoryItems[0],
-  maintenanceHistory: [
-    {
-      id: 'm1',
-      date: '2024-02-15',
-      type: 'PMCS',
-      description: 'Regular maintenance check',
-      performedBy: 'SPC Johnson',
-      nextDueDate: '2024-03-15',
-    },
-  ],
-  assignmentHistory: [
-    {
-      id: 'a1',
-      date: '2024-01-01',
-      assignedTo: 'SGT Smith, John',
-      assignedBy: 'LT Davis',
-      action: 'issued',
-    },
-  ],
-  documents: [
-    {
-      id: 'd1',
-      name: 'Technical Manual',
-      type: 'PDF',
-      url: '/documents/tm-m4a1.pdf',
-    },
-  ],
-};
-
 const UnitInventory: React.FC = () => {
   // State management
   const [currentUnit, setCurrentUnit] = useState<string[]>(['C CO, 2-506 IN, 3BCT, 101st ABN DIV (AASLT)']);
@@ -191,7 +160,6 @@ const UnitInventory: React.FC = () => {
     assignedTo: '',
     unitLevel: '',
   });
-  const [selectedItem, setSelectedItem] = useState<ItemDetails | null>(null);
   const [detailsDrawerOpen, setDetailsDrawerOpen] = useState(false);
   const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
 
@@ -228,8 +196,7 @@ const UnitInventory: React.FC = () => {
     });
   };
 
-  const handleViewDetails = (item: InventoryItem) => {
-    setSelectedItem(mockItemDetails); // In real app, fetch details
+  const handleViewDetails = () => {
     setDetailsDrawerOpen(true);
   };
 
@@ -351,7 +318,7 @@ const UnitInventory: React.FC = () => {
         <ItemDetailsDrawer
           open={detailsDrawerOpen}
           onClose={() => setDetailsDrawerOpen(false)}
-          item={selectedItem}
+          item={null}
           onTransfer={handleTransfer}
           onMaintenance={handleMaintenance}
           onViewQR={handleViewQR}

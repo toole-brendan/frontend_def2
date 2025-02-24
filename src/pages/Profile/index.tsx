@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
 import { Box, Grid } from '@mui/material';
+import {
+  Security as SecurityIcon,
+  SupervisorAccount as SupervisorAccountIcon,
+  Build as BuildIcon,
+  Inventory as InventoryIcon,
+} from '@mui/icons-material';
 import ProfileHeader from './components/ProfileHeader';
 import PersonalInformation from './components/PersonalInformation';
 import AccountSettings from './components/AccountSettings';
@@ -28,43 +34,34 @@ const mockUserData = {
       permissions: [
         {
           id: '1',
-          name: 'Manage Users',
-          description: 'Create, edit, and deactivate user accounts',
+          name: 'Administrator',
+          description: 'Full system access and control',
+          icon: <SecurityIcon />,
         },
         {
           id: '2',
-          name: 'Approve Transfers',
-          description: 'Review and approve property transfer requests',
+          name: 'Inventory Manager',
+          description: 'Manage unit inventory and equipment',
+          icon: <InventoryIcon />,
         },
+      ],
+    },
+    {
+      id: '2',
+      name: 'Maintenance Supervisor',
+      description: 'Oversee maintenance operations and schedules',
+      permissions: [
         {
           id: '3',
-          name: 'View Inventory',
-          description: 'Access and view unit inventory records',
+          name: 'Maintenance Manager',
+          description: 'Oversee maintenance operations',
+          icon: <BuildIcon />,
         },
         {
           id: '4',
-          name: 'Edit Inventory',
-          description: 'Modify inventory records and quantities',
-        },
-        {
-          id: '5',
-          name: 'Generate Reports',
-          description: 'Create and export inventory reports',
-        },
-        {
-          id: '6',
-          name: 'Access Sensitive Items',
-          description: 'View and manage sensitive item records',
-        },
-        {
-          id: '7',
-          name: 'View Audit Logs',
-          description: 'Access system audit trails',
-        },
-        {
-          id: '8',
-          name: 'Approve Hand Receipts',
-          description: 'Review and approve hand receipt transactions',
+          name: 'Team Supervisor',
+          description: 'Manage team members and assignments',
+          icon: <SupervisorAccountIcon />,
         },
       ],
     },
@@ -133,9 +130,9 @@ const Profile: React.FC = () => {
     }));
   };
 
-  const handlePasswordChange = (oldPassword: string, newPassword: string) => {
-    // Handle password change
-    console.log('Changing password');
+  const handlePasswordChange = () => {
+    // TODO: Implement password change logic
+    console.log('Password change requested');
   };
 
   const handleToggle2FA = (enabled: boolean) => {

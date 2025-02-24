@@ -9,7 +9,6 @@ import {
   Avatar,
   styled,
   Card,
-  Link,
   Button,
 } from '@mui/material';
 import {
@@ -33,10 +32,10 @@ const StyledCard = styled(Card)(({ theme }) => ({
   width: '100%',
 }));
 
-const ActivityChip = styled(Chip)(({ theme }) => ({
-  '& .MuiChip-label': {
-    fontWeight: 500,
-  },
+const ActivityChip = styled(Chip)(() => ({
+  borderRadius: '16px',
+  fontWeight: 500,
+  fontSize: '0.75rem',
 }));
 
 const ActivityList = styled(List)(({ theme }) => ({
@@ -56,12 +55,6 @@ const ActivityList = styled(List)(({ theme }) => ({
     background: theme.palette.divider,
     borderRadius: '3px',
   },
-}));
-
-const ViewAllLink = styled(Box)(({ theme }) => ({
-  borderTop: `1px solid ${theme.palette.divider}`,
-  padding: theme.spacing(1.5),
-  textAlign: 'center',
 }));
 
 const getActivityIcon = (type: Activity['type']) => {

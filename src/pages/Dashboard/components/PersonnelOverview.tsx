@@ -14,10 +14,6 @@ const StyledCard = styled(Card)(({ theme }) => ({
   padding: theme.spacing(2),
 }));
 
-const OverviewHeader = styled(Box)(({ theme }) => ({
-  marginBottom: theme.spacing(2),
-}));
-
 const StatItem = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-between',

@@ -20,7 +20,7 @@ const StyledMetricCard = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'color' && prop !== 'delay',
 })<{ color: string; delay: number }>(({ theme, color, delay }) => ({
   backgroundColor: theme.palette.background.paper,
-  border: `1px solid ${theme.palette.divider}`,
+  border: `1px solid ${color}`,
   borderRadius: theme.shape.borderRadius,
   padding: theme.spacing(3),
   height: '100%',

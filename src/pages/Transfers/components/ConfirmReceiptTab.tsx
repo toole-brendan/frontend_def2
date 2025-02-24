@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Button,
   Paper,
   Typography,
   List,
@@ -11,69 +10,38 @@ import {
   Divider,
   IconButton,
 } from '@mui/material';
-import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { Transfer, QRScanResult } from '../types';
-import QRScanner from './QRScanner';
+import { Transfer } from '../types';
 import TransferDetailsModal from './TransferDetailsModal';
 
 interface ConfirmReceiptTabProps {
   pendingTransfers: Transfer[];
   onConfirmReceipt: (transfer: Transfer) => void;
-  onViewDetails: (transfer: Transfer) => void;
 }
 
 const ConfirmReceiptTab: React.FC<ConfirmReceiptTabProps> = ({
   pendingTransfers,
   onConfirmReceipt,
-  onViewDetails,
 }) => {
-  const [isQRScannerOpen, setIsQRScannerOpen] = useState(false);
-  const [selectedTransfer, setSelectedTransfer] = useState<Transfer | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+  const [selectedTransfer, setSelectedTransfer] = useState<Transfer | null>(null);
 
-  const handleQRScan = (result: QRScanResult) => {
-    // Find transfer matching the scanned item
-    const transfer = pendingTransfers.find(t =>
-      t.items.some(item => item.id === result.itemId)
-    );
-
-    if (transfer) {
-      setSelectedTransfer(transfer);
-      setDetailsModalOpen(true);
-    } else {
-      // Handle no matching transfer found
-      console.log('No pending transfer found for this item');
-    }
+  const handleViewDetails = (transfer: Transfer) => {
+    setSelectedTransfer(transfer);
+    setDetailsModalOpen(true);
   };
 
   return (
     <Box>
-      {/* Quick Action Section */}
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Quick Actions
-        </Typography>
-        <Button
-          variant="outlined"
-          startIcon={<QrCodeScannerIcon />}
-          onClick={() => setIsQRScannerOpen(true)}
-          fullWidth
-          sx={{ mb: 2 }}
-        >
-          Scan QR to Confirm Receipt
-        </Button>
-        <Typography variant="body2" color="text.secondary">
-          Scan the QR code on any item to quickly confirm its receipt
-        </Typography>
-      </Paper>
-
       {/* Pending Transfers List */}
       <Paper>
         <Box sx={{ p: 2 }}>
           <Typography variant="h6" gutterBottom>
             Pending Transfers to Confirm
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Review and confirm receipt of property transfers assigned to you
           </Typography>
         </Box>
         <Divider />
@@ -97,7 +65,7 @@ const ConfirmReceiptTab: React.FC<ConfirmReceiptTabProps> = ({
                   <IconButton
                     edge="end"
                     aria-label="view details"
-                    onClick={() => onViewDetails(transfer)}
+                    onClick={() => handleViewDetails(transfer)}
                     sx={{ mr: 1 }}
                   >
                     <VisibilityIcon />
@@ -125,14 +93,6 @@ const ConfirmReceiptTab: React.FC<ConfirmReceiptTabProps> = ({
           )}
         </List>
       </Paper>
-
-      {/* QR Scanner Modal */}
-      <QRScanner
-        open={isQRScannerOpen}
-        onClose={() => setIsQRScannerOpen(false)}
-        onScanComplete={handleQRScan}
-        title="Scan Item to Confirm Receipt"
-      />
 
       {/* Transfer Details Modal */}
       <TransferDetailsModal

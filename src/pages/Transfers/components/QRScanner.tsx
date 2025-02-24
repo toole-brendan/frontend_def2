@@ -12,19 +12,18 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
-import { QRScanResult } from '../types';
 
 interface QRScannerProps {
   open: boolean;
   onClose: () => void;
-  onScanComplete: (result: QRScanResult) => void;
+  onScan: (result: { itemId: string; serialNumber: string }) => void;
   title?: string;
 }
 
 const QRScanner: React.FC<QRScannerProps> = ({
   open,
   onClose,
-  onScanComplete,
+  onScan,
   title = 'Scan QR Code',
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -64,20 +63,12 @@ const QRScanner: React.FC<QRScannerProps> = ({
     };
   }, [open]);
 
-  const handleScanError = () => {
-    setError('Failed to scan QR code. Please try again.');
-    setTimeout(() => setError(null), 3000);
-  };
-
-  // Mock QR code detection - in a real implementation, you would use a QR code scanning library
   const handleScan = () => {
     // Simulated successful scan
-    const mockResult: QRScanResult = {
+    onScan({
       itemId: 'ITEM-123',
       serialNumber: 'SN-456',
-      success: true
-    };
-    onScanComplete(mockResult);
+    });
     onClose();
   };
 
@@ -171,7 +162,7 @@ const QRScanner: React.FC<QRScannerProps> = ({
           startIcon={<QrCodeScannerIcon />}
           disabled={!scanning}
         >
-          Scan Now
+          Scan
         </Button>
       </DialogActions>
     </Dialog>
