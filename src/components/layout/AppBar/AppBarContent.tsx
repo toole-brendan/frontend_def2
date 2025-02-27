@@ -15,6 +15,8 @@ import {
   Box,
   styled,
   Theme,
+  Chip,
+  Tooltip,
 } from '@mui/material';
 import {
   Search as SearchIcon,
@@ -24,7 +26,12 @@ import {
   Logout as LogoutIcon,
   KeyboardArrowDown as ArrowDownIcon,
   Menu as MenuIcon,
+  Security as SecurityIcon,
+  Person as PersonIcon,
+  LightMode as LightModeIcon,
+  DarkMode as DarkModeIcon,
 } from '@mui/icons-material';
+import { useTheme } from '../../../theme/ThemeProvider';
 
 const DRAWER_WIDTH = 240;
 
@@ -126,6 +133,29 @@ const UserInfo = styled(Box)(({ theme }) => ({
   },
 }));
 
+const RankChip = styled(Chip)(({ theme }) => ({
+  backgroundColor: 'rgba(0, 48, 143, 0.8)',
+  color: '#FFFFFF',
+  fontWeight: 600,
+  fontSize: '0.7rem',
+  height: 20,
+  borderRadius: 0,
+  border: '1px solid rgba(255, 255, 255, 0.3)',
+  '& .MuiChip-label': {
+    padding: '0 8px',
+  },
+}));
+
+const MilitaryAvatar = styled(Avatar)(({ theme }) => ({
+  width: 38,
+  height: 38,
+  border: '1px solid rgba(255, 255, 255, 0.3)',
+  backgroundColor: 'rgba(0, 48, 143, 0.6)',
+  color: '#FFFFFF',
+  fontWeight: 600,
+  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
+}));
+
 const StyledMenu = styled(Menu)(({ theme }) => ({
   '& .MuiPaper-root': {
     backgroundColor: '#000000',
@@ -195,6 +225,12 @@ export const AppBarContent: React.FC<AppBarContentProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const navigate = useNavigate();
+  const { mode, toggleTheme } = useTheme();
+
+  // Parse rank and name from userDisplayName (assuming format like "CPT Michael Rodriguez")
+  const nameParts = userDisplayName.split(' ');
+  const rank = nameParts.length > 0 ? nameParts[0] : '';
+  const name = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -260,6 +296,23 @@ export const AppBarContent: React.FC<AppBarContentProps> = ({
 
       <Box sx={{ flexGrow: 1 }} />
 
+      <Tooltip title={mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
+        <IconButton
+          size="large"
+          aria-label="toggle theme"
+          color="inherit"
+          onClick={toggleTheme}
+          sx={{
+            '&:hover': {
+              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            },
+            mr: 1,
+          }}
+        >
+          {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+        </IconButton>
+      </Tooltip>
+
       <IconButton
         size="large"
         aria-label="show notifications"
@@ -268,6 +321,7 @@ export const AppBarContent: React.FC<AppBarContentProps> = ({
           '&:hover': {
             backgroundColor: 'rgba(255, 255, 255, 0.05)',
           },
+          mr: 1,
         }}
       >
         <StyledBadge badgeContent={3} color="error">
@@ -276,25 +330,27 @@ export const AppBarContent: React.FC<AppBarContentProps> = ({
       </IconButton>
 
       <UserInfo onClick={handleMenuOpen}>
-        <Avatar
-          sx={{
-            width: 32,
-            height: 32,
-            border: (theme) => `1px solid ${theme.palette.divider}`,
-          }}
-        >
-          {userDisplayName.charAt(0)}
-        </Avatar>
-        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-          <Typography
-            variant="subtitle2"
-            sx={{
-              fontWeight: 500,
-              letterSpacing: '0.02em',
-            }}
-          >
-            {userDisplayName}
-          </Typography>
+        <MilitaryAvatar>
+          {rank.charAt(0)}
+        </MilitaryAvatar>
+        <Box sx={{ display: { xs: 'none', sm: 'flex' }, flexDirection: 'column' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <RankChip 
+              label={rank} 
+              size="small"
+              icon={<SecurityIcon style={{ fontSize: 14, color: '#FFFFFF' }} />}
+            />
+            <Typography
+              variant="subtitle2"
+              sx={{
+                fontWeight: 500,
+                letterSpacing: '0.02em',
+                ml: 0.5,
+              }}
+            >
+              {name}
+            </Typography>
+          </Box>
           <Typography
             variant="caption"
             color="text.secondary"
@@ -302,9 +358,10 @@ export const AppBarContent: React.FC<AppBarContentProps> = ({
               textTransform: 'uppercase',
               letterSpacing: '0.1em',
               fontSize: '0.7rem',
+              color: 'rgba(255, 255, 255, 0.7)',
             }}
           >
-            USER
+            Company Commander
           </Typography>
         </Box>
         <ArrowDownIcon
@@ -328,17 +385,26 @@ export const AppBarContent: React.FC<AppBarContentProps> = ({
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
+        <Box sx={{ px: 2, py: 1, backgroundColor: 'rgba(0, 48, 143, 0.1)' }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+            {userDisplayName}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            Bravo Company, 2-87 Infantry
+          </Typography>
+        </Box>
+        <Divider />
         <MenuItem component={Link} to="/defense/profile">
           <ListItemIcon>
-            <AccountCircle fontSize="small" />
+            <PersonIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Profile</ListItemText>
+          <ListItemText>My Profile</ListItemText>
         </MenuItem>
         <MenuItem component={Link} to="/defense/settings">
           <ListItemIcon>
             <SettingsIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Settings</ListItemText>
+          <ListItemText>Account Settings</ListItemText>
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleLogout}>

@@ -12,12 +12,12 @@ www.handreceipt.com (CloudFront Distribution)
 │   ├── index.html           # Version selector landing page
 │   └── assets/              # Login selector assets
 │
-├── /defense (THIS PROJECT)
+├── /defense 
 │   ├── index.html           # Defense app landing page
 │   └── assets/              # Defense app assets
 │
-└── /civilian (future project)
-    └── [Not yet implemented]
+└── /civ 
+    └── 
 ```
 
 ## Development

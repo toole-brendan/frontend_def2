@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, CssBaseline, useMediaQuery, useTheme } from '@mui/material';
 import AppBar from './AppBar';
 import Sidebar from './Sidebar';
-import { NAV_ITEMS } from '../../app/routes';
+import { NAV_ITEMS, SYSTEM_STATUS } from '../../app/routes';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -24,7 +24,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <AppBar 
         isMobile={isMobile}
         onDrawerToggle={handleDrawerToggle}
-        userDisplayName="John Doe" // TODO: Replace with actual user name from auth
+        userDisplayName="CPT Michael Rodriguez" // User display name
       />
       
       <Sidebar 
@@ -33,6 +33,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         open={sidebarOpen}
         onClose={handleDrawerToggle}
         navItems={NAV_ITEMS}
+        systemStatus={SYSTEM_STATUS}
       />
       
       <Box

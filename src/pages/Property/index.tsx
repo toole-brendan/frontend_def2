@@ -22,6 +22,22 @@ import {
   InputLabel,
   TablePagination,
   styled,
+  Button,
+  Divider,
+  Alert,
+  Card,
+  CardContent,
+  CardHeader,
+  Stack,
+  Badge,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Collapse,
+  Tabs,
+  Tab,
+  Menu,
 } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import SearchIcon from '@mui/icons-material/Search';
@@ -29,19 +45,53 @@ import InfoIcon from '@mui/icons-material/Info';
 import BuildIcon from '@mui/icons-material/Build';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import LinkIcon from '@mui/icons-material/Link';
+import PrintIcon from '@mui/icons-material/Print';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import EventIcon from '@mui/icons-material/Event';
+import UpdateIcon from '@mui/icons-material/Update';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import PersonIcon from '@mui/icons-material/Person';
+import GroupIcon from '@mui/icons-material/Group';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import WarningIcon from '@mui/icons-material/Warning';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import PushPinIcon from '@mui/icons-material/PushPin';
+import PushPinOutlinedIcon from '@mui/icons-material/PushPinOutlined';
 import { format } from 'date-fns';
 import { useProperty } from '../../hooks/useProperty';
 import { PropertySkeleton } from './PropertySkeleton';
 import { ErrorDisplay } from '../../components/common/ErrorDisplay';
 import { PropertyItem } from '../../types/property';
 import PageTitle from '../../components/common/PageTitle';
+import { 
+  SubHandReceiptStatusTable, 
+  SubHandReceiptActions, 
+  PbuseIntegrationPanel,
+  EquipmentSearchFilter,
+  EquipmentTable,
+  HandReceiptAssignmentPanel,
+  DAForm2062PreviewPanel,
+  ToolIntegrationPanel,
+  PropertyHeader,
+  PrimaryHandReceiptManagementPanel,
+  SubHandReceiptManagementPanel,
+  DigitalHandReceiptPreviewPanel,
+  EquipmentDetailPanel,
+  EquipmentListPanel
+} from './components';
+import { EquipmentFilters } from './components/EquipmentSearchFilter';
 
 // Base card styling following dashboard pattern
 const DashboardCard = styled(Paper)(({ theme }) => ({
   height: '100%',
   backgroundColor: theme.palette.background.paper,
-  borderRadius: 0,
+  borderRadius: theme.shape.borderRadius,
   border: `1px solid ${theme.palette.divider}`,
+  boxShadow: theme.shadows[2],
+  marginBottom: theme.spacing(3),
   '& .card-header': {
     padding: theme.spacing(2),
     borderBottom: `1px solid ${theme.palette.divider}`,
@@ -59,13 +109,145 @@ const DashboardCard = styled(Paper)(({ theme }) => ({
   },
 }));
 
+const StatusIndicator = styled(Box)<{ status: 'success' | 'warning' | 'error' }>(({ theme, status }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(1),
+  color: theme.palette[status].main,
+  '& svg': {
+    fontSize: '1rem',
+  },
+}));
+
+const ActionButton = styled(Button)(({ theme }) => ({
+  textTransform: 'none',
+  fontWeight: 500,
+}));
+
+// Sub-hand receipt tree item
+interface TreeItemProps {
+  depth?: number;
+}
+
+const TreeItem = styled(ListItem, {
+  shouldForwardProp: (prop) => prop !== 'depth',
+})<TreeItemProps>(({ theme, depth = 0 }) => ({
+  paddingLeft: theme.spacing(2 + depth * 3),
+  borderLeft: depth > 0 ? `1px dashed ${theme.palette.divider}` : 'none',
+  marginLeft: depth > 0 ? theme.spacing(2) : 0,
+  '&:hover': {
+    backgroundColor: theme.palette.action.hover,
+  },
+}));
+
+// Tab panel component
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+const TabPanel = (props: TabPanelProps) => {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`property-tabpanel-${index}`}
+      aria-labelledby={`property-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ pt: 3 }}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+};
+
+// Collapsible card component
+interface CollapsibleCardProps {
+  title: string;
+  children: React.ReactNode;
+  defaultExpanded?: boolean;
+  isPinnable?: boolean;
+  id: string;
+  pinnedCards: string[];
+  onTogglePin: (id: string) => void;
+}
+
+const CollapsibleCard: React.FC<CollapsibleCardProps> = ({
+  title,
+  children,
+  defaultExpanded = false,
+  isPinnable = false,
+  id,
+  pinnedCards,
+  onTogglePin
+}) => {
+  const [expanded, setExpanded] = useState(defaultExpanded || pinnedCards.includes(id));
+  const isPinned = pinnedCards.includes(id);
+
+  const handleToggleExpand = () => {
+    setExpanded(!expanded);
+  };
+
+  const handleTogglePin = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onTogglePin(id);
+  };
+
+  return (
+    <DashboardCard>
+      <div 
+        className="card-header" 
+        onClick={handleToggleExpand}
+        style={{ cursor: 'pointer' }}
+      >
+        <Typography variant="h6">{title}</Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {isPinnable && (
+            <Tooltip title={isPinned ? "Unpin from dashboard" : "Pin to dashboard"}>
+              <IconButton size="small" onClick={handleTogglePin} sx={{ mr: 1 }}>
+                {isPinned ? <PushPinIcon fontSize="small" /> : <PushPinOutlinedIcon fontSize="small" />}
+              </IconButton>
+            </Tooltip>
+          )}
+          <IconButton size="small">
+            {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </IconButton>
+        </Box>
+      </div>
+      <Collapse in={expanded}>
+        <div className="card-content">
+          {children}
+        </div>
+      </Collapse>
+    </DashboardCard>
+  );
+};
+
 const Property: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [category, setCategory] = useState('all');
-  const [condition, setCondition] = useState('all');
-  const [readiness, setReadiness] = useState('all');
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  // Tab state
+  const [tabValue, setTabValue] = useState(0);
+  
+  // Action menu state
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  
+  // Pinned cards state
+  const [pinnedCards, setPinnedCards] = useState<string[]>(['primary-hand-receipt']);
+  
+  const [selectedItem, setSelectedItem] = useState<PropertyItem | null>(null);
+  const [equipmentFilters, setEquipmentFilters] = useState<EquipmentFilters>({
+    searchQuery: '',
+    authorization: 'ALL',
+    handReceipt: 'ALL',
+    category: 'ALL',
+    status: 'ALL',
+  });
 
   const {
     summary,
@@ -96,244 +278,244 @@ const Property: React.FC = () => {
     loadData();
   }, [loadSummary, loadEquipmentList, loadComplianceStatus]);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'SERVICEABLE':
-      case 'OPERATIONAL':
-        return 'success';
-      case 'UNSERVICEABLE':
-      case 'NEEDS_MAINTENANCE':
-        return 'warning';
-      case 'DAMAGED':
-      case 'IN_REPAIR':
-        return 'error';
-      default:
-        return 'default';
-    }
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
+
+  const handleSelectItem = (item: PropertyItem) => {
+    setSelectedItem(item);
+  };
+
+  const handleClosePanel = () => {
+    setSelectedItem(null);
+  };
+
+  const handleActionsClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleActionsClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleTogglePin = (id: string) => {
+    setPinnedCards(prev => 
+      prev.includes(id) 
+        ? prev.filter(cardId => cardId !== id) 
+        : [...prev, id]
+    );
+  };
+
+  const handleFilterChange = (filters: EquipmentFilters) => {
+    setEquipmentFilters(filters);
   };
 
   return (
     <Container maxWidth="xl">
       <Box sx={{ py: 4 }}>
-        {/* Header Section */}
-        <Box sx={{ mb: 4 }}>
-          <PageTitle variant="h4" gutterBottom>
-            MY PROPERTY
-          </PageTitle>
-          <Typography variant="body2" color="text.secondary">
-            Manage and track your assigned equipment
-          </Typography>
+        {/* Header Section with Actions */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+          <PropertyHeader />
+          <Box>
+            <Button 
+              variant="contained" 
+              color="primary" 
+              sx={{ mr: 1 }}
+              onClick={handleRetry}
+              startIcon={<RefreshIcon />}
+            >
+              Refresh
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={handleActionsClick}
+              endIcon={<MoreVertIcon />}
+            >
+              Actions
+            </Button>
+            <Menu
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleActionsClose}
+            >
+              <MenuItem onClick={handleActionsClose}>Generate DA Form 2062</MenuItem>
+              <MenuItem onClick={handleActionsClose}>Export to Excel</MenuItem>
+              <MenuItem onClick={handleActionsClose}>Print Hand Receipt</MenuItem>
+              <MenuItem onClick={handleActionsClose}>PBUSE Integration</MenuItem>
+              <MenuItem onClick={handleActionsClose}>Tool Integration</MenuItem>
+              <Divider />
+              <MenuItem onClick={handleActionsClose}>Manage Pinned Cards</MenuItem>
+            </Menu>
+          </Box>
         </Box>
 
-        {/* Summary Cards */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={6} md={3}>
-            <DashboardCard>
-              <div className="card-content">
-                <Typography variant="h4" color="primary" gutterBottom>
-                  {summary.totalItems}
-                </Typography>
-                <Typography variant="subtitle2" color="text.secondary">
-                  Total Items
-                </Typography>
-              </div>
-            </DashboardCard>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <DashboardCard>
-              <div className="card-content">
-                <Typography variant="h4" color="success.main" gutterBottom>
-                  {summary.serviceableItems} ({Math.round((summary.serviceableItems / summary.totalItems) * 100)}%)
-                </Typography>
-                <Typography variant="subtitle2" color="text.secondary">
-                  Serviceable Items
-                </Typography>
-              </div>
-            </DashboardCard>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <DashboardCard>
-              <div className="card-content">
-                <Typography variant="h4" color="warning.main" gutterBottom>
-                  {summary.upcomingInspections.next30Days}
-                </Typography>
-                <Typography variant="subtitle2" color="text.secondary">
-                  Upcoming Inspections (30 Days)
-                </Typography>
-              </div>
-            </DashboardCard>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <DashboardCard>
-              <div className="card-content">
-                <Typography variant="h4" color="error.main" gutterBottom>
-                  {summary.disputedItems}
-                </Typography>
-                <Typography variant="subtitle2" color="text.secondary">
-                  Disputed Items
-                </Typography>
-              </div>
-            </DashboardCard>
-          </Grid>
-        </Grid>
+        {/* Tabs Navigation */}
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs 
+            value={tabValue} 
+            onChange={handleTabChange} 
+            aria-label="property management tabs"
+            variant="scrollable"
+            scrollButtons="auto"
+          >
+            <Tab label="Overview" id="property-tab-0" aria-controls="property-tabpanel-0" />
+            <Tab label="Equipment" id="property-tab-1" aria-controls="property-tabpanel-1" />
+            <Tab label="Hand Receipts" id="property-tab-2" aria-controls="property-tabpanel-2" />
+            <Tab label="Integrations" id="property-tab-3" aria-controls="property-tabpanel-3" />
+          </Tabs>
+        </Box>
 
-        {/* Filters */}
-        <DashboardCard sx={{ mb: 3 }}>
-          <div className="card-header">
-            <Typography variant="h6">FILTERS</Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <TextField
-                placeholder="Search by item name or serial number..."
-                size="small"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{ width: 300 }}
-              />
-              <IconButton onClick={handleRetry}>
-                <RefreshIcon />
-              </IconButton>
-            </Box>
-          </div>
-          <div className="card-content">
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>Category</InputLabel>
-                <Select
-                  value={category}
-                  label="Category"
-                  onChange={(e) => setCategory(e.target.value)}
-                >
-                  <MenuItem value="all">All</MenuItem>
-                  <MenuItem value="weapons">Weapons</MenuItem>
-                  <MenuItem value="equipment">Equipment</MenuItem>
-                  <MenuItem value="vehicles">Vehicles</MenuItem>
-                </Select>
-              </FormControl>
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>Condition</InputLabel>
-                <Select
-                  value={condition}
-                  label="Condition"
-                  onChange={(e) => setCondition(e.target.value)}
-                >
-                  <MenuItem value="all">All</MenuItem>
-                  <MenuItem value="SERVICEABLE">Serviceable</MenuItem>
-                  <MenuItem value="UNSERVICEABLE">Unserviceable</MenuItem>
-                  <MenuItem value="DAMAGED">Damaged</MenuItem>
-                </Select>
-              </FormControl>
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>Readiness</InputLabel>
-                <Select
-                  value={readiness}
-                  label="Readiness"
-                  onChange={(e) => setReadiness(e.target.value)}
-                >
-                  <MenuItem value="all">All</MenuItem>
-                  <MenuItem value="OPERATIONAL">Operational</MenuItem>
-                  <MenuItem value="NEEDS_MAINTENANCE">Needs Maintenance</MenuItem>
-                  <MenuItem value="IN_REPAIR">In Repair</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
-          </div>
-        </DashboardCard>
+        {/* Overview Tab */}
+        <TabPanel value={tabValue} index={0}>
+          <CollapsibleCard 
+            title="PRIMARY HAND RECEIPT MANAGEMENT" 
+            id="primary-hand-receipt"
+            defaultExpanded={true}
+            isPinnable={true}
+            pinnedCards={pinnedCards}
+            onTogglePin={handleTogglePin}
+          >
+            <PrimaryHandReceiptManagementPanel onRetry={handleRetry} />
+          </CollapsibleCard>
 
-        {/* Equipment List */}
-        <DashboardCard>
-          <div className="card-header">
-            <Typography variant="h6">EQUIPMENT LIST</Typography>
-          </div>
-          <div className="card-content">
-            {loading.summary || loading.equipmentList || loading.compliance ? (
-              <PropertySkeleton />
-            ) : error.summary || error.equipmentList || error.compliance ? (
-              <ErrorDisplay 
-                title="Error Loading Property Data"
-                message={error.summary || error.equipmentList || error.compliance || "Failed to load property data"}
-                onRetry={handleRetry}
+          <CollapsibleCard 
+            title="SUB-HAND RECEIPT MANAGEMENT" 
+            id="sub-hand-receipt"
+            defaultExpanded={false}
+            isPinnable={true}
+            pinnedCards={pinnedCards}
+            onTogglePin={handleTogglePin}
+          >
+            <SubHandReceiptManagementPanel />
+          </CollapsibleCard>
+
+          <CollapsibleCard 
+            title="EQUIPMENT SUMMARY" 
+            id="equipment-summary"
+            defaultExpanded={false}
+            isPinnable={true}
+            pinnedCards={pinnedCards}
+            onTogglePin={handleTogglePin}
+          >
+            <EquipmentListPanel 
+              equipmentList={equipmentList}
+              loading={loading}
+              error={error}
+              onRetry={handleRetry}
+            />
+          </CollapsibleCard>
+        </TabPanel>
+
+        {/* Equipment Tab */}
+        <TabPanel value={tabValue} index={1}>
+          <CollapsibleCard 
+            title="EQUIPMENT SEARCH & FILTERS" 
+            id="equipment-filters"
+            defaultExpanded={true}
+            isPinnable={false}
+            pinnedCards={pinnedCards}
+            onTogglePin={handleTogglePin}
+          >
+            <EquipmentSearchFilter onFilterChange={handleFilterChange} />
+          </CollapsibleCard>
+
+          <CollapsibleCard 
+            title="EQUIPMENT LIST" 
+            id="equipment-list"
+            defaultExpanded={true}
+            isPinnable={true}
+            pinnedCards={pinnedCards}
+            onTogglePin={handleTogglePin}
+          >
+            <EquipmentTable 
+              equipmentList={equipmentList}
+              filters={equipmentFilters}
+              onSelectItem={handleSelectItem}
+            />
+          </CollapsibleCard>
+
+          {selectedItem && (
+            <CollapsibleCard 
+              title="EQUIPMENT DETAILS" 
+              id="equipment-details"
+              defaultExpanded={true}
+              isPinnable={false}
+              pinnedCards={pinnedCards}
+              onTogglePin={handleTogglePin}
+            >
+              <EquipmentDetailPanel 
+                equipmentList={equipmentList}
+                selectedItem={selectedItem}
+                onSelectItem={handleSelectItem}
+                onClosePanel={handleClosePanel}
               />
-            ) : (
-              <>
-                <TableContainer>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>NSN</TableCell>
-                        <TableCell>Nomenclature</TableCell>
-                        <TableCell>Serial Number</TableCell>
-                        <TableCell>Status</TableCell>
-                        <TableCell>Last Inspection</TableCell>
-                        <TableCell>Next Due</TableCell>
-                        <TableCell>Actions</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {equipmentList.map((item: PropertyItem) => (
-                        <TableRow key={item.id}>
-                          <TableCell>{item.nsn}</TableCell>
-                          <TableCell>{item.nomenclature}</TableCell>
-                          <TableCell>{item.serialNumber}</TableCell>
-                          <TableCell>
-                            <Chip
-                              label={item.status}
-                              color={getStatusColor(item.status)}
-                              size="small"
-                            />
-                          </TableCell>
-                          <TableCell>{format(new Date(item.lastInspection), 'MMM dd, yyyy')}</TableCell>
-                          <TableCell>{format(new Date(item.nextInspectionDue), 'MMM dd, yyyy')}</TableCell>
-                          <TableCell>
-                            <Box sx={{ display: 'flex', gap: 1 }}>
-                              <Tooltip title="View Details">
-                                <IconButton size="small">
-                                  <InfoIcon fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
-                              <Tooltip title="Maintenance Log">
-                                <IconButton size="small">
-                                  <BuildIcon fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
-                              <Tooltip title="Transfer">
-                                <IconButton size="small">
-                                  <SwapHorizIcon fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
-                              <Tooltip title="Blockchain Record">
-                                <IconButton size="small">
-                                  <LinkIcon fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
-                            </Box>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-                <TablePagination
-                  component="div"
-                  count={equipmentList.length}
-                  page={page}
-                  onPageChange={(_, newPage) => setPage(newPage)}
-                  rowsPerPage={rowsPerPage}
-                  onRowsPerPageChange={(e) => {
-                    setRowsPerPage(parseInt(e.target.value, 10));
-                    setPage(0);
-                  }}
-                />
-              </>
-            )}
-          </div>
-        </DashboardCard>
+            </CollapsibleCard>
+          )}
+        </TabPanel>
+
+        {/* Hand Receipts Tab */}
+        <TabPanel value={tabValue} index={2}>
+          <CollapsibleCard 
+            title="HAND RECEIPT ASSIGNMENT" 
+            id="hand-receipt-assignment"
+            defaultExpanded={true}
+            isPinnable={true}
+            pinnedCards={pinnedCards}
+            onTogglePin={handleTogglePin}
+          >
+            <HandReceiptAssignmentPanel 
+              selectedItem={selectedItem}
+              onClose={handleClosePanel}
+            />
+          </CollapsibleCard>
+
+          <CollapsibleCard 
+            title="SUB-HAND RECEIPT STATUS" 
+            id="sub-hand-receipt-status"
+            defaultExpanded={true}
+            isPinnable={true}
+            pinnedCards={pinnedCards}
+            onTogglePin={handleTogglePin}
+          >
+            <SubHandReceiptStatusTable />
+          </CollapsibleCard>
+
+          <CollapsibleCard 
+            title="DA FORM 2062 PREVIEW" 
+            id="da-form-preview"
+            defaultExpanded={false}
+            isPinnable={true}
+            pinnedCards={pinnedCards}
+            onTogglePin={handleTogglePin}
+          >
+            <DAForm2062PreviewPanel />
+          </CollapsibleCard>
+        </TabPanel>
+
+        {/* Integrations Tab */}
+        <TabPanel value={tabValue} index={3}>
+          <CollapsibleCard 
+            title="PBUSE INTEGRATION" 
+            id="pbuse-integration"
+            defaultExpanded={true}
+            isPinnable={true}
+            pinnedCards={pinnedCards}
+            onTogglePin={handleTogglePin}
+          >
+            <PbuseIntegrationPanel />
+          </CollapsibleCard>
+
+          <CollapsibleCard 
+            title="TOOL INTEGRATION" 
+            id="tool-integration"
+            defaultExpanded={true}
+            isPinnable={true}
+            pinnedCards={pinnedCards}
+            onTogglePin={handleTogglePin}
+          >
+            <ToolIntegrationPanel />
+          </CollapsibleCard>
+        </TabPanel>
       </Box>
     </Container>
   );

@@ -1,29 +1,90 @@
-export type PropertyStatus = 'FMC' | 'PMC' | 'NMC';
+export type PropertyStatus = 'FMC' | 'NMC' | 'NMCS' | 'NMCM';
+export type SubHandReceiptType = 'PRIMARY' | '1PLT' | '2PLT' | '3PLT' | 'HQ PLT';
+export type EquipmentCategory = 'WEAPONS' | 'ROLLING_STOCK' | 'COMMS_CCI' | 'OPTICS_NVGS' | 'TPE_ITEMS' | 'COEI_BII' | 'CTA_50';
+export type FLIPLStatus = 'OPEN' | 'CLOSED' | 'PENDING';
 
 export interface PropertyItem {
   id: string;
-  nsn: string;
   nomenclature: string;
-  serialNumber: string;
+  lin: string; // Line Item Number
+  nsn: string;
+  serialNumber: string; // Or bumper number for vehicles
+  location: string;
+  subHandReceipt: SubHandReceiptType;
   status: PropertyStatus;
-  lastInspection: string;
-  nextInspectionDue: string;
-  location?: string;
-  assignedTo?: string;
-  category?: string;
-  custodyStartDate?: string;
+  lastInventory: string;
+  lastInspection?: string; // Date of last inspection
+  nextInspectionDue?: string; // Date when next inspection is due
+  inventoryType?: 'COC' | 'CYCLIC' | 'SENSITIVE' | 'MONTHLY';
+  category: EquipmentCategory;
+  isSensitiveItem: boolean;
+  isCCI: boolean;
+  flipl?: {
+    status: FLIPLStatus;
+    documentNumber?: string;
+    openDate?: string;
+  };
+  maintenanceStatus?: {
+    hasOpenWorkOrder: boolean;
+    workOrderNumber?: string;
+    deadline?: string;
+    partsETA?: string;
+  };
   blockchainTxId?: string;
-  lin?: string; // Line Item Number
+  components?: {
+    total: number;
+    missing: number;
+    shortages: Array<{
+      nomenclature: string;
+      nsn: string;
+      quantity: number;
+    }>;
+  };
 }
 
 export interface PropertySummary {
-  totalItems: number;
-  serviceableItems: number;
-  upcomingInspections: {
-    next7Days: number;
-    next30Days: number;
+  unitInfo: {
+    unit: string;
+    uic: string;
+    primaryHandReceiptHolder: string;
   };
-  disputedItems: number;
+  mtoeAuthorization: {
+    totalLines: number;
+    fillPercentage: number;
+  };
+  sensitiveItems: {
+    total: number;
+    accounted: number;
+    lastInventoryDate: string;
+  };
+  value: string; // Total value in dollars
+  shortageAnnexes: number;
+  lastUpdated: string;
+  csdpStatus: 'GREEN' | 'AMBER' | 'RED';
+}
+
+export interface SubHandReceipt {
+  type: SubHandReceiptType;
+  holder: string;
+  documentDate: string;
+  itemCount: number;
+}
+
+export interface SupplyActivity {
+  dtg: string;
+  type: 'LATERAL_TRANSFER' | 'MAINTENANCE' | 'TURN_IN' | 'ISSUE';
+  documentNumber: string;
+  item: string;
+  from: string;
+  to: string;
+  status: string;
+  dueDate?: string;
+}
+
+export interface DeploymentSupport {
+  ntcReadiness: string;
+  jrpatStatus: string;
+  tatRatPlanning: string;
 }
 
 export interface CustodyEvent {
@@ -92,6 +153,22 @@ export interface MissingDocument {
   dueDate: string;
 }
 
+export interface SensitiveItemsAccountability {
+  dailyItems: {
+    total: number;
+    verified: number;
+    reportComplete: boolean;
+  };
+  weeklyItems: {
+    total: number;
+    verified: number;
+    dayComplete: string;
+  };
+  nextMonthlyInventory: string;
+  openTracers: number;
+  openSIRs: number;
+}
+
 export interface ComplianceStatus {
   itemsInspected: {
     total: number;
@@ -107,6 +184,10 @@ export interface ComplianceStatus {
 export interface PropertyState {
   summary: PropertySummary;
   equipmentList: PropertyItem[];
+  subHandReceipts: SubHandReceipt[];
+  sensitiveItemsAccountability: SensitiveItemsAccountability;
+  recentSupplyActivity: SupplyActivity[];
+  deploymentSupport: DeploymentSupport;
   selectedItemId: string | null;
   selectedItemDetails: {
     item: PropertyItem | null;
