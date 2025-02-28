@@ -1,233 +1,196 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { icons } from '../components/layout/Sidebar';
 import {
   Dashboard as DashboardIcon,
   MenuBook as PropertyBookIcon,
   Inventory as InventoryIcon,
-  Campaign as OperationsIcon,
+  Security as SensitiveItemsIcon,
   SwapHoriz as TransfersIcon,
   Assignment as InventoriesIcon,
   Build as MaintenanceIcon,
   Description as ReportsIcon,
-  AdminPanelSettings as AdminToolsIcon,
-  Help as SupportIcon,
-  QrCode as QrCodeIcon,
+  Settings as SettingsIcon,
+  AdminPanelSettings as AdminIcon,
 } from '@mui/icons-material';
 
 // Lazy load pages
 const Dashboard = React.lazy(() => import('../pages/Dashboard/index'));
-const PropertyBook = React.lazy(() => import('../pages/Property'));
-const UnitInventory = React.lazy(() => import('../pages/UnitInventory/index'));
-const Transfers = React.lazy(() => import('../pages/Transfers/index'));
-const Maintenance = React.lazy(() => import('../pages/Maintenance/index'));
-const QrManagement = React.lazy(() => import('../pages/QrManagement/index'));
+const PropertyBook = React.lazy(() => import('../pages/PropertyBook/index'));
+const Inventories = React.lazy(() => import('../pages/Inventories/index'));
+const TransfersMovement = React.lazy(() => import('../pages/TransfersMovement/index'));
+const EquipmentReadiness = React.lazy(() => import('../pages/EquipmentReadiness/index'));
 const Reports = React.lazy(() => import('../pages/Reports/index'));
 const UserManagement = React.lazy(() => import('../pages/UserManagement/index'));
 const Settings = React.lazy(() => import('../pages/Settings/index'));
-const Profile = React.lazy(() => import('../pages/Profile/index'));
+const SensitiveItems = React.lazy(() => import('../pages/SensitiveItems/index'));
 
 export const ROUTES = {
+  // 1. Dashboard
   DASHBOARD: '/defense/dashboard',
   
-  // Property Book routes
+  // 2. Property Book
   PROPERTY_BOOK: '/defense/property-book',
   HAND_RECEIPTS: '/defense/property-book/hand-receipts',
   SUB_HAND_RECEIPTS: '/defense/property-book/sub-hand-receipts',
-  PBUSE_VIEW: '/defense/property-book/pbuse-view',
+  COMPONENT_HAND_RECEIPTS: '/defense/property-book/component-hand-receipts',
+  SHORTAGE_ANNEXES: '/defense/property-book/shortage-annexes',
   
-  // Unit Inventory routes
-  UNIT_INVENTORY: '/defense/unit-inventory',
+  // 3. Sensitive Items Management
+  SENSITIVE_ITEMS: '/defense/sensitive-items',
+  SENSITIVE_INVENTORY: '/defense/sensitive-items/inventory',
+  SENSITIVE_DASHBOARD: '/defense/sensitive-items/dashboard',
+  SERIAL_VERIFICATION: '/defense/sensitive-items/verification',
+  MISSING_ITEM_RESPONSE: '/defense/sensitive-items/missing',
   
-  // Equipment Management routes
-  EQUIPMENT: '/defense/equipment',
-  VEHICLE_FLEET: '/defense/equipment/vehicle-fleet',
-  WEAPONS_SYSTEMS: '/defense/equipment/weapons-systems',
-  COMMUNICATIONS: '/defense/equipment/communications',
-  OPTICS_NVGS: '/defense/equipment/optics-nvgs',
-  SENSITIVE_ITEMS: '/defense/equipment/sensitive-items',
-  COEI_BII: '/defense/equipment/coei-bii',
-  
-  // Operations routes
-  OPERATIONS: '/defense/operations',
-  NTC_ROTATION: '/defense/operations/ntc-rotation',
-  TRAINING_EQUIPMENT: '/defense/operations/training-equipment',
-  DEPLOY_REDEPLOY: '/defense/operations/deploy-redeploy',
-  FIELD_PLANNING: '/defense/operations/field-planning',
-  
-  // Transfers routes
+  // 4. Transfers & Movement
   TRANSFERS: '/defense/transfers',
-  INCOMING_TRANSFERS: '/defense/transfers/incoming',
-  OUTGOING_TRANSFERS: '/defense/transfers/outgoing',
   LATERAL_TRANSFERS: '/defense/transfers/lateral',
   TURN_IN_PROCESS: '/defense/transfers/turn-in',
+  ISSUE_PROCESS: '/defense/transfers/issue',
+  TEMP_HAND_RECEIPTS: '/defense/transfers/temporary',
+  MAINTENANCE_TRANSFERS: '/defense/transfers/maintenance',
   
-  // Inventories routes
+  // 5. Inventories & Inspections
   INVENTORIES: '/defense/inventories',
-  SENSITIVE_INVENTORY: '/defense/inventories/sensitive',
-  CYCLIC_INVENTORY: '/defense/inventories/cyclic',
+  INVENTORY_SCHEDULE: '/defense/inventories/schedule',
+  INVENTORY_EXECUTION: '/defense/inventories/execution',
   CHANGE_OF_COMMAND: '/defense/inventories/change-of-command',
   CSDP: '/defense/inventories/csdp',
   
-  // Maintenance routes
-  MAINTENANCE: '/defense/maintenance',
-  MAINTENANCE_REQUESTS: '/defense/maintenance/requests',
-  SERVICE_SCHEDULES: '/defense/maintenance/schedules',
-  PARTS_ORDERING: '/defense/maintenance/parts',
-  DEADLINED_EQUIPMENT: '/defense/maintenance/deadlined',
+  // 6. Equipment Readiness
+  EQUIPMENT_READINESS: '/defense/equipment-readiness',
+  READINESS_DASHBOARD: '/defense/equipment-readiness/dashboard',
+  MAINTENANCE_MANAGEMENT: '/defense/equipment-readiness/maintenance',
+  MISSION_IMPACT: '/defense/equipment-readiness/mission-impact',
+  OPERATOR_QUALIFICATIONS: '/defense/equipment-readiness/qualifications',
   
-  // QR Management routes
-  QR_MANAGEMENT: '/defense/qr-management',
-  GENERATE_QR: '/defense/qr-management/generate',
-  MANAGE_QR: '/defense/qr-management/manage',
-  QR_METRICS: '/defense/qr-management/metrics',
-  
-  // Reports routes
+  // 7. Reports & Documentation
   REPORTS: '/defense/reports',
+  STANDARD_FORMS: '/defense/reports/forms',
   COMMAND_REPORTS: '/defense/reports/command',
   FLIPL: '/defense/reports/flipl',
-  SUPPLY_ACTIVITY: '/defense/reports/supply-activity',
-  READINESS_REPORTING: '/defense/reports/readiness',
+  DOCUMENT_ARCHIVE: '/defense/reports/archive',
   
-  // Admin routes
+  // 8. Admin & Settings
   ADMIN: '/defense/admin',
   USER_MANAGEMENT: '/defense/admin/users',
   UNIT_CONFIGURATION: '/defense/admin/unit',
-  SYSTEM_INTEGRATIONS: '/defense/admin/integrations',
-  
-  // Support routes
-  SUPPORT: '/defense/support',
-  TRAINING_MATERIALS: '/defense/support/training',
-  SOPS_REGULATIONS: '/defense/support/sops',
-  HELP_DESK: '/defense/support/help',
-  CONTACT_S4: '/defense/support/contact',
+  SYSTEM_INTEGRATION: '/defense/admin/integration',
+  SECURITY_SETTINGS: '/defense/admin/security',
   
   PROFILE: '/defense/profile',
 } as const;
 
 export const NAV_ITEMS = [
+  // 1. Dashboard
   {
     title: 'Dashboard',
     path: ROUTES.DASHBOARD,
     icon: DashboardIcon,
-    notificationCount: 3
+    notificationCount: 3,
+    description: 'Command-level accountability status and critical actions'
   },
+  
+  // 2. Property Book
   {
     title: 'Property Book',
     path: ROUTES.PROPERTY_BOOK,
     icon: PropertyBookIcon,
+    description: 'Hand receipt management and property accountability chain',
     subItems: [
       { title: 'Hand Receipts', path: ROUTES.HAND_RECEIPTS },
       { title: 'Sub-Hand Receipts', path: ROUTES.SUB_HAND_RECEIPTS },
-      { title: 'PBUSE View', path: ROUTES.PBUSE_VIEW }
+      { title: 'Component Hand Receipts', path: ROUTES.COMPONENT_HAND_RECEIPTS },
+      { title: 'Shortage Annexes', path: ROUTES.SHORTAGE_ANNEXES }
     ]
   },
+  
+  // 3. Sensitive Items Management
   {
-    title: 'Unit Inventory',
-    path: ROUTES.UNIT_INVENTORY,
-    icon: InventoryIcon,
-  },
-  {
-    title: 'Equipment Management',
-    path: ROUTES.EQUIPMENT,
-    icon: InventoryIcon,
+    title: 'Sensitive Items',
+    path: ROUTES.SENSITIVE_ITEMS,
+    icon: SensitiveItemsIcon,
+    description: 'Dedicated tracking of high-value, sensitive equipment',
+    notificationCount: 1,
     subItems: [
-      { title: 'Vehicle Fleet', path: ROUTES.VEHICLE_FLEET },
-      { title: 'Weapons Systems', path: ROUTES.WEAPONS_SYSTEMS },
-      { title: 'Communications', path: ROUTES.COMMUNICATIONS },
-      { title: 'Optics/NVGs', path: ROUTES.OPTICS_NVGS },
-      { title: 'Sensitive Items', path: ROUTES.SENSITIVE_ITEMS },
-      { title: 'COEI/BII Components', path: ROUTES.COEI_BII }
+      { title: 'Daily/Weekly Inventory', path: ROUTES.SENSITIVE_INVENTORY },
+      { title: 'Sensitive Item Dashboard', path: ROUTES.SENSITIVE_DASHBOARD },
+      { title: 'Serial Number Verification', path: ROUTES.SERIAL_VERIFICATION },
+      { title: 'Missing Item Response', path: ROUTES.MISSING_ITEM_RESPONSE }
     ]
   },
-  {
-    title: 'Operations',
-    path: ROUTES.OPERATIONS,
-    icon: OperationsIcon,
-    subItems: [
-      { title: 'NTC Rotation Prep', path: ROUTES.NTC_ROTATION },
-      { title: 'Training Equipment', path: ROUTES.TRAINING_EQUIPMENT },
-      { title: 'Deploy/Redeploy Tools', path: ROUTES.DEPLOY_REDEPLOY },
-      { title: 'Field Exercise Planning', path: ROUTES.FIELD_PLANNING }
-    ]
-  },
+  
+  // 4. Transfers & Movement
   {
     title: 'Transfers & Movement',
     path: ROUTES.TRANSFERS,
     icon: TransfersIcon,
-    notificationCount: 13,
+    description: 'Equipment transfer documentation and processing',
+    notificationCount: 2,
     subItems: [
-      { title: 'Incoming Transfers', path: ROUTES.INCOMING_TRANSFERS },
-      { title: 'Outgoing Transfers', path: ROUTES.OUTGOING_TRANSFERS },
       { title: 'Lateral Transfers', path: ROUTES.LATERAL_TRANSFERS },
-      { title: 'Turn-In Process', path: ROUTES.TURN_IN_PROCESS }
+      { title: 'Turn-In Process', path: ROUTES.TURN_IN_PROCESS },
+      { title: 'Issue Process', path: ROUTES.ISSUE_PROCESS },
+      { title: 'Temporary Hand Receipts', path: ROUTES.TEMP_HAND_RECEIPTS },
+      { title: 'Maintenance Transfers', path: ROUTES.MAINTENANCE_TRANSFERS }
     ]
   },
+  
+  // 5. Inventories & Inspections
   {
-    title: 'Inventories',
+    title: 'Inventories & Inspections',
     path: ROUTES.INVENTORIES,
     icon: InventoriesIcon,
+    description: 'Planning and conducting required inventories',
     subItems: [
-      { title: 'Sensitive Item Inventory', path: ROUTES.SENSITIVE_INVENTORY },
-      { title: 'Cyclic Inventory (10%)', path: ROUTES.CYCLIC_INVENTORY },
+      { title: 'Inventory Schedule', path: ROUTES.INVENTORY_SCHEDULE },
+      { title: 'Inventory Execution', path: ROUTES.INVENTORY_EXECUTION },
       { title: 'Change of Command', path: ROUTES.CHANGE_OF_COMMAND },
-      { title: 'Command Supply Discipline Program', path: ROUTES.CSDP }
+      { title: 'CSDP Integration', path: ROUTES.CSDP }
     ]
   },
+  
+  // 6. Equipment Readiness
   {
-    title: 'Maintenance',
-    path: ROUTES.MAINTENANCE,
+    title: 'Equipment Readiness',
+    path: ROUTES.EQUIPMENT_READINESS,
     icon: MaintenanceIcon,
+    description: 'Maintenance status and mission capability',
+    notificationCount: 8,
     subItems: [
-      { title: 'Maintenance Requests', path: ROUTES.MAINTENANCE_REQUESTS },
-      { title: 'Service Schedules', path: ROUTES.SERVICE_SCHEDULES },
-      { title: 'Parts Ordering', path: ROUTES.PARTS_ORDERING },
-      { title: 'Deadlined Equipment', path: ROUTES.DEADLINED_EQUIPMENT }
+      { title: 'Readiness Dashboard', path: ROUTES.READINESS_DASHBOARD },
+      { title: 'Maintenance Management', path: ROUTES.MAINTENANCE_MANAGEMENT },
+      { title: 'Mission Impact Analysis', path: ROUTES.MISSION_IMPACT },
+      { title: 'Operator Qualifications', path: ROUTES.OPERATOR_QUALIFICATIONS }
     ]
   },
-  {
-    title: 'QR Management',
-    path: ROUTES.QR_MANAGEMENT,
-    icon: QrCodeIcon,
-    subItems: [
-      { title: 'Generate QR Codes', path: ROUTES.GENERATE_QR },
-      { title: 'Manage QR Codes', path: ROUTES.MANAGE_QR },
-      { title: 'QR Metrics', path: ROUTES.QR_METRICS }
-    ]
-  },
+  
+  // 7. Reports & Documentation
   {
     title: 'Reports & Documentation',
     path: ROUTES.REPORTS,
     icon: ReportsIcon,
+    description: 'Generate required military property documentation',
     subItems: [
+      { title: 'Standard Army Forms', path: ROUTES.STANDARD_FORMS },
       { title: 'Command Reports', path: ROUTES.COMMAND_REPORTS },
-      { title: 'Financial Liability Investigations', path: ROUTES.FLIPL },
-      { title: 'Supply Activity Reports', path: ROUTES.SUPPLY_ACTIVITY },
-      { title: 'Readiness Reporting', path: ROUTES.READINESS_REPORTING }
+      { title: 'FLIPL Tools', path: ROUTES.FLIPL },
+      { title: 'Document Archive', path: ROUTES.DOCUMENT_ARCHIVE }
     ]
   },
-  // Administrative Section
+  
+  // 8. Admin & Settings
   {
-    title: 'Admin Tools',
+    title: 'Admin & Settings',
     path: ROUTES.ADMIN,
-    icon: AdminToolsIcon,
+    icon: AdminIcon,
+    description: 'System configuration and unit management',
     isAdminSection: true,
     subItems: [
       { title: 'User Management', path: ROUTES.USER_MANAGEMENT },
       { title: 'Unit Configuration', path: ROUTES.UNIT_CONFIGURATION },
-      { title: 'System Integrations', path: ROUTES.SYSTEM_INTEGRATIONS }
-    ]
-  },
-  {
-    title: 'Support & Resources',
-    path: ROUTES.SUPPORT,
-    icon: SupportIcon,
-    isAdminSection: true,
-    subItems: [
-      { title: 'Training Materials', path: ROUTES.TRAINING_MATERIALS },
-      { title: 'SOPs & Regulations', path: ROUTES.SOPS_REGULATIONS },
-      { title: 'Help Desk', path: ROUTES.HELP_DESK },
-      { title: 'Contact S4', path: ROUTES.CONTACT_S4 }
+      { title: 'System Integration', path: ROUTES.SYSTEM_INTEGRATION },
+      { title: 'Security Settings', path: ROUTES.SECURITY_SETTINGS }
     ]
   }
 ];
@@ -252,77 +215,56 @@ const AppRoutes: React.FC = () => {
         <Route path={ROUTES.PROPERTY_BOOK} element={<PropertyBook />} />
         <Route path={ROUTES.HAND_RECEIPTS} element={<PropertyBook />} />
         <Route path={ROUTES.SUB_HAND_RECEIPTS} element={<PropertyBook />} />
-        <Route path={ROUTES.PBUSE_VIEW} element={<PropertyBook />} />
+        <Route path={ROUTES.COMPONENT_HAND_RECEIPTS} element={<PropertyBook />} />
+        <Route path={ROUTES.SHORTAGE_ANNEXES} element={<PropertyBook />} />
         
-        {/* Unit Inventory route */}
-        <Route path={ROUTES.UNIT_INVENTORY} element={<UnitInventory />} />
-        
-        {/* Equipment Management routes */}
-        <Route path={ROUTES.EQUIPMENT} element={<UnitInventory />} />
-        <Route path={ROUTES.VEHICLE_FLEET} element={<UnitInventory />} />
-        <Route path={ROUTES.WEAPONS_SYSTEMS} element={<UnitInventory />} />
-        <Route path={ROUTES.COMMUNICATIONS} element={<UnitInventory />} />
-        <Route path={ROUTES.OPTICS_NVGS} element={<UnitInventory />} />
-        <Route path={ROUTES.SENSITIVE_ITEMS} element={<UnitInventory />} />
-        <Route path={ROUTES.COEI_BII} element={<UnitInventory />} />
-        
-        {/* Operations routes */}
-        <Route path={ROUTES.OPERATIONS} element={<Dashboard />} />
-        <Route path={ROUTES.NTC_ROTATION} element={<Dashboard />} />
-        <Route path={ROUTES.TRAINING_EQUIPMENT} element={<Dashboard />} />
-        <Route path={ROUTES.DEPLOY_REDEPLOY} element={<Dashboard />} />
-        <Route path={ROUTES.FIELD_PLANNING} element={<Dashboard />} />
+        {/* Sensitive Items routes */}
+        <Route path={ROUTES.SENSITIVE_ITEMS} element={<SensitiveItems />} />
+        <Route path={ROUTES.SENSITIVE_INVENTORY} element={<SensitiveItems />} />
+        <Route path={ROUTES.SENSITIVE_DASHBOARD} element={<SensitiveItems />} />
+        <Route path={ROUTES.SERIAL_VERIFICATION} element={<SensitiveItems />} />
+        <Route path={ROUTES.MISSING_ITEM_RESPONSE} element={<SensitiveItems />} />
         
         {/* Transfers routes */}
-        <Route path={ROUTES.TRANSFERS} element={<Transfers />} />
-        <Route path={ROUTES.INCOMING_TRANSFERS} element={<Transfers />} />
-        <Route path={ROUTES.OUTGOING_TRANSFERS} element={<Transfers />} />
-        <Route path={ROUTES.LATERAL_TRANSFERS} element={<Transfers />} />
-        <Route path={ROUTES.TURN_IN_PROCESS} element={<Transfers />} />
+        <Route path={ROUTES.TRANSFERS} element={<TransfersMovement />} />
+        <Route path={ROUTES.LATERAL_TRANSFERS} element={<TransfersMovement />} />
+        <Route path={ROUTES.TURN_IN_PROCESS} element={<TransfersMovement />} />
+        <Route path={ROUTES.ISSUE_PROCESS} element={<TransfersMovement />} />
+        <Route path={ROUTES.TEMP_HAND_RECEIPTS} element={<TransfersMovement />} />
+        <Route path={ROUTES.MAINTENANCE_TRANSFERS} element={<TransfersMovement />} />
         
         {/* Inventories routes */}
-        <Route path={ROUTES.INVENTORIES} element={<UnitInventory />} />
-        <Route path={ROUTES.SENSITIVE_INVENTORY} element={<UnitInventory />} />
-        <Route path={ROUTES.CYCLIC_INVENTORY} element={<UnitInventory />} />
-        <Route path={ROUTES.CHANGE_OF_COMMAND} element={<UnitInventory />} />
-        <Route path={ROUTES.CSDP} element={<UnitInventory />} />
+        <Route path={ROUTES.INVENTORIES} element={<Inventories />} />
+        <Route path={ROUTES.INVENTORY_SCHEDULE} element={<Inventories />} />
+        <Route path={ROUTES.INVENTORY_EXECUTION} element={<Inventories />} />
+        <Route path={ROUTES.CHANGE_OF_COMMAND} element={<Inventories />} />
+        <Route path={ROUTES.CSDP} element={<Inventories />} />
         
-        {/* Maintenance routes */}
-        <Route path={ROUTES.MAINTENANCE} element={<Maintenance />} />
-        <Route path={ROUTES.MAINTENANCE_REQUESTS} element={<Maintenance />} />
-        <Route path={ROUTES.SERVICE_SCHEDULES} element={<Maintenance />} />
-        <Route path={ROUTES.PARTS_ORDERING} element={<Maintenance />} />
-        <Route path={ROUTES.DEADLINED_EQUIPMENT} element={<Maintenance />} />
-        
-        {/* QR Management routes */}
-        <Route path={ROUTES.QR_MANAGEMENT} element={<QrManagement />} />
-        <Route path={ROUTES.GENERATE_QR} element={<QrManagement />} />
-        <Route path={ROUTES.MANAGE_QR} element={<QrManagement />} />
-        <Route path={ROUTES.QR_METRICS} element={<QrManagement />} />
+        {/* Equipment Readiness routes */}
+        <Route path={ROUTES.EQUIPMENT_READINESS} element={<EquipmentReadiness />} />
+        <Route path={ROUTES.READINESS_DASHBOARD} element={<EquipmentReadiness />} />
+        <Route path={ROUTES.MAINTENANCE_MANAGEMENT} element={<EquipmentReadiness />} />
+        <Route path={ROUTES.MISSION_IMPACT} element={<EquipmentReadiness />} />
+        <Route path={ROUTES.OPERATOR_QUALIFICATIONS} element={<EquipmentReadiness />} />
         
         {/* Reports routes */}
         <Route path={ROUTES.REPORTS} element={<Reports />} />
+        <Route path={ROUTES.STANDARD_FORMS} element={<Reports />} />
         <Route path={ROUTES.COMMAND_REPORTS} element={<Reports />} />
         <Route path={ROUTES.FLIPL} element={<Reports />} />
-        <Route path={ROUTES.SUPPLY_ACTIVITY} element={<Reports />} />
-        <Route path={ROUTES.READINESS_REPORTING} element={<Reports />} />
+        <Route path={ROUTES.DOCUMENT_ARCHIVE} element={<Reports />} />
         
         {/* Admin routes */}
         <Route path={ROUTES.ADMIN} element={<UserManagement />} />
         <Route path={ROUTES.USER_MANAGEMENT} element={<UserManagement />} />
         <Route path={ROUTES.UNIT_CONFIGURATION} element={<Settings />} />
-        <Route path={ROUTES.SYSTEM_INTEGRATIONS} element={<Settings />} />
+        <Route path={ROUTES.SYSTEM_INTEGRATION} element={<Settings />} />
+        <Route path={ROUTES.SECURITY_SETTINGS} element={<Settings />} />
         
-        {/* Support routes */}
-        <Route path={ROUTES.SUPPORT} element={<Settings />} />
-        <Route path={ROUTES.TRAINING_MATERIALS} element={<Settings />} />
-        <Route path={ROUTES.SOPS_REGULATIONS} element={<Settings />} />
-        <Route path={ROUTES.HELP_DESK} element={<Settings />} />
-        <Route path={ROUTES.CONTACT_S4} element={<Settings />} />
+        {/* User Profile */}
+        <Route path={ROUTES.PROFILE} element={<Dashboard />} />
         
-        <Route path={ROUTES.PROFILE} element={<Profile />} />
-        
-        {/* Catch all - redirect to dashboard */}
+        {/* Handle 404 */}
         <Route path="*" element={<Navigate to={ROUTES.DASHBOARD} replace />} />
       </Routes>
     </React.Suspense>

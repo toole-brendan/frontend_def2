@@ -1,151 +1,114 @@
 import React from 'react';
-import {
-  Box,
+import { 
+  Box, 
+  Typography, 
+  Paper, 
   List,
   ListItem,
   ListItemText,
-  Typography,
+  Divider,
   Chip,
-  Avatar,
-  styled,
-  Card,
   Button,
+  useTheme,
+  Avatar
 } from '@mui/material';
-import {
-  SwapHoriz as TransferIcon,
-  Build as MaintenanceIcon,
-  Assignment as InspectionIcon,
-} from '@mui/icons-material';
-import { formatDistanceToNow } from 'date-fns';
-import { Activity } from '../types';
+import { RecentActivityFeedProps } from '../types';
 
-interface RecentActivityFeedProps {
-  activities: Activity[];
-}
-
-const StyledCard = styled(Card)(({ theme }) => ({
-  padding: theme.spacing(2),
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  backgroundColor: theme.palette.background.paper,
-  width: '100%',
-}));
-
-const ActivityChip = styled(Chip)(() => ({
-  borderRadius: '16px',
-  fontWeight: 500,
-  fontSize: '0.75rem',
-}));
-
-const ActivityList = styled(List)(({ theme }) => ({
-  flex: 1,
-  overflowY: 'auto',
-  minHeight: '250px',
-  maxHeight: '250px',
-  padding: 0,
-  marginBottom: theme.spacing(1),
-  '&::-webkit-scrollbar': {
-    width: '6px',
-  },
-  '&::-webkit-scrollbar-track': {
-    background: 'transparent',
-  },
-  '&::-webkit-scrollbar-thumb': {
-    background: theme.palette.divider,
-    borderRadius: '3px',
-  },
-}));
-
-const getActivityIcon = (type: Activity['type']) => {
-  switch (type) {
-    case 'Transfer':
-      return <TransferIcon fontSize="small" />;
-    case 'Maintenance':
-      return <MaintenanceIcon fontSize="small" />;
-    case 'Inspection':
-      return <InspectionIcon fontSize="small" />;
-  }
-};
-
-const getActivityColor = (type: Activity['type']) => {
-  switch (type) {
-    case 'Transfer':
-      return 'primary';
-    case 'Maintenance':
-      return 'warning';
-    case 'Inspection':
-      return 'info';
-  }
-};
-
-export const RecentActivityFeed: React.FC<RecentActivityFeedProps> = ({ activities }) => {
+export const RecentActivityFeed: React.FC<RecentActivityFeedProps> = ({
+  activities,
+  onViewAllActivity
+}) => {
+  const theme = useTheme();
+  
+  // Helper function to get status chip color
+  const getStatusColor = (status: string): 'success' | 'warning' | 'default' => {
+    switch (status) {
+      case 'Complete':
+        return 'success';
+      case 'In Progress':
+        return 'warning';
+      default:
+        return 'default';
+    }
+  };
+  
   return (
-    <StyledCard>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 1, py: 1, mb: 1 }}>
-        <Typography variant="h6">Recent Activity</Typography>
-        <Button
-          color="primary"
-          sx={{ textTransform: 'none' }}
-        >
-          View All
-        </Button>
+    <Paper elevation={2} sx={{ height: '100%', p: 2, borderRadius: 2 }}>
+      {/* Card Header */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h6" fontWeight="bold">
+          Property Accountability Activity
+        </Typography>
       </Box>
-      <ActivityList>
-        {activities.map((activity) => (
-          <ListItem
-            key={activity.id}
-            sx={{
-              py: 1,
-              px: 1,
-              borderBottom: 1,
-              borderColor: 'divider',
-              '&:last-child': {
-                borderBottom: 0,
-              },
-            }}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', width: '100%' }}>
-              <Avatar
-                sx={{
-                  width: 28,
-                  height: 28,
-                  bgcolor: `${getActivityColor(activity.type)}.light`,
-                  color: `${getActivityColor(activity.type)}.main`,
-                  mr: 1,
+      
+      {/* Activity Table */}
+      <Box sx={{ mb: 2, overflow: 'auto', maxHeight: 320 }}>
+        <Box 
+          component="table" 
+          sx={{ 
+            width: '100%', 
+            borderCollapse: 'collapse', 
+            '& th, & td': { 
+              p: 1.5, 
+              borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+              fontSize: '0.875rem'
+            },
+            '& th': {
+              fontWeight: 'bold',
+              textAlign: 'left',
+              backgroundColor: 'rgba(0, 0, 0, 0.04)'
+            }
+          }}
+        >
+          <Box component="thead">
+            <Box component="tr">
+              <Box component="th">Date</Box>
+              <Box component="th">Time</Box>
+              <Box component="th">Activity</Box>
+              <Box component="th">Personnel</Box>
+              <Box component="th">Details</Box>
+              <Box component="th">Status</Box>
+            </Box>
+          </Box>
+          <Box component="tbody">
+            {activities.map((activity, index) => (
+              <Box 
+                component="tr" 
+                key={index}
+                sx={{ 
+                  '&:hover': { 
+                    backgroundColor: 'rgba(0, 0, 0, 0.04)' 
+                  }
                 }}
               >
-                {getActivityIcon(activity.type)}
-              </Avatar>
-              <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.25 }}>
-                  <Typography variant="subtitle2" noWrap>
-                    {activity.user.rank} {activity.user.name}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary" sx={{ ml: 1 }}>
-                    {formatDistanceToNow(new Date(activity.timestamp), { addSuffix: true })}
-                  </Typography>
+                <Box component="td">{activity.date}</Box>
+                <Box component="td">{activity.time}</Box>
+                <Box component="td" sx={{ fontWeight: 'medium' }}>{activity.activity}</Box>
+                <Box component="td">{activity.personnel}</Box>
+                <Box component="td">{activity.details}</Box>
+                <Box component="td">
+                  <Chip 
+                    label={activity.status} 
+                    size="small"
+                    color={getStatusColor(activity.status)}
+                    sx={{ fontWeight: 'medium' }}
+                  />
                 </Box>
-                <ListItemText
-                  primary={activity.description}
-                  primaryTypographyProps={{
-                    variant: 'body2',
-                    sx: { mb: 0.25 }
-                  }}
-                  secondary={
-                    <ActivityChip
-                      size="small"
-                      label={activity.status}
-                      color={activity.status === 'COMPLETED' ? 'success' : 'warning'}
-                      variant="outlined"
-                    />
-                  }
-                />
               </Box>
-            </Box>
-          </ListItem>
-        ))}
-      </ActivityList>
-    </StyledCard>
+            ))}
+          </Box>
+        </Box>
+      </Box>
+      
+      {/* View All Button */}
+      <Button 
+        variant="outlined" 
+        color="primary" 
+        fullWidth
+        onClick={onViewAllActivity}
+      >
+        View All Activity
+      </Button>
+    </Paper>
   );
 }; 

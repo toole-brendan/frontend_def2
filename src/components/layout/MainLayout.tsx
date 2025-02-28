@@ -40,10 +40,13 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
+          p: { xs: 1, sm: 2, md: 3 }, // Responsive padding
           mt: 8, // Height of AppBar
           backgroundColor: theme.palette.background.default,
           minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'auto',
         }}
       >
         {children}

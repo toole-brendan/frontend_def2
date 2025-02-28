@@ -1,204 +1,199 @@
-import React, { useState } from 'react';
-import { Box, Grid, Container, Typography } from '@mui/material';
-import {
-  Security as SecurityIcon,
-  SupervisorAccount as SupervisorAccountIcon,
-  Build as BuildIcon,
-  Inventory as InventoryIcon,
-} from '@mui/icons-material';
-import PageTitle from '../../components/common/PageTitle';
-import ProfileHeader from './components/ProfileHeader';
-import PersonalInformation from './components/PersonalInformation';
-import AccountSettings from './components/AccountSettings';
-import RolesAndPermissions from './components/RolesAndPermissions';
-import CertificationsAndTraining from './components/CertificationsAndTraining';
-import ChainOfCommand from './components/ChainOfCommand';
-
-// Mock data - In a real app, this would come from your backend
-const mockUserData = {
-  name: 'John Doe',
-  rank: 'CPT',
-  profilePicture: undefined,
-  dodId: '1234567890',
-  branch: 'Army',
-  unit: 'C CO, 2-506 IN, 3BCT, 101st ABN DIV (AASLT)',
-  dutyPosition: 'Company Commander',
-  mos: '11A',
-  email: 'john.doe@army.mil',
-  phone: '(555) 123-4567',
-  is2FAEnabled: true,
-  roles: [
-    {
-      id: '1',
-      name: 'Officer',
-      description: 'Full access to all features and approval authority',
-      permissions: [
-        {
-          id: '1',
-          name: 'Administrator',
-          description: 'Full system access and control',
-          icon: <SecurityIcon />,
-        },
-        {
-          id: '2',
-          name: 'Inventory Manager',
-          description: 'Manage unit inventory and equipment',
-          icon: <InventoryIcon />,
-        },
-      ],
-    },
-    {
-      id: '2',
-      name: 'Maintenance Supervisor',
-      description: 'Oversee maintenance operations and schedules',
-      permissions: [
-        {
-          id: '3',
-          name: 'Maintenance Manager',
-          description: 'Oversee maintenance operations',
-          icon: <BuildIcon />,
-        },
-        {
-          id: '4',
-          name: 'Team Supervisor',
-          description: 'Manage team members and assignments',
-          icon: <SupervisorAccountIcon />,
-        },
-      ],
-    },
-  ],
-  certifications: [
-    {
-      id: '1',
-      name: 'Ranger Qualified',
-      issueDate: '2022-08-15',
-      expirationDate: '9999-12-31', // Never expires
-      status: 'Active' as const,
-      description: 'U.S. Army Ranger School Graduate',
-    },
-    {
-      id: '2',
-      name: 'Unit Movement Officer (UMO)',
-      issueDate: '2023-03-10',
-      expirationDate: '2025-03-10',
-      status: 'Active' as const,
-      description: 'Certified to plan and execute unit deployments',
-    },
-  ],
-  chainOfCommand: {
-    supervisor: {
-      id: '1',
-      name: 'James Anderson',
-      rank: 'MAJ',
-      position: 'Battalion Commander',
-    },
-    subordinates: [
-      {
-        id: '2',
-        name: 'Michael Johnson',
-        rank: '1LT',
-        position: '1st Platoon Leader',
-      },
-      {
-        id: '3',
-        name: 'Thomas Wilson',
-        rank: '1LT',
-        position: '2nd Platoon Leader',
-      },
-      {
-        id: '4',
-        name: 'Robert Davis',
-        rank: '1LT',
-        position: '3rd Platoon Leader',
-      },
-    ],
-  },
-};
+import React from 'react';
+import { 
+  Box, 
+  Container, 
+  Grid, 
+  Typography, 
+  Paper,
+  Avatar,
+  Divider,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  Card,
+  CardContent
+} from '@mui/material';
 
 const Profile: React.FC = () => {
-  const [userData, setUserData] = useState(mockUserData);
-
-  const handlePictureChange = (file: File) => {
-    // Handle profile picture update
-    console.log('Updating profile picture:', file);
-  };
-
-  const handleContactInfoUpdate = (email: string, phone: string) => {
-    setUserData((prev) => ({
-      ...prev,
-      email,
-      phone,
-    }));
-  };
-
-  const handlePasswordChange = () => {
-    // TODO: Implement password change logic
-    console.log('Password change requested');
-  };
-
-  const handleToggle2FA = (enabled: boolean) => {
-    setUserData((prev) => ({
-      ...prev,
-      is2FAEnabled: enabled,
-    }));
-  };
-
-  const handleNotificationPreferencesChange = (preferences: any) => {
-    // Handle notification preferences update
-    console.log('Updating notification preferences:', preferences);
+  // Mock user data
+  const userData = {
+    name: "CPT Michael Rodriguez",
+    rank: "Captain",
+    unit: "B Company, 2-87 Infantry",
+    role: "Company Commander",
+    email: "michael.rodriguez@army.mil",
+    phone: "(555) 123-4567",
+    lastLogin: "25FEB2025 0730",
+    accountCreated: "14JUN2024",
+    permissions: [
+      "Property Book Access",
+      "Inventory Management",
+      "Hand Receipt Holder",
+      "Maintenance Request Creation",
+      "Report Generation"
+    ]
   };
 
   return (
     <Container maxWidth="xl">
-      <Box sx={{ py: 4 }}>
-        {/* Header Section */}
-        <Box sx={{ mb: 4 }}>
-          <PageTitle variant="h4" gutterBottom>
-            MY PROFILE
-          </PageTitle>
-          <Typography variant="body2" color="text.secondary">
-            View and manage your profile information and account settings
-          </Typography>
-        </Box>
-
-        <ProfileHeader
-          name={userData.name}
-          rank={userData.rank}
-          profilePicture={userData.profilePicture}
-          onPictureChange={handlePictureChange}
-        />
-
+      <Box sx={{ py: 3 }}>
+        <Typography variant="h4" gutterBottom fontWeight="bold">
+          User Profile
+        </Typography>
+        
         <Grid container spacing={3}>
-          <Grid item xs={12} lg={8}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-              <PersonalInformation
-                dodId={userData.dodId}
-                branch={userData.branch}
-                unit={userData.unit}
-                dutyPosition={userData.dutyPosition}
-                mos={userData.mos}
-                email={userData.email}
-                phone={userData.phone}
-                onContactInfoUpdate={handleContactInfoUpdate}
-              />
-              <RolesAndPermissions roles={userData.roles} />
-              <CertificationsAndTraining certifications={userData.certifications} />
-            </Box>
+          {/* Profile Information */}
+          <Grid item xs={12} md={4}>
+            <Paper elevation={2} sx={{ p: 3, borderRadius: 2 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
+                <Avatar 
+                  sx={{ 
+                    width: 120, 
+                    height: 120, 
+                    mb: 2,
+                    fontSize: '3rem',
+                    bgcolor: 'primary.main' 
+                  }}
+                >
+                  {userData.name.charAt(0)}
+                </Avatar>
+                <Typography variant="h5" fontWeight="bold">
+                  {userData.name}
+                </Typography>
+                <Typography variant="subtitle1" color="text.secondary">
+                  {userData.rank} • {userData.role}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {userData.unit}
+                </Typography>
+              </Box>
+              
+              <Divider sx={{ my: 2 }} />
+              
+              <List disablePadding>
+                <ListItem disablePadding sx={{ py: 1 }}>
+                  <ListItemText 
+                    primary="Email" 
+                    secondary={userData.email} 
+                    primaryTypographyProps={{ variant: 'body2', color: 'text.secondary' }}
+                    secondaryTypographyProps={{ variant: 'body1' }}
+                  />
+                </ListItem>
+                <ListItem disablePadding sx={{ py: 1 }}>
+                  <ListItemText 
+                    primary="Phone" 
+                    secondary={userData.phone} 
+                    primaryTypographyProps={{ variant: 'body2', color: 'text.secondary' }}
+                    secondaryTypographyProps={{ variant: 'body1' }}
+                  />
+                </ListItem>
+                <ListItem disablePadding sx={{ py: 1 }}>
+                  <ListItemText 
+                    primary="Last Login" 
+                    secondary={userData.lastLogin} 
+                    primaryTypographyProps={{ variant: 'body2', color: 'text.secondary' }}
+                    secondaryTypographyProps={{ variant: 'body1' }}
+                  />
+                </ListItem>
+                <ListItem disablePadding sx={{ py: 1 }}>
+                  <ListItemText 
+                    primary="Account Created" 
+                    secondary={userData.accountCreated} 
+                    primaryTypographyProps={{ variant: 'body2', color: 'text.secondary' }}
+                    secondaryTypographyProps={{ variant: 'body1' }}
+                  />
+                </ListItem>
+              </List>
+              
+              <Button 
+                variant="contained" 
+                color="primary" 
+                fullWidth 
+                sx={{ mt: 3 }}
+              >
+                Edit Profile
+              </Button>
+            </Paper>
           </Grid>
-
-          <Grid item xs={12} lg={4}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-              <AccountSettings
-                is2FAEnabled={userData.is2FAEnabled}
-                onPasswordChange={handlePasswordChange}
-                onToggle2FA={handleToggle2FA}
-                onNotificationPreferencesChange={handleNotificationPreferencesChange}
-              />
-              <ChainOfCommand
-                supervisor={userData.chainOfCommand.supervisor}
-                subordinates={userData.chainOfCommand.subordinates}
-              />
-            </Box>
+          
+          {/* User Permissions */}
+          <Grid item xs={12} md={8}>
+            <Paper elevation={2} sx={{ p: 3, borderRadius: 2, mb: 3 }}>
+              <Typography variant="h6" fontWeight="bold" gutterBottom>
+                System Permissions
+              </Typography>
+              
+              <Grid container spacing={2} sx={{ mb: 2 }}>
+                {userData.permissions.map((permission, index) => (
+                  <Grid item key={index}>
+                    <Box 
+                      sx={{ 
+                        bgcolor: 'primary.light',
+                        color: 'primary.dark',
+                        px: 2,
+                        py: 1,
+                        borderRadius: 2,
+                        fontWeight: 'medium'
+                      }}
+                    >
+                      {permission}
+                    </Box>
+                  </Grid>
+                ))}
+              </Grid>
+              
+              <Button variant="outlined" color="primary">
+                Request Additional Access
+              </Button>
+            </Paper>
+            
+            {/* Recent Activity */}
+            <Paper elevation={2} sx={{ p: 3, borderRadius: 2 }}>
+              <Typography variant="h6" fontWeight="bold" gutterBottom>
+                Recent Activity
+              </Typography>
+              
+              <List>
+                <ListItem sx={{ bgcolor: 'background.default', mb: 1, borderRadius: 1 }}>
+                  <ListItemText 
+                    primary="Completed Sensitive Item Inventory" 
+                    secondary="25FEB2025 0730"
+                    primaryTypographyProps={{ fontWeight: 'medium' }}
+                  />
+                </ListItem>
+                <ListItem sx={{ bgcolor: 'background.default', mb: 1, borderRadius: 1 }}>
+                  <ListItemText 
+                    primary="Signed Hand Receipt (1LT Chen)" 
+                    secondary="24FEB2025 1645"
+                    primaryTypographyProps={{ fontWeight: 'medium' }}
+                  />
+                </ListItem>
+                <ListItem sx={{ bgcolor: 'background.default', mb: 1, borderRadius: 1 }}>
+                  <ListItemText 
+                    primary="Approved Maintenance Request (HMMWV #HQ-237)" 
+                    secondary="24FEB2025 1432"
+                    primaryTypographyProps={{ fontWeight: 'medium' }}
+                  />
+                </ListItem>
+                <ListItem sx={{ bgcolor: 'background.default', mb: 1, borderRadius: 1 }}>
+                  <ListItemText 
+                    primary="Generated Monthly Supply Activity Report" 
+                    secondary="23FEB2025 0915"
+                    primaryTypographyProps={{ fontWeight: 'medium' }}
+                  />
+                </ListItem>
+              </List>
+              
+              <Button 
+                variant="outlined" 
+                color="primary" 
+                fullWidth 
+                sx={{ mt: 2 }}
+              >
+                View Full Activity History
+              </Button>
+            </Paper>
           </Grid>
         </Grid>
       </Box>

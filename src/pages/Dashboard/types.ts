@@ -164,11 +164,6 @@ export interface CommandSupplyAction {
   action: string;
 }
 
-export interface AccountabilityStatusCardProps {
-  overallRate: number;
-  subHandReceipts: SubHandReceipt[];
-}
-
 export interface CommandDirectedActionsProps {
   actions: CommandDirectedAction[];
 }
@@ -189,8 +184,10 @@ export interface CommandSupplyActionsProps {
   actions: CommandSupplyAction[];
 }
 
+// Dashboard Header - Combined definition
 export interface DashboardHeaderProps {
-  unitInfo: {
+  // Legacy props
+  unitInfo?: {
     name: string;
     classVIIItems: number;
     dollarValue: string;
@@ -200,6 +197,13 @@ export interface DashboardHeaderProps {
       lastInventory: string;
     };
   };
+  // New props
+  title?: string;
+  user?: string;
+  totalValue?: string;
+  equipmentItems?: number;
+  sensitiveItemsStatus?: string;
+  dateTime?: string;
 }
 
 export interface DashboardFooterProps {
@@ -209,4 +213,131 @@ export interface DashboardFooterProps {
     pbo: string;
     helpDesk: string;
   };
+}
+
+// Equipment Category
+export interface EquipmentCategory {
+  name: string;
+  count: string;
+  percentage: number;
+  lastVerified: string;
+  note?: string;
+}
+
+// Accountability Status Card - Combined definition
+export interface AccountabilityStatusCardProps {
+  overallRate: number;
+  // Legacy props
+  subHandReceipts?: SubHandReceipt[];
+  // New props
+  sensitiveItems?: {
+    verified: string;
+    lastVerification: string;
+    nextRequired: string;
+  };
+  equipmentCategories?: EquipmentCategory[];
+  onStartInventory?: () => void;
+}
+
+// Command Action Items Card
+export interface CommandAction {
+  priority: 'HIGH' | 'MEDIUM' | 'LOW';
+  item: string;
+  type: string;
+  deadline: string;
+  action: string;
+}
+
+export interface CommandActionItemsCardProps {
+  actions: CommandAction[];
+  onViewAllActions: () => void;
+}
+
+// NTC Rotation Readiness Card
+export interface Milestone {
+  name: string;
+  status: 'Complete' | 'Pending' | 'Delayed';
+  date: string;
+  daysRemaining: number | null;
+}
+
+export interface NTCRotationReadinessCardProps {
+  title: string;
+  daysToDeployment: number;
+  equipmentStatus: {
+    requiredItems: number;
+    currentOnHand: number;
+    percentage: number;
+    criticalShortages: number;
+    serviceability: number;
+  };
+  milestones: Milestone[];
+  onViewNTCPlan: () => void;
+}
+
+// Property Distribution Visualization
+export interface PropertyDistributionVisualizationProps {}
+
+// Critical Equipment Status Table
+export interface EquipmentItem {
+  equipment: string;
+  serialBumper: string;
+  status: 'FMC' | 'PMC' | 'NMC' | 'In Process';
+  location: string;
+  issue: string;
+  actionRequired: string;
+  due: string;
+}
+
+export interface CriticalEquipmentStatusTableProps {
+  equipment: EquipmentItem[];
+}
+
+// Upcoming Accountability Requirements
+export interface Requirement {
+  name: string;
+  due: string;
+  daysRemaining?: number;
+  progress?: number | null;
+}
+
+export interface UpcomingAccountabilityRequirementsProps {
+  weeklyRequirements: Requirement[];
+  monthlyRequirements: Requirement[];
+  quarterlyRequirements: Requirement[];
+  onStartInventory: () => void;
+}
+
+// Recent Activity Feed
+export interface DashboardActivity {
+  date: string;
+  time: string;
+  activity: string;
+  personnel: string;
+  details: string;
+  status: 'Complete' | 'In Progress' | 'Temporary';
+}
+
+export interface RecentActivityFeedProps {
+  activities: DashboardActivity[];
+  onViewAllActivity: () => void;
+}
+
+// Quick Action Panel
+export interface Action {
+  label: string;
+  icon: string;
+  action: string | (() => void);
+}
+
+export interface QuickActionPanelProps {
+  actions: Action[];
+}
+
+// System Status Footer
+export interface SystemStatusFooterProps {
+  connectionStatus: string;
+  lastUpdate: string;
+  mobileAppStatus: string;
+  systemNotice: string;
 } 

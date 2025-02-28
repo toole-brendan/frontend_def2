@@ -4,134 +4,195 @@ import {
   Typography, 
   Paper, 
   Button, 
-  List, 
-  ListItem, 
-  ListItemText,
+  Divider, 
   CircularProgress,
-  styled 
+  List,
+  ListItem,
+  ListItemText,
+  Alert,
+  Stack
 } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import WarningIcon from '@mui/icons-material/Warning';
-import ErrorIcon from '@mui/icons-material/Error';
 import { AccountabilityStatusCardProps } from '../types';
 
-const StyledCard = styled(Paper)(({ theme }) => ({
-  height: '100%',
-  backgroundColor: theme.palette.background.paper,
-  borderRadius: 0,
-  border: `1px solid ${theme.palette.divider}`,
-  '& .card-header': {
-    padding: theme.spacing(2),
-    borderBottom: `1px solid ${theme.palette.divider}`,
-    '& h6': {
-      fontWeight: 600,
-      textTransform: 'uppercase',
-      letterSpacing: '0.1em',
-    },
-  },
-  '& .card-content': {
-    padding: theme.spacing(2),
-  },
-}));
-
-const CircularProgressBox = styled(Box)(({ theme }) => ({
-  position: 'relative',
-  display: 'inline-flex',
-  margin: theme.spacing(2, 0),
-}));
-
-const CircularProgressLabel = styled(Box)(({ theme }) => ({
-  top: 0,
-  left: 0,
-  bottom: 0,
-  right: 0,
-  position: 'absolute',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flexDirection: 'column',
-}));
-
-const getStatusIcon = (status: string) => {
-  switch (status) {
-    case 'OK':
-      return <CheckCircleIcon color="success" />;
-    case 'WARNING':
-      return <WarningIcon color="warning" />;
-    case 'ERROR':
-      return <ErrorIcon color="error" />;
-    default:
-      return <CheckCircleIcon color="success" />;
-  }
-};
-
-export const AccountabilityStatusCard: React.FC<AccountabilityStatusCardProps> = ({ 
-  overallRate, 
-  subHandReceipts 
+export const AccountabilityStatusCard: React.FC<AccountabilityStatusCardProps> = ({
+  overallRate,
+  sensitiveItems,
+  equipmentCategories,
+  onStartInventory,
+  subHandReceipts
 }) => {
+  // Helper function to determine color based on percentage
+  const getStatusColor = (percentage: number): 'success' | 'warning' | 'error' => {
+    if (percentage >= 98) return 'success';
+    if (percentage >= 90) return 'warning';
+    return 'error';
+  };
+
+  // Handle legacy mode vs new mode
+  const isLegacyMode = subHandReceipts && subHandReceipts.length > 0;
+
   return (
-    <StyledCard>
-      <div className="card-header">
-        <Typography variant="h6">ACCOUNTABILITY STATUS</Typography>
-      </div>
-      <div className="card-content">
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
-          <CircularProgressBox sx={{ width: 120, height: 120 }}>
-            <CircularProgress
-              variant="determinate"
-              value={overallRate}
-              size={120}
-              thickness={5}
-              color={overallRate >= 99 ? "success" : overallRate >= 95 ? "warning" : "error"}
-            />
-            <CircularProgressLabel>
-              <Typography variant="h4" component="div" color="text.primary">
-                {overallRate}%
-              </Typography>
-              <Typography variant="caption" component="div" color="text.secondary">
-                Overall
-              </Typography>
-            </CircularProgressLabel>
-          </CircularProgressBox>
-        </Box>
+    <Paper elevation={2} sx={{ height: '100%', p: 2, borderRadius: 2 }}>
+      {/* Card Title */}
+      <Typography variant="h6" fontWeight="bold" gutterBottom>
+        Accountability Status
+      </Typography>
 
-        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
-          Sub-hand receipt breakdown:
-        </Typography>
-        
-        <List dense>
-          {subHandReceipts.map((receipt, index) => (
-            <ListItem key={index} sx={{ py: 0.5 }}>
-              <Box sx={{ mr: 1 }}>
-                {getStatusIcon(receipt.status)}
-              </Box>
-              <ListItemText
-                primary={
-                  <Box component="span" sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      {receipt.officer} ({receipt.platoon})
-                    </Typography>
-                    <Typography variant="body2">
-                      {receipt.itemCount} items
-                    </Typography>
-                  </Box>
-                }
-                secondary={receipt.statusMessage}
-              />
-            </ListItem>
-          ))}
-        </List>
-
-        <Box sx={{ mt: 3 }}>
-          <Button 
-            variant="contained" 
-            color="primary" 
-            fullWidth
-          >
-            View PBUSE Data
-          </Button>
+      {/* Accountability Gauge */}
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center',
+          position: 'relative',
+          my: 2,
+          height: 180 
+        }}
+      >
+        <CircularProgress
+          variant="determinate"
+          value={100}
+          size={160}
+          thickness={4}
+          sx={{ position: 'absolute', color: 'grey.300' }}
+        />
+        <CircularProgress
+          variant="determinate"
+          value={overallRate}
+          size={160}
+          thickness={4}
+          sx={{ 
+            position: 'absolute', 
+            color: `${getStatusColor(overallRate)}.main`,
+          }}
+        />
+        <Box
+          sx={{
+            position: 'absolute',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Typography variant="h4" fontWeight="bold">
+            {overallRate}%
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            Overall Accountability
+          </Typography>
         </Box>
-      </div>
-    </StyledCard>
+      </Box>
+
+      {/* New Dashboard Mode */}
+      {!isLegacyMode && (
+        <>
+          {/* Sensitive Items Section */}
+          {sensitiveItems && (
+            <Box sx={{ mb: 2, p: 1, bgcolor: 'success.light', borderRadius: 1 }}>
+              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                Sensitive Items
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 'medium' }}>
+                {sensitiveItems.verified}
+              </Typography>
+              <Stack direction="row" spacing={2} sx={{ mt: 1 }}>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  Last: {sensitiveItems.lastVerification}
+                </Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 'bold' }}>
+                  Next: {sensitiveItems.nextRequired}
+                </Typography>
+              </Stack>
+              <Button 
+                variant="contained" 
+                color="primary" 
+                fullWidth 
+                sx={{ mt: 1 }}
+                onClick={onStartInventory}
+              >
+                Conduct Sensitive Item Inventory
+              </Button>
+            </Box>
+          )}
+
+          {/* Equipment Categories */}
+          {equipmentCategories && equipmentCategories.length > 0 && (
+            <>
+              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                Equipment Categories
+              </Typography>
+              <List disablePadding>
+                {equipmentCategories.map((category, index) => (
+                  <ListItem 
+                    key={index}
+                    disablePadding
+                    sx={{ 
+                      py: 1, 
+                      borderBottom: index < equipmentCategories.length - 1 ? '1px solid rgba(0, 0, 0, 0.12)' : 'none',
+                    }}
+                  >
+                    <ListItemText
+                      primary={
+                        <Typography variant="body2" fontWeight="medium">
+                          {category.name}: {category.count} ({category.percentage}%)
+                        </Typography>
+                      }
+                      secondary={
+                        <Typography variant="caption" component="div" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 0.5 }}>
+                          <span style={{ color: 'text.secondary' }}>
+                            Last verified {category.lastVerified}
+                          </span>
+                          {category.note && (
+                            <span style={{ color: '#ED6C02' }}> {/* warning.main color */}
+                              {category.note}
+                            </span>
+                          )}
+                        </Typography>
+                      }
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            </>
+          )}
+        </>
+      )}
+
+      {/* Legacy Mode - Display Sub-Hand Receipts */}
+      {isLegacyMode && (
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+            Sub-Hand Receipt Breakdown
+          </Typography>
+          <List disablePadding>
+            {subHandReceipts.map((receipt, index) => (
+              <ListItem 
+                key={index}
+                disablePadding
+                sx={{ 
+                  py: 1, 
+                  borderBottom: index < subHandReceipts.length - 1 ? '1px solid rgba(0, 0, 0, 0.12)' : 'none',
+                }}
+              >
+                <ListItemText
+                  primary={
+                    <Typography variant="body2" component="div" sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ fontWeight: 500 }}>
+                        {receipt.officer} ({receipt.platoon})
+                      </span>
+                      <span>
+                        {receipt.itemCount} items
+                      </span>
+                    </Typography>
+                  }
+                  secondary={receipt.statusMessage}
+                />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      )}
+    </Paper>
   );
 }; 

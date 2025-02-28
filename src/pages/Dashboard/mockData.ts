@@ -1,398 +1,174 @@
-import { DashboardData } from './types';
+import {
+  DashboardData,
+  EquipmentCategory,
+  CommandAction,
+  Milestone,
+  EquipmentItem,
+  Requirement,
+  DashboardActivity,
+  Action
+} from './types';
 
 export const mockDashboardData: DashboardData = {
   propertyStats: {
-    totalItems: 1250,
-    serviceableItems: 980,
-    maintenanceNeeded: 180,
+    totalItems: 721,
+    serviceableItems: 650,
+    maintenanceNeeded: 71,
     pendingTransfers: {
-      count: 45,
+      count: 12,
       items: [
-        {
-          id: 'TRF-001',
-          itemName: 'M4 Carbine',
-          from: 'Alpha Company',
-          to: 'Bravo Company',
-        },
-        {
-          id: 'TRF-002',
-          itemName: 'HMMWV',
-          from: 'Charlie Company',
-          to: 'HQ Company',
-        },
-        {
-          id: 'TRF-003',
-          itemName: 'Night Vision Goggles',
-          from: 'Delta Company',
-          to: 'Alpha Company',
-        },
-      ],
+        { id: 'TR-001', itemName: 'M4A1 Carbine', from: '1st Platoon', to: 'Range' },
+        { id: 'TR-002', itemName: 'HMMWV', from: 'Motor Pool', to: 'Maintenance' }
+      ]
     },
     maintenanceRequests: {
-      count: 65,
+      count: 24,
       items: [
-        {
-          id: 'MNT-001',
-          itemName: 'HMMWV #234',
-          type: 'Scheduled Maintenance',
-          priority: 'medium',
-        },
-        {
-          id: 'MNT-002',
-          itemName: 'Radio Set #45',
-          type: 'Repair',
-          priority: 'high',
-        },
-        {
-          id: 'MNT-003',
-          itemName: 'M2 .50 Cal #12',
-          type: 'Inspection',
-          priority: 'low',
-        },
-      ],
+        { id: 'MR-001', itemName: 'HMMWV #HQ-237', type: 'Corrective', priority: 'high' },
+        { id: 'MR-002', itemName: 'SINCGARS Radio', type: 'Preventive', priority: 'medium' }
+      ]
     },
-    overdueItems: 90,
+    overdueItems: 5,
     categories: [
-      { name: 'Weapons', value: 450, count: 450 },
-      { name: 'Vehicles', value: 200, count: 200 },
-      { name: 'Communications', value: 350, count: 350 },
-      { name: 'Other', value: 250, count: 250 },
+      { name: 'Weapons', value: 1200000, count: 143 },
+      { name: 'Vehicles', value: 1800000, count: 72 },
+      { name: 'Communications', value: 520000, count: 95 },
+      { name: 'Optics', value: 430000, count: 63 },
+      { name: 'Other', value: 250000, count: 348 }
     ],
     criticalItems: [
-      {
-        name: 'HMMWV #234',
-        issue: 'Overdue maintenance',
-        status: 'CRITICAL',
-      },
-      {
-        name: 'Radio Set #45',
-        issue: 'Malfunctioning',
-        status: 'CRITICAL',
-      },
-      {
-        name: 'M2 .50 Cal #12',
-        issue: 'Inspection needed',
-        status: 'WARNING',
-      },
-    ],
+      { name: 'SINCGARS Radio', issue: 'Missing Components', status: 'CRITICAL' },
+      { name: 'HMMWV #HQ-237', issue: 'Brake System', status: 'WARNING' }
+    ]
   },
   personnelStats: {
-    totalPersonnel: 150,
-    fullyEquipped: 120,
-    partiallyEquipped: 25,
-    overdueItems: 5,
+    totalPersonnel: 156,
+    fullyEquipped: 149,
+    partiallyEquipped: 7,
+    overdueItems: 3
   },
   activities: [
-    {
-      id: 'ACT-001',
-      type: 'Transfer',
-      description: 'M4 Carbine transferred to Bravo Company',
-      user: {
-        rank: 'SGT',
-        name: 'John Smith',
-      },
-      timestamp: '2023-10-15T10:30:00Z',
-      status: 'COMPLETED',
-    },
-    {
-      id: 'ACT-002',
-      type: 'Maintenance',
-      description: 'HMMWV #234 scheduled maintenance',
-      user: {
-        rank: 'SPC',
-        name: 'Jane Doe',
-      },
-      timestamp: '2023-10-15T09:15:00Z',
-      status: 'IN PROGRESS',
-    },
-    {
-      id: 'ACT-003',
-      type: 'Inspection',
-      description: 'Monthly weapons inspection',
-      user: {
-        rank: 'SSG',
-        name: 'Mike Johnson',
-      },
-      timestamp: '2023-10-14T15:45:00Z',
-      status: 'COMPLETED',
-    },
-    {
-      id: 'ACT-004',
-      type: 'Transfer',
-      description: 'Night Vision Goggles transferred to Charlie Company',
-      user: {
-        rank: 'CPL',
-        name: 'Sarah Williams',
-      },
-      timestamp: '2023-10-14T14:20:00Z',
-      status: 'COMPLETED',
-    },
-    {
-      id: 'ACT-005',
-      type: 'Maintenance',
-      description: 'Radio Set #45 repair completed',
-      user: {
-        rank: 'SPC',
-        name: 'Robert Davis',
-      },
-      timestamp: '2023-10-14T13:10:00Z',
-      status: 'COMPLETED',
-    },
-    {
-      id: 'ACT-006',
-      type: 'Inspection',
-      description: 'Quarterly vehicle inspection',
-      user: {
-        rank: 'SSG',
-        name: 'James Wilson',
-      },
-      timestamp: '2023-10-14T11:30:00Z',
-      status: 'IN PROGRESS',
-    },
-    {
-      id: 'ACT-007',
-      type: 'Transfer',
-      description: 'Ammunition resupply to Delta Company',
-      user: {
-        rank: 'SGT',
-        name: 'Emily Brown',
-      },
-      timestamp: '2023-10-14T10:45:00Z',
-      status: 'COMPLETED',
-    },
-    {
-      id: 'ACT-008',
-      type: 'Maintenance',
-      description: 'M2 .50 Cal maintenance request submitted',
-      user: {
-        rank: 'SPC',
-        name: 'Michael Taylor',
-      },
-      timestamp: '2023-10-14T09:30:00Z',
-      status: 'IN PROGRESS',
-    },
-    {
-      id: 'ACT-009',
-      type: 'Inspection',
-      description: 'Communications equipment check',
-      user: {
-        rank: 'SSG',
-        name: 'David Martinez',
-      },
-      timestamp: '2023-10-14T08:15:00Z',
-      status: 'COMPLETED',
-    },
-    {
-      id: 'ACT-010',
-      type: 'Transfer',
-      description: 'Medical supplies transferred to Aid Station',
-      user: {
-        rank: 'SGT',
-        name: 'Lisa Anderson',
-      },
-      timestamp: '2023-10-13T16:45:00Z',
-      status: 'COMPLETED',
-    },
+    { id: 'ACT-001', type: 'Maintenance', description: 'HMMWV #HQ-237 scheduled for repair', user: { rank: 'SSG', name: 'Wilson' }, timestamp: '24FEB2025 1432', status: 'IN PROGRESS' },
+    { id: 'ACT-002', type: 'Transfer', description: 'M249 SAW transferred to range', user: { rank: 'CW2', name: 'Patel' }, timestamp: '24FEB2025 1645', status: 'COMPLETED' }
   ],
   notifications: [
-    {
-      id: 'NOTIF-001',
-      type: 'high',
-      message: 'Critical maintenance required for HMMWV #234',
-      timestamp: '2023-10-15T08:00:00Z',
-    },
-    {
-      id: 'NOTIF-002',
-      type: 'medium',
-      message: 'Pending transfer requests require approval',
-      timestamp: '2023-10-15T07:30:00Z',
-    },
-    {
-      id: 'NOTIF-003',
-      type: 'low',
-      message: 'Monthly inventory report is ready for review',
-      timestamp: '2023-10-14T16:00:00Z',
-    },
+    { id: 'NOT-001', type: 'high', message: 'Sensitive Items Inventory Due in 2 Days', timestamp: '25FEB2025 0800' },
+    { id: 'NOT-002', type: 'medium', message: 'New JLTV Receipt Pending Signature', timestamp: '25FEB2025 0830' }
   ],
   unitInfo: {
-    name: "B CO, 2-87 IN BN, 2BCT",
+    name: 'B Company, 2-87 Infantry',
     classVIIItems: 721,
-    dollarValue: "$4.2M",
+    dollarValue: '$4,200,000',
     accountabilityRate: 99.4,
     sensitiveItemStatus: {
-      accountedFor: 100,
-      lastInventory: "25FEB2025 0600"
+      accountedFor: 210,
+      lastInventory: '23FEB2025 0830'
     }
   },
   accountabilityStatus: {
     overallRate: 99.4,
     subHandReceipts: [
-      {
-        officer: "1LT Parker",
-        platoon: "1st PLT",
-        itemCount: 143,
-        status: "OK"
-      },
-      {
-        officer: "1LT Chen",
-        platoon: "2nd PLT",
-        itemCount: 138,
-        status: "OK"
-      },
-      {
-        officer: "1LT Garcia",
-        platoon: "3rd PLT",
-        itemCount: 156,
-        status: "WARNING",
-        statusMessage: "1 FLIPL pending"
-      },
-      {
-        officer: "1SG Martinez",
-        platoon: "HQ",
-        itemCount: 284,
-        status: "OK"
-      }
+      { officer: '1LT Chen', platoon: '1st PLT', itemCount: 143, status: 'OK' },
+      { officer: '1LT Smith', platoon: '2nd PLT', itemCount: 136, status: 'OK' },
+      { officer: '1LT Johnson', platoon: '3rd PLT', itemCount: 139, status: 'WARNING', statusMessage: '1 Item Pending Transfer' },
+      { officer: 'SFC Taylor', platoon: 'HQ PLT', itemCount: 203, status: 'OK' }
     ]
   },
   commandDirectedActions: [
-    {
-      id: "CDA-001",
-      description: "JLTV #W55639 - Accept on Property Book",
-      dueDate: "1700 Today",
-      status: "PENDING"
-    },
-    {
-      id: "CDA-002",
-      description: "SINCGARS RT-1523F (SN: RC-987-2441) - FLIPL Initiation",
-      dueDate: "Yesterday",
-      status: "OVERDUE"
-    },
-    {
-      id: "CDA-003",
-      description: "3rd PLT Sub-Hand Receipt - Command Signature Required",
-      dueDate: "NLT 1600 27FEB",
-      status: "PENDING"
-    },
-    {
-      id: "CDA-004",
-      description: "CSDP Monthly Certification",
-      dueDate: "28FEB",
-      status: "PENDING"
-    }
+    { id: 'CDA-001', description: 'Complete Monthly Sensitive Items Inventory', dueDate: '27FEB2025', status: 'PENDING' },
+    { id: 'CDA-002', description: 'Sign New JLTV Receipt', dueDate: '25FEB2025', status: 'OVERDUE' }
   ],
   sensitiveItems: [
-    {
-      nomenclature: "M2A1 .50 Cal",
-      serialOrNsn: "SN: M2-456832",
-      subHandReceipt: "1LT Chen",
-      lastPmcs: "23FEB2025",
-      status: "FMC"
-    },
-    {
-      nomenclature: "M240B",
-      serialOrNsn: "SN: M2405689",
-      subHandReceipt: "1LT Parker",
-      lastPmcs: "24FEB2025",
-      status: "FMC"
-    },
-    {
-      nomenclature: "DAGR",
-      serialOrNsn: "NSN: 5825-01-526-4783",
-      subHandReceipt: "1LT Garcia",
-      lastPmcs: "22FEB2025",
-      status: "FMC"
-    }
+    { nomenclature: 'M4A1 Carbine', serialOrNsn: 'M4-78921', subHandReceipt: '1st PLT', lastPmcs: '20FEB2025', status: 'FMC' },
+    { nomenclature: 'M240B', serialOrNsn: 'M240-12345', subHandReceipt: '2nd PLT', lastPmcs: '20FEB2025', status: 'FMC' }
   ],
   maintenanceReadiness: {
     statuses: [
-      {
-        category: "M1097A2 HMMWV",
-        total: 14,
-        fmc: 12,
-        pmcA: 0,
-        pmcB: 0,
-        nmc: 2
-      },
-      {
-        category: "FMTVs",
-        total: 4,
-        fmc: 4,
-        pmcA: 0,
-        pmcB: 0,
-        nmc: 0
-      },
-      {
-        category: "JLTVs",
-        total: 2,
-        fmc: 2,
-        pmcA: 0,
-        pmcB: 0,
-        nmc: 0
-      }
+      { category: 'Weapons', total: 143, fmc: 141, pmcA: 2, pmcB: 0, nmc: 0 },
+      { category: 'Vehicles', total: 72, fmc: 68, pmcA: 3, pmcB: 0, nmc: 1 },
+      { category: 'Communications', total: 95, fmc: 93, pmcA: 1, pmcB: 0, nmc: 1 }
     ]
   },
   battalionActivities: [
-    {
-      id: "BA-001",
-      timestamp: "25FEB2025 0730",
-      person: "1LT Chen",
-      description: "Completed Weekly SI Inventory IAW AR 710-2"
-    },
-    {
-      id: "BA-002",
-      timestamp: "24FEB2025 1645",
-      person: "CW2 Patel (BN PBO)",
-      description: "Approved lateral transfer of 4x M249 SAW"
-    },
-    {
-      id: "BA-003",
-      timestamp: "24FEB2025 1432",
-      person: "SSG Wilson",
-      description: "Submitted 5988-E for HMMWV #HQ-237"
-    },
-    {
-      id: "BA-004",
-      timestamp: "23FEB2025 0915",
-      person: "CPT Rodriguez",
-      description: "Signed monthly CSDP certification"
-    },
-    {
-      id: "BA-005",
-      timestamp: "22FEB2025 1100",
-      person: "SPC Diaz",
-      description: "Completed JLIST inventory (100% accountability)"
-    }
+    { id: 'BA-001', timestamp: '25FEB2025 0800', person: 'Battalion XO', description: 'Published updated Command Supply Guidance' },
+    { id: 'BA-002', timestamp: '24FEB2025 1400', person: 'S4', description: 'Announced Change of Command Inventory for Charlie Co' }
   ],
   commandSupplyActions: [
-    {
-      id: "CSA-001",
-      label: "Conduct SI Inventory",
-      icon: "inventory",
-      action: "/inventory/sensitive-items"
-    },
-    {
-      id: "CSA-002",
-      label: "Process 3161 Transfer",
-      icon: "swap_horiz",
-      action: "/transfers/new"
-    },
-    {
-      id: "CSA-003",
-      label: "Generate Sub-Hand Receipt",
-      icon: "description",
-      action: "/property/sub-hand-receipts/new"
-    },
-    {
-      id: "CSA-004",
-      label: "Initiate FLIPL",
-      icon: "report_problem",
-      action: "/property/flipl/new"
-    }
+    { id: 'CSA-001', label: 'Conduct Sensitive Item Inventory', icon: 'clipboard-check', action: 'sensitiveItemInventory' },
+    { id: 'CSA-002', label: 'Sign Pending Hand Receipts', icon: 'file-signature', action: 'signHandReceipts' }
   ],
   gcssStatus: {
     connected: true,
-    asOf: "25FEB2025 0842",
-    pbo: "CW2 Patel (S4 AOIC)",
-    helpDesk: "767-1401"
+    asOf: '25FEB2025 0842',
+    pbo: 'CPT FRANKLIN (555-123-4567)',
+    helpDesk: 'GCSS-ARMY HELP DESK: 1-866-547-1349'
   }
-}; 
+};
+
+// Additional component-specific mock data
+
+// AccountabilityStatusCard
+export const mockEquipmentCategories: EquipmentCategory[] = [
+  { name: "Weapons", count: "143/143", percentage: 100, lastVerified: "23FEB2025" },
+  { name: "Vehicles", count: "71/72", percentage: 98.6, lastVerified: "23FEB2025", note: "1 at Battalion Maintenance" },
+  { name: "Communications", count: "95/95", percentage: 100, lastVerified: "20FEB2025" },
+  { name: "Optics/NVGs", count: "63/63", percentage: 100, lastVerified: "23FEB2025" }
+];
+
+// CommandActionItemsCard
+export const mockCommandActions: CommandAction[] = [
+  { priority: "HIGH", item: "New JLTV Receipt", type: "Acquisition", deadline: "TODAY", action: "Verify & Sign" },
+  { priority: "HIGH", item: "SINCGARS (SN: RC-987-2441)", type: "Maintenance", deadline: "OVERDUE", action: "Initiate FLIPL" },
+  { priority: "MEDIUM", item: "3rd PLT Hand Receipt", type: "Transfer", deadline: "27FEB", action: "Review & Sign" }
+];
+
+// NTCRotationReadinessCard
+export const mockMilestones: Milestone[] = [
+  { name: "Equipment Identification", status: "Complete", date: "", daysRemaining: null },
+  { name: "Initial Sourcing Plan", status: "Pending", date: "01MAR", daysRemaining: 4 },
+  { name: "Maintenance Completion", status: "Pending", date: "15MAY", daysRemaining: null },
+  { name: "Load Plans Due", status: "Pending", date: "01JUN", daysRemaining: null }
+];
+
+// CriticalEquipmentStatusTable
+export const mockEquipmentItems: EquipmentItem[] = [
+  { equipment: "HMMWV", serialBumper: "HQ-237", status: "PMC", location: "Motor Pool", issue: "Brake system", actionRequired: "Maintenance Request", due: "28FEB" },
+  { equipment: "JLTV", serialBumper: "Pending", status: "In Process", location: "Brigade S4", issue: "New receipt", actionRequired: "Command Signature", due: "TODAY" },
+  { equipment: "SINCGARS", serialBumper: "RC-987-2441", status: "NMC", location: "Maintenance", issue: "Missing components", actionRequired: "FLIPL Initiation", due: "OVERDUE" },
+  { equipment: "M240B", serialBumper: "M2405689", status: "FMC", location: "Arms Room", issue: "None", actionRequired: "Weekly Verification", due: "28FEB" }
+];
+
+// UpcomingAccountabilityRequirements
+export const mockWeeklyRequirements: Requirement[] = [
+  { name: "Sensitive Items Inventory", due: "27FEB", daysRemaining: 2 },
+  { name: "Weapons Count Verification", due: "28FEB", daysRemaining: 3 },
+  { name: "CSDP Monthly Review", due: "01MAR", daysRemaining: 4 }
+];
+
+export const mockMonthlyRequirements: Requirement[] = [
+  { name: "10% Cyclic Inventory (Vehicles)", due: "28FEB", progress: 68 },
+  { name: "Monthly Supply Activity Report", due: "01MAR", progress: null },
+  { name: "Sub-Hand Receipt Review", due: "05MAR", progress: null }
+];
+
+export const mockQuarterlyRequirements: Requirement[] = [
+  { name: "CSDP Formal Review", due: "15APR", daysRemaining: 49 }
+];
+
+// RecentActivityFeed
+export const mockActivities: DashboardActivity[] = [
+  { date: "25FEB", time: "0730", activity: "Sensitive Item Inventory", personnel: "1LT Chen", details: "Completed daily verification", status: "Complete" },
+  { date: "24FEB", time: "1645", activity: "Equipment Transfer", personnel: "CW2 Patel", details: "Approved 4x M249 SAW to Range", status: "Temporary" },
+  { date: "24FEB", time: "1432", activity: "Maintenance Request", personnel: "SSG Wilson", details: "HMMWV #HQ-237 brake system", status: "In Progress" },
+  { date: "23FEB", time: "0915", activity: "CSDP Certification", personnel: "CPT Rodriguez", details: "Signed monthly certification", status: "Complete" }
+];
+
+// QuickActionPanel
+export const mockQuickActions: Action[] = [
+  { label: "Conduct Sensitive Item Inventory", icon: "clipboard-check", action: "sensitiveItemInventory" },
+  { label: "Sign Pending Hand Receipts", icon: "file-signature", action: "signHandReceipts" },
+  { label: "Review Transfer Requests", icon: "exchange-alt", action: "reviewTransfers" },
+  { label: "Generate Property Report", icon: "chart-bar", action: "generateReport" },
+  { label: "Initiate FLIPL", icon: "exclamation-triangle", action: "initiateFLIPL" },
+  { label: "Schedule Change of Command Inventory", icon: "calendar", action: "scheduleInventory" }
+]; 
