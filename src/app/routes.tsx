@@ -23,6 +23,7 @@ const Reports = React.lazy(() => import('../pages/Reports/index'));
 const UserManagement = React.lazy(() => import('../pages/UserManagement/index'));
 const Settings = React.lazy(() => import('../pages/Settings/index'));
 const SensitiveItems = React.lazy(() => import('../pages/SensitiveItems/index'));
+const Admin = React.lazy(() => import('../pages/Admin/index'));
 
 export const ROUTES = {
   // 1. Dashboard
@@ -255,7 +256,7 @@ const AppRoutes: React.FC = () => {
         <Route path={ROUTES.DOCUMENT_ARCHIVE} element={<Reports />} />
         
         {/* Admin routes */}
-        <Route path={ROUTES.ADMIN} element={<UserManagement />} />
+        <Route path={ROUTES.ADMIN} element={<Admin />} />
         <Route path={ROUTES.USER_MANAGEMENT} element={<UserManagement />} />
         <Route path={ROUTES.UNIT_CONFIGURATION} element={<Settings />} />
         <Route path={ROUTES.SYSTEM_INTEGRATION} element={<Settings />} />

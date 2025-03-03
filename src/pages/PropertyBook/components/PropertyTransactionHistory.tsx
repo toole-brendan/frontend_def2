@@ -14,6 +14,14 @@ import {
   Link,
   IconButton,
   Tooltip,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Tabs,
+  Tab,
+  Button,
+  styled,
 } from '@mui/material';
 import {
   SwapHoriz as TransferIcon,
@@ -25,7 +33,7 @@ import {
 
 type TransactionType = 'all' | 'transfers' | 'issues' | 'turn-ins' | 'maintenance';
 
-interface Transaction {
+export interface Transaction {
   date: string;
   type: TransactionType;
   documentNumber: string;
@@ -35,47 +43,22 @@ interface Transaction {
   status: 'complete' | 'pending' | 'in-progress' | 'temporary';
 }
 
-const transactions: Transaction[] = [
-  {
-    date: '24FEB2025',
-    type: 'transfers',
-    documentNumber: 'TRX-2025-087',
-    items: '4x M249 SAW',
-    from: 'Arms Room',
-    to: 'Range Control',
-    status: 'temporary',
-  },
-  {
-    date: '23FEB2025',
-    type: 'issues',
-    documentNumber: 'ISU-2025-065',
-    items: 'JLTV #204987JT',
-    from: 'BN Supply',
-    to: 'B Co Motor Pool',
-    status: 'complete',
-  },
-  {
-    date: '22FEB2025',
-    type: 'maintenance',
-    documentNumber: 'MNT-2025-034',
-    items: 'HMMWV #HQ-237',
-    from: '3rd PLT',
-    to: 'BN Maintenance',
-    status: 'in-progress',
-  },
-];
+interface PropertyTransactionHistoryProps {
+  recentTransactions: Transaction[];
+}
 
-const PropertyTransactionHistory: React.FC = () => {
-  const [filter, setFilter] = useState<TransactionType>('all');
+const TransactionList = styled(List)(({ theme }) => ({
+  width: '100%',
+  backgroundColor: theme.palette.background.paper,
+  '& .MuiListItem-root': {
+    padding: theme.spacing(1, 0),
+  },
+}));
 
-  const handleFilterChange = (
-    event: React.MouseEvent<HTMLElement>,
-    newFilter: TransactionType,
-  ) => {
-    if (newFilter !== null) {
-      setFilter(newFilter);
-    }
-  };
+const PropertyTransactionHistory: React.FC<PropertyTransactionHistoryProps> = ({
+  recentTransactions
+}) => {
+  const [selectedTab, setSelectedTab] = React.useState(0);
 
   const getStatusColor = (status: Transaction['status']) => {
     switch (status) {
@@ -92,7 +75,7 @@ const PropertyTransactionHistory: React.FC = () => {
     }
   };
 
-  const getTransactionIcon = (type: TransactionType) => {
+  const getTransactionIcon = (type: Transaction['type']) => {
     switch (type) {
       case 'transfers':
         return <TransferIcon />;
@@ -107,96 +90,53 @@ const PropertyTransactionHistory: React.FC = () => {
     }
   };
 
-  const filteredTransactions = transactions.filter(
-    (transaction) => filter === 'all' || transaction.type === filter
-  );
-
   return (
     <Paper elevation={2} sx={{ p: 2, borderRadius: 2 }}>
       <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography variant="h6" fontWeight="bold">
           Property Transaction History
         </Typography>
-        <ToggleButtonGroup
-          value={filter}
-          exclusive
-          onChange={handleFilterChange}
-          size="small"
+        <Tabs
+          value={selectedTab}
+          onChange={(_, newValue) => setSelectedTab(newValue)}
+          variant="fullWidth"
+          sx={{ mb: 2 }}
         >
-          <ToggleButton value="all">
-            All Types
-          </ToggleButton>
-          <ToggleButton value="transfers">
-            Transfers
-          </ToggleButton>
-          <ToggleButton value="issues">
-            Issues
-          </ToggleButton>
-          <ToggleButton value="turn-ins">
-            Turn-ins
-          </ToggleButton>
-          <ToggleButton value="maintenance">
-            Maintenance
-          </ToggleButton>
-        </ToggleButtonGroup>
+          <Tab label="All Types" />
+          <Tab label="Transfers" />
+          <Tab label="Issues" />
+        </Tabs>
       </Box>
 
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Transaction</TableCell>
-            <TableCell>Document #</TableCell>
-            <TableCell>Item(s)</TableCell>
-            <TableCell>From</TableCell>
-            <TableCell>To</TableCell>
-            <TableCell align="center">Status</TableCell>
-            <TableCell align="center">Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {filteredTransactions.map((transaction, index) => (
-            <TableRow key={index}>
-              <TableCell>{transaction.date}</TableCell>
-              <TableCell>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  {getTransactionIcon(transaction.type)}
-                  <Typography variant="body2">
-                    {transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}
-                  </Typography>
-                </Box>
-              </TableCell>
-              <TableCell>
-                <Link href="#" underline="hover">
-                  {transaction.documentNumber}
-                </Link>
-              </TableCell>
-              <TableCell>{transaction.items}</TableCell>
-              <TableCell>{transaction.from}</TableCell>
-              <TableCell>{transaction.to}</TableCell>
-              <TableCell align="center">
-                <Chip
-                  label={transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
-                  color={getStatusColor(transaction.status)}
-                  size="small"
-                />
-              </TableCell>
-              <TableCell align="center">
-                <Tooltip title="View Details">
-                  <IconButton size="small">
-                    <ViewIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <TransactionList>
+        {recentTransactions.map((transaction, index) => (
+          <ListItem key={index} alignItems="flex-start">
+            <ListItemIcon>
+              {getTransactionIcon(transaction.type)}
+            </ListItemIcon>
+            <ListItemText
+              primary={
+                <Typography variant="subtitle2" component="div" sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>{transaction.date}</span>
+                  <span style={{ color: 'primary.main' }}>{transaction.type}</span>
+                </Typography>
+              }
+              secondary={transaction.items}
+            />
+          </ListItem>
+        ))}
+      </TransactionList>
 
       <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
-        <Link href="#" underline="hover">
+        <Button
+          fullWidth
+          variant="text"
+          color="primary"
+          sx={{ mt: 2 }}
+          onClick={() => console.log('View all transactions')}
+        >
           View All Transactions
-        </Link>
+        </Button>
       </Box>
     </Paper>
   );

@@ -3,135 +3,250 @@ import {
   Box,
   Typography,
   Button,
-  Stack,
+  Tabs,
+  Tab,
+  styled,
   Paper,
-  Grid,
-  Divider,
   Chip,
-  ButtonGroup,
+  alpha
 } from '@mui/material';
-import {
-  Print as PrintIcon,
-  Assignment as AssignmentIcon,
-  VerifiedUser as VerifiedIcon,
-  Search as SearchIcon,
-} from '@mui/icons-material';
+import { ReceiptLong, Print, Security, Search } from '@mui/icons-material';
+
+const HeaderWrapper = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(3),
+  width: '100%',
+  backgroundColor: theme.palette.background.paper,
+  borderBottom: `1px solid ${theme.palette.divider}`,
+}));
+
+const TopSection = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'flex-start',
+  padding: theme.spacing(3, 4),
+}));
+
+const MetricsSection = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  gap: theme.spacing(6),
+  marginTop: theme.spacing(2),
+  padding: theme.spacing(2),
+  backgroundColor: alpha(theme.palette.primary.main, 0.04),
+  borderRadius: theme.shape.borderRadius,
+}));
+
+const Metric = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(0.5),
+}));
+
+const MetricLabel = styled(Typography)(({ theme }) => ({
+  color: theme.palette.text.secondary,
+  fontSize: '0.75rem',
+  fontWeight: 500,
+  textTransform: 'uppercase',
+  letterSpacing: '0.5px',
+}));
+
+const MetricValue = styled(Typography)(({ theme }) => ({
+  color: theme.palette.text.primary,
+  fontSize: '1.5rem',
+  fontWeight: 600,
+  letterSpacing: '-0.5px',
+}));
+
+const QuickActions = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(2),
+  minWidth: '320px',
+}));
+
+const ActionsPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(2.5),
+  backgroundColor: theme.palette.background.default,
+  border: `1px solid ${theme.palette.divider}`,
+  borderRadius: theme.shape.borderRadius * 2,
+}));
 
 interface PropertyBookHeaderProps {
   unit: string;
-  primaryHolder: {
-    name: string;
-    rank: string;
-  };
-  stats: {
-    totalLineItems: number;
-    totalValue: string;
-    lastReconciliation: string;
-  };
-  onAction: (action: 'generate' | 'print' | 'certify' | 'search') => void;
+  primaryHolder: string;
+  totalItems: number;
+  totalValue: number;
+  lastReconciliation: string;
+  onTabChange: (event: React.SyntheticEvent, newValue: number) => void;
+  currentTab: number;
+  onAction: (action: string) => void;
 }
 
-const PropertyBookHeader: React.FC<PropertyBookHeaderProps> = ({
+export const PropertyBookHeader: React.FC<PropertyBookHeaderProps> = ({
   unit,
   primaryHolder,
-  stats,
+  totalItems,
+  totalValue,
+  lastReconciliation,
+  onTabChange,
+  currentTab,
   onAction,
 }) => {
   return (
-    <Box sx={{ mb: 3 }}>
-      {/* Title and Unit */}
-      <Box sx={{ mb: 2 }}>
-        <Typography variant="h4" fontWeight="bold">
-          Property Book - {unit}
-        </Typography>
-      </Box>
-
-      <Grid container spacing={3}>
-        {/* Authorization Stats */}
-        <Grid item xs={12} md={8}>
-          <Paper elevation={2} sx={{ p: 3, borderRadius: 2 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <Typography variant="subtitle1" color="text.secondary">
-                  Primary Hand Receipt Holder
-                </Typography>
-                <Typography variant="h6" fontWeight="bold">
-                  {primaryHolder.rank} {primaryHolder.name}
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Divider sx={{ my: 1 }} />
-              </Grid>
-              <Grid item xs={4}>
-                <Typography variant="subtitle2" color="text.secondary">
-                  Total Line Items
-                </Typography>
-                <Typography variant="h6" fontWeight="bold">
-                  {stats.totalLineItems}
-                </Typography>
-              </Grid>
-              <Grid item xs={4}>
-                <Typography variant="subtitle2" color="text.secondary">
-                  Total Equipment Value
-                </Typography>
-                <Typography variant="h6" fontWeight="bold">
-                  {stats.totalValue}
-                </Typography>
-              </Grid>
-              <Grid item xs={4}>
-                <Typography variant="subtitle2" color="text.secondary">
-                  Last Reconciliation
-                </Typography>
-                <Typography variant="h6" fontWeight="bold">
-                  {stats.lastReconciliation}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Grid>
-
-        {/* Action Buttons */}
-        <Grid item xs={12} md={4}>
-          <Paper elevation={2} sx={{ p: 3, borderRadius: 2, height: '100%' }}>
-            <Stack spacing={2}>
-              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                Quick Actions
-              </Typography>
-              <ButtonGroup orientation="vertical" fullWidth>
-                <Button
-                  variant="contained"
-                  startIcon={<AssignmentIcon />}
-                  onClick={() => onAction('generate')}
-                >
-                  Generate Hand Receipt
-                </Button>
-                <Button
-                  variant="contained"
-                  startIcon={<PrintIcon />}
-                  onClick={() => onAction('print')}
-                >
-                  Print Property Book
-                </Button>
-                <Button
-                  variant="contained"
-                  startIcon={<VerifiedIcon />}
-                  onClick={() => onAction('certify')}
-                >
-                  Certify
-                </Button>
-                <Button
-                  variant="contained"
-                  startIcon={<SearchIcon />}
-                  onClick={() => onAction('search')}
-                >
-                  Search
-                </Button>
-              </ButtonGroup>
-            </Stack>
-          </Paper>
-        </Grid>
-      </Grid>
-    </Box>
+    <HeaderWrapper>
+      <TopSection>
+        <Box>
+          <Typography 
+            variant="h4" 
+            component="h1" 
+            gutterBottom
+            sx={{ 
+              fontWeight: 600,
+              letterSpacing: '-0.5px',
+              color: 'text.primary',
+              mb: 0.5
+            }}
+          >
+            {unit}
+          </Typography>
+          <Typography 
+            variant="subtitle1" 
+            sx={{ 
+              color: 'text.secondary',
+              fontWeight: 500,
+              mb: 1
+            }}
+          >
+            Primary Hand Receipt Holder
+          </Typography>
+          <Typography 
+            variant="h6"
+            sx={{
+              fontWeight: 600,
+              color: 'primary.main',
+              mb: 3
+            }}
+          >
+            {primaryHolder}
+          </Typography>
+          <MetricsSection>
+            <Metric>
+              <MetricLabel>Total Line Items</MetricLabel>
+              <MetricValue>{totalItems}</MetricValue>
+            </Metric>
+            <Metric>
+              <MetricLabel>Equipment Value</MetricLabel>
+              <MetricValue>${totalValue.toLocaleString()}</MetricValue>
+            </Metric>
+            <Metric>
+              <MetricLabel>Last Reconciliation</MetricLabel>
+              <MetricValue>{lastReconciliation}</MetricValue>
+            </Metric>
+          </MetricsSection>
+        </Box>
+        <QuickActions>
+          <ActionsPaper elevation={0}>
+            <Typography 
+              variant="subtitle2" 
+              gutterBottom
+              sx={{ 
+                fontWeight: 600,
+                color: 'text.primary',
+                mb: 2,
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}
+            >
+              Quick Actions
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+              <Button
+                fullWidth
+                variant="contained"
+                size="large"
+                startIcon={<ReceiptLong />}
+                onClick={() => onAction('generate')}
+                sx={{ 
+                  py: 1.5,
+                  textTransform: 'none',
+                  fontWeight: 600
+                }}
+              >
+                Generate Hand Receipt
+              </Button>
+              <Button
+                fullWidth
+                variant="outlined"
+                size="large"
+                startIcon={<Print />}
+                onClick={() => onAction('print')}
+                sx={{ 
+                  py: 1.5,
+                  textTransform: 'none',
+                  fontWeight: 500,
+                  backgroundColor: 'background.paper'
+                }}
+              >
+                Print Property Book
+              </Button>
+              <Button
+                fullWidth
+                variant="outlined"
+                size="large"
+                startIcon={<Security />}
+                onClick={() => onAction('certify')}
+                sx={{ 
+                  py: 1.5,
+                  textTransform: 'none',
+                  fontWeight: 500,
+                  backgroundColor: 'background.paper'
+                }}
+              >
+                Certify Inventory
+              </Button>
+              <Button
+                fullWidth
+                variant="outlined"
+                size="large"
+                startIcon={<Search />}
+                onClick={() => onAction('search')}
+                sx={{ 
+                  py: 1.5,
+                  textTransform: 'none',
+                  fontWeight: 500,
+                  backgroundColor: 'background.paper'
+                }}
+              >
+                Advanced Search
+              </Button>
+            </Box>
+          </ActionsPaper>
+        </QuickActions>
+      </TopSection>
+      <Tabs
+        value={currentTab}
+        onChange={onTabChange}
+        sx={{ 
+          px: 4,
+          '& .MuiTab-root': {
+            textTransform: 'none',
+            fontWeight: 500,
+            fontSize: '0.95rem',
+            minHeight: 48,
+            color: 'text.secondary',
+            '&.Mui-selected': {
+              color: 'primary.main',
+              fontWeight: 600
+            }
+          }
+        }}
+      >
+        <Tab label="Primary Hand Receipt" />
+        <Tab label="Sub-Hand Receipts" />
+        <Tab label="Shortage Annexes" />
+      </Tabs>
+    </HeaderWrapper>
   );
 };
 

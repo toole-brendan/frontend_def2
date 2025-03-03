@@ -19,7 +19,20 @@ import {
   Card,
   CardContent,
   CardActions,
+  Tabs,
+  Tab,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Checkbox,
+  Toolbar,
+  Theme,
 } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import {
   DataGrid,
   GridColDef,
@@ -54,10 +67,75 @@ import {
   KeyboardArrowUp as KeyboardArrowUpIcon,
   Fullscreen as FullscreenIcon,
   FullscreenExit as FullscreenExitIcon,
+  ViewColumn,
+  FilterList,
+  GridView,
+  History as HistoryIcon,
+  QrCode as QrCodeIcon,
+  Print as PrintIcon,
 } from '@mui/icons-material';
 import { PropertyFilters } from './FilterPanel';
 import EquipmentDetailPanel from './EquipmentDetailPanel';
 import BulkActionToolbar from './BulkActionToolbar';
+import { alpha } from '@mui/material/styles';
+import SecurityIcon from '@mui/icons-material/Security';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+
+const StyledTableCell = styled(TableCell)(({ theme }: { theme: Theme }) => ({
+  borderBottom: `1px solid ${theme.palette.divider}`,
+  padding: theme.spacing(1.5),
+}));
+
+const StatusChip = styled(Chip)<{ status: string }>(({ theme, status }) => ({
+  borderRadius: '4px',
+  height: '24px',
+  backgroundColor: status === 'Serviceable' 
+    ? theme.palette.success.dark
+    : status === 'Maintenance'
+    ? theme.palette.warning.dark
+    : theme.palette.error.dark,
+  color: theme.palette.common.white,
+}));
+
+const SensitiveItemIcon = styled(SecurityIcon)(({ theme }: { theme: Theme }) => ({
+  color: theme.palette.error.main,
+  fontSize: '1rem',
+  marginRight: theme.spacing(0.5),
+}));
+
+const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
+  border: 'none',
+  '& .MuiDataGrid-main': {
+    backgroundColor: theme.palette.background.paper,
+  },
+  '& .MuiDataGrid-columnHeaders': {
+    backgroundColor: theme.palette.background.default,
+    borderBottom: `1px solid ${theme.palette.divider}`,
+  },
+  '& .MuiDataGrid-columnHeaderTitle': {
+    fontWeight: 600,
+    color: theme.palette.text.primary,
+  },
+  '& .MuiDataGrid-cell': {
+    borderBottom: `1px solid ${theme.palette.divider}`,
+  },
+  '& .MuiDataGrid-row': {
+    '&:hover': {
+      backgroundColor: alpha(theme.palette.primary.main, 0.04),
+    },
+  },
+  '& .MuiDataGrid-footerContainer': {
+    borderTop: `1px solid ${theme.palette.divider}`,
+    backgroundColor: theme.palette.background.default,
+  },
+}));
+
+const ActionButton = styled(IconButton)(({ theme }) => ({
+  padding: theme.spacing(0.5),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.primary.main, 0.08),
+  },
+}));
 
 export interface PropertyItem {
   id: string;
@@ -85,8 +163,160 @@ interface PropertyBookTableProps {
   viewMode: 'list' | 'grid';
   onSelectionChange?: (selectedIds: string[]) => void;
   onRowAction?: (action: string, item: PropertyItem) => void;
-  onBulkAction?: (action: string, items: PropertyItem[], additionalData?: any) => void;
+  onBulkAction?: (action: string, items: PropertyItem[]) => void;
 }
+
+interface DetailPanelProps {
+  row: PropertyItem;
+}
+
+const DetailPanel: React.FC<DetailPanelProps> = ({ row }) => {
+  const [activeTab, setActiveTab] = useState(0);
+
+  return (
+    <Box sx={{ p: 2 }}>
+      <Tabs value={activeTab} onChange={(e, v) => setActiveTab(v)}>
+        <Tab label="General Info" />
+        <Tab label="Components" />
+        <Tab label="History" />
+        <Tab label="Documentation" />
+      </Tabs>
+      <Box sx={{ mt: 2 }}>
+        {activeTab === 0 && (
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <Typography variant="subtitle2" color="textSecondary" component="div">
+                Serial Number:
+              </Typography>
+              <Typography component="div">{row.serialNumber || 'N/A'}</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant="subtitle2" color="textSecondary" component="div">
+                Location:
+              </Typography>
+              <Typography component="div">{row.location}</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant="subtitle2" color="textSecondary" component="div">
+                Status:
+              </Typography>
+              <Typography component="div">{row.status}</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant="subtitle2" color="textSecondary" component="div">
+                Hand Receipt:
+              </Typography>
+              <Typography component="div">{row.handReceiptHolder}</Typography>
+            </Grid>
+          </Grid>
+        )}
+      </Box>
+    </Box>
+  );
+};
+
+interface RowProps {
+  item: PropertyItem;
+  isSelected: boolean;
+  onSelect: (id: string) => void;
+  onExpand: (id: string) => void;
+  isExpanded: boolean;
+}
+
+const Row: React.FC<RowProps> = ({ item, isSelected, onSelect, onExpand, isExpanded }) => {
+  return (
+    <>
+      <TableRow
+        hover
+        selected={isSelected}
+        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+      >
+        <StyledTableCell padding="checkbox">
+          <Checkbox
+            checked={isSelected}
+            onChange={() => onSelect(item.id)}
+            color="primary"
+          />
+        </StyledTableCell>
+        <StyledTableCell>
+          <IconButton size="small" onClick={() => onExpand(item.id)}>
+            {isExpanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          </IconButton>
+        </StyledTableCell>
+        <StyledTableCell>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {item.isSensitive && <SensitiveItemIcon />}
+            {item.lin}
+            <Typography variant="caption" color="textSecondary" sx={{ ml: 1 }}>
+              {item.nsn}
+            </Typography>
+          </Box>
+        </StyledTableCell>
+        <StyledTableCell>{item.nomenclature}</StyledTableCell>
+        <StyledTableCell>{item.category}</StyledTableCell>
+        <StyledTableCell align="center">{item.qtyAuth}</StyledTableCell>
+        <StyledTableCell align="center">{item.qtyOnHand}</StyledTableCell>
+        <StyledTableCell>
+          <StatusChip
+            label={item.status}
+            status={item.status}
+            size="small"
+          />
+        </StyledTableCell>
+      </TableRow>
+      <TableRow>
+        <StyledTableCell colSpan={8} sx={{ py: 0 }}>
+          <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+            <Box sx={{ p: 2 }}>
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="h6" gutterBottom>
+                  General Info
+                </Typography>
+                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2 }}>
+                  <Box>
+                    <Typography variant="subtitle2" color="textSecondary">
+                      Serial Number:
+                    </Typography>
+                    <Typography>{item.serialNumber}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="subtitle2" color="textSecondary">
+                      Location:
+                    </Typography>
+                    <Typography>{item.location}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="subtitle2" color="textSecondary">
+                      Status:
+                    </Typography>
+                    <StatusChip label={item.status} status={item.status} size="small" />
+                  </Box>
+                  <Box>
+                    <Typography variant="subtitle2" color="textSecondary">
+                      Hand Receipt:
+                    </Typography>
+                    <Typography>{item.handReceiptHolder}</Typography>
+                  </Box>
+                </Box>
+              </Box>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Button variant="outlined" size="small">
+                  Print Receipt
+                </Button>
+                <Button variant="outlined" size="small">
+                  Transfer
+                </Button>
+                <Button variant="outlined" size="small">
+                  Update Status
+                </Button>
+              </Box>
+            </Box>
+          </Collapse>
+        </StyledTableCell>
+      </TableRow>
+    </>
+  );
+};
 
 const PropertyBookTable: React.FC<PropertyBookTableProps> = ({
   items,
@@ -100,16 +330,16 @@ const PropertyBookTable: React.FC<PropertyBookTableProps> = ({
   const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>([]);
   const [actionMenuAnchor, setActionMenuAnchor] = useState<null | HTMLElement>(null);
   const [selectedItem, setSelectedItem] = useState<PropertyItem | null>(null);
-  const [expandedRow, setExpandedRow] = useState<string | null>(null);
+  const [detailTab, setDetailTab] = useState(0);
   const [sortModel, setSortModel] = useState<GridSortModel>([
     {
       field: 'category',
       sort: 'asc',
     }
   ]);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [activeTab, setActiveTab] = useState(0);
 
-  // Handle selection changes
   const handleSelectionChange = (newSelectionModel: GridRowSelectionModel) => {
     setSelectionModel(newSelectionModel);
     if (onSelectionChange) {
@@ -117,19 +347,29 @@ const PropertyBookTable: React.FC<PropertyBookTableProps> = ({
     }
   };
 
-  // Handle sort model changes
   const handleSortModelChange = (newSortModel: GridSortModel) => {
     setSortModel(newSortModel);
   };
 
-  // Handle row action menu
+  const handleRowClick = (params: GridRowParams) => {
+    const newExpandedRows = new Set(expandedRows);
+    if (newExpandedRows.has(params.id as string)) {
+      newExpandedRows.delete(params.id as string);
+    } else {
+      newExpandedRows.add(params.id as string);
+    }
+    setExpandedRows(newExpandedRows);
+  };
+
   const handleActionClick = (event: React.MouseEvent<HTMLElement>, item: PropertyItem) => {
+    event.stopPropagation();
     setActionMenuAnchor(event.currentTarget);
     setSelectedItem(item);
   };
 
   const handleActionClose = () => {
     setActionMenuAnchor(null);
+    setSelectedItem(null);
   };
 
   const handleActionSelect = (action: string) => {
@@ -139,36 +379,12 @@ const PropertyBookTable: React.FC<PropertyBookTableProps> = ({
     handleActionClose();
   };
 
-  // Handle row click for expansion
-  const handleRowClick: GridEventListener<'rowClick'> = (params, event) => {
-    // Prevent expansion when clicking on actions or checkboxes
-    const target = event.target as HTMLElement;
-    if (target && (
-      target.closest('.MuiCheckbox-root') || 
-      target.closest('.actions-cell') ||
-      // Prevent expansion when clicking on clickable elements
-      target.closest('button') || 
-      target.closest('a')
-    )) {
-      return;
-    }
-    
-    // Toggle expansion
-    if (expandedRow === params.row.id) {
-      setExpandedRow(null);
-    } else {
-      setExpandedRow(params.row.id);
-    }
-  };
-
-  // Handle bulk actions
-  const handleBulkAction = (action: string, items: PropertyItem[], additionalData?: any) => {
+  const handleBulkAction = (action: string, items: PropertyItem[]) => {
     if (onBulkAction) {
-      onBulkAction(action, items, additionalData);
+      onBulkAction(action, items);
     }
   };
 
-  // Clear selection
   const handleClearSelection = () => {
     setSelectionModel([]);
     if (onSelectionChange) {
@@ -176,7 +392,6 @@ const PropertyBookTable: React.FC<PropertyBookTableProps> = ({
     }
   };
 
-  // Get location icon based on location string
   const getLocationIcon = (location: string) => {
     switch (location) {
       case 'Arms Room':
@@ -192,7 +407,6 @@ const PropertyBookTable: React.FC<PropertyBookTableProps> = ({
     }
   };
 
-  // Get status chip color
   const getStatusColor = (status: string): 'success' | 'warning' | 'error' | 'default' => {
     switch (status) {
       case 'Serviceable':
@@ -209,284 +423,143 @@ const PropertyBookTable: React.FC<PropertyBookTableProps> = ({
     }
   };
 
-  // Format serial number according to Army standards
   const formatSerialNumber = (serialNumber: string): string => {
-    // Implementation of Army serial number formatting
-    // This is a simplified version - actual implementation would depend on exact Army standards
-    
-    // Remove any spaces or special characters
     let formatted = serialNumber.replace(/[^a-zA-Z0-9]/g, '');
     
-    // If it's a weapon serial number (usually starting with specific prefixes)
     if (/^(M4|M16|M240|M249|M2)/i.test(formatted)) {
-      // Format as XXXXXX-XX (first 6 chars, dash, last 2)
       if (formatted.length > 8) {
         return `${formatted.substring(0, 6)}-${formatted.substring(6, 8)}`;
       }
     }
     
-    // Vehicle or equipment format (often has model-serial structure)
     if (formatted.length > 5 && /^[A-Z]/i.test(formatted)) {
-      // Split model prefix from numbers
       const match = formatted.match(/^([A-Z]+)(\d+)/i);
       if (match && match.length === 3) {
         return `${match[1]}-${match[2]}`;
       }
     }
     
-    // If no specific format applies, return as is
     return serialNumber;
   };
 
-  // Column definitions
   const columns: GridColDef[] = [
     {
-      field: 'expand',
-      headerName: '',
+      field: 'select',
+      type: 'actions',
       width: 50,
-      sortable: false,
-      filterable: false,
-      renderCell: (params: GridRenderCellParams<PropertyItem>) => (
-        <IconButton
-          size="small"
-          onClick={(e) => {
-            e.stopPropagation();
-            setExpandedRow(expandedRow === params.row.id ? null : params.row.id);
-          }}
-        >
-          {expandedRow === params.row.id ? (
-            <KeyboardArrowUpIcon fontSize="small" />
-          ) : (
-            <KeyboardArrowDownIcon fontSize="small" />
-          )}
-        </IconButton>
-      ),
+      getActions: () => [],
     },
     {
-      field: 'lin',
+      field: 'lin_nsn',
       headerName: 'LIN/NSN',
-      width: 180,
-      filterable: true,
-      renderCell: (params: GridRenderCellParams<PropertyItem>) => {
-        const isSensitive = params.row.isSensitive;
-        return (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            {isSensitive && (
-              <Tooltip title="Sensitive Item">
-                <SensitiveIcon
-                  fontSize="small"
-                  color="error"
-                  sx={{ mr: 1 }}
-                />
-              </Tooltip>
-            )}
-            <Box>
-              <Typography variant="body2" fontWeight="medium">
-                {params.row.lin}
-              </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ fontFamily: 'monospace' }}>
-                {params.row.nsn}
-              </Typography>
-            </Box>
-          </Box>
-        );
-      },
+      width: 150,
+      renderCell: (params: GridRenderCellParams<PropertyItem>) => (
+        <Box>
+          <Typography variant="body2" fontWeight="medium">
+            {params.row.lin}
+          </Typography>
+          <Typography variant="caption" color="textSecondary">
+            {params.row.nsn}
+          </Typography>
+        </Box>
+      ),
     },
     {
       field: 'nomenclature',
       headerName: 'Nomenclature',
-      width: 250,
-      filterable: true,
+      width: 200,
       renderCell: (params: GridRenderCellParams<PropertyItem>) => (
-        <Tooltip title={params.value as string}>
-          <Typography variant="body2" noWrap>
-            {params.value}
-          </Typography>
-        </Tooltip>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {params.row.isSensitive && (
+            <Tooltip title="Sensitive Item">
+              <SecurityIcon color="error" fontSize="small" />
+            </Tooltip>
+          )}
+          <Typography variant="body2">{params.value}</Typography>
+        </Box>
       ),
     },
     {
       field: 'category',
       headerName: 'Category',
-      width: 150,
-      filterable: true,
-      valueGetter: (params: { row: PropertyItem }) => {
-        if (!params || !params.row) return '';
-        return `${params.row.category || ''}${params.row.subCategory ? ` / ${params.row.subCategory}` : ''}`;
-      },
+      width: 200,
+      renderCell: (params: GridRenderCellParams<PropertyItem>) => (
+        <Typography variant="body2">
+          {params.row.category} / {params.row.subCategory}
+        </Typography>
+      ),
     },
     {
-      field: 'qtyAuth',
+      field: 'qty_auth',
       headerName: 'QTY Auth',
+      width: 100,
       type: 'number',
-      width: 90,
       align: 'center',
       headerAlign: 'center',
     },
     {
-      field: 'qtyOnHand',
+      field: 'qty_oh',
       headerName: 'QTY OH',
+      width: 100,
       type: 'number',
-      width: 90,
       align: 'center',
       headerAlign: 'center',
-      renderCell: (params: GridRenderCellParams<PropertyItem>) => {
-        const qtyAuth = params.row.qtyAuth;
-        const qtyOH = params.row.qtyOnHand;
-        const color = qtyOH < qtyAuth ? 'error.main' : qtyOH > qtyAuth ? 'warning.main' : 'success.main';
-        
-        return (
-          <Typography variant="body2" fontWeight="medium" color={color}>
-            {qtyOH}
-          </Typography>
-        );
-      },
-    },
-    {
-      field: 'serialNumber',
-      headerName: 'Serial Number',
-      width: 150,
-      filterable: true,
-      renderCell: (params: GridRenderCellParams<PropertyItem>) => {
-        const formattedSerial = formatSerialNumber(params.value as string);
-        const isSensitive = params.row.isSensitive;
-        
-        return (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                fontFamily: 'monospace',
-                fontWeight: isSensitive ? 'bold' : 'normal',
-                color: isSensitive ? 'error.main' : 'text.primary',
-                bgcolor: isSensitive ? 'error.lighter' : 'transparent',
-                px: isSensitive ? 1 : 0,
-                borderRadius: 1,
-              }}
-            >
-              {formattedSerial}
-            </Typography>
-          </Box>
-        );
-      },
-    },
-    {
-      field: 'location',
-      headerName: 'Location',
-      width: 150,
-      filterable: true,
-      renderCell: (params: GridRenderCellParams<PropertyItem>) => (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Tooltip title={params.value as string}>
-            {getLocationIcon(params.value as string)}
-          </Tooltip>
-          <Typography variant="body2">{params.value}</Typography>
-        </Box>
-      ),
-    },
-    {
-      field: 'handReceiptHolder',
-      headerName: 'Hand Receipt',
-      width: 150,
-      filterable: true,
-      renderCell: (params: GridRenderCellParams<PropertyItem>) => (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <PersonIcon fontSize="small" color="action" />
-          <Typography variant="body2">{params.value}</Typography>
-        </Box>
-      ),
     },
     {
       field: 'status',
       headerName: 'Status',
-      width: 150,
-      filterable: true,
+      width: 130,
       renderCell: (params: GridRenderCellParams<PropertyItem>) => {
         const status = params.value as string;
-        const color = getStatusColor(status);
-        
-        // Enhanced status indicator with icon and color coding
-        return (
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 1,
-            bgcolor: `${color}.lighter`,
-            py: 0.5,
-            px: 1,
-            borderRadius: 2,
-          }}>
-            {status === 'Serviceable' && <SensitiveIcon fontSize="small" color="success" />}
-            {status === 'Maintenance' && <MaintenanceIcon fontSize="small" color="warning" />}
-            {status === 'Unserviceable' && <UnsecuredIcon fontSize="small" color="error" />}
-            {status === 'Shortage' && <ArrowDownwardIcon fontSize="small" color="error" />}
-            {status === 'Missing' && <HelpOutlineIcon fontSize="small" color="error" />}
-            <Typography 
-              variant="body2" 
-              fontWeight="medium"
-              color={`${color}.main`}
-            >
-              {status}
-            </Typography>
-          </Box>
-        );
-      },
-    },
-    {
-      field: 'lastVerified',
-      headerName: 'Last Verified',
-      width: 130,
-      type: 'date',
-      filterable: true,
-      valueGetter: (params: { row: PropertyItem }) => {
-        if (!params || !params.row || !params.row.lastVerified) return null;
-        return new Date(params.row.lastVerified);
-      },
-      renderCell: (params: GridRenderCellParams<PropertyItem>) => {
-        if (!params.row || !params.row.lastVerified) {
-          return <Typography variant="body2">Not verified</Typography>;
-        }
-        
-        const date = new Date(params.row.lastVerified);
-        const now = new Date();
-        const daysDiff = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
-        
-        let color = 'text.primary';
-        if (daysDiff > 180) color = 'error.main';
-        else if (daysDiff > 90) color = 'warning.main';
         
         return (
-          <Typography variant="body2" color={color}>
-            {date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-          </Typography>
+          <Chip
+            label={status}
+            size="small"
+            sx={(theme) => {
+              let backgroundColor;
+              let textColor;
+              
+              switch (status.toLowerCase()) {
+                case 'serviceable':
+                  backgroundColor = alpha(theme.palette.success.main, 0.1);
+                  textColor = theme.palette.success.main;
+                  break;
+                case 'maintenance':
+                  backgroundColor = alpha(theme.palette.warning.main, 0.1);
+                  textColor = theme.palette.warning.main;
+                  break;
+                case 'unserviceable':
+                  backgroundColor = alpha(theme.palette.error.main, 0.1);
+                  textColor = theme.palette.error.main;
+                  break;
+                default:
+                  backgroundColor = alpha(theme.palette.text.secondary, 0.1);
+                  textColor = theme.palette.text.secondary;
+              }
+              
+              return {
+                backgroundColor,
+                color: textColor,
+                fontWeight: 'medium',
+              };
+            }}
+          />
         );
       },
-    },
-    {
-      field: 'value',
-      headerName: 'Value',
-      width: 110,
-      type: 'number',
-      filterable: true,
-      valueFormatter: (params: { value: number }) => {
-        if (params.value === undefined || params.value === null) return '$0';
-        return `$${params.value.toLocaleString()}`;
-      },
-      align: 'right',
-      headerAlign: 'right',
     },
     {
       field: 'actions',
-      headerName: 'Actions',
-      width: 100,
+      headerName: '',
+      width: 50,
       sortable: false,
-      filterable: false,
       renderCell: (params: GridRenderCellParams<PropertyItem>) => (
-        <Box className="actions-cell">
-          <IconButton size="small" onClick={(e) => handleActionClick(e, params.row)}>
-            <MoreVertIcon fontSize="small" />
-          </IconButton>
-        </Box>
+        <IconButton
+          size="small"
+          onClick={(e) => handleActionClick(e, params.row)}
+        >
+          <MoreVertIcon fontSize="small" />
+        </IconButton>
       ),
     },
   ];
@@ -499,68 +572,13 @@ const PropertyBookTable: React.FC<PropertyBookTableProps> = ({
     return '';
   };
 
-  // Get selected items from selection model
   const getSelectedItems = (): PropertyItem[] => {
     return items.filter((item) => selectionModel.includes(item.id));
   };
 
-  // Handle fullscreen toggle
-  const handleFullscreenToggle = () => {
-    setIsFullscreen(!isFullscreen);
-  };
-
-  const renderGridView = () => (
-    <Grid container spacing={2}>
-      {items.map((item) => (
-        <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" noWrap>
-                {item.nomenclature}
-              </Typography>
-              <Typography color="textSecondary" gutterBottom>
-                NSN: {item.nsn}
-              </Typography>
-              <Box sx={{ mt: 1 }}>
-                <Chip
-                  label={item.status}
-                  size="small"
-                  color={getStatusColor(item.status)}
-                  sx={{ mr: 1 }}
-                />
-                {item.isSensitive && (
-                  <Chip
-                    icon={<SensitiveIcon />}
-                    label="Sensitive"
-                    size="small"
-                    color="warning"
-                  />
-                )}
-              </Box>
-              <Typography variant="body2" sx={{ mt: 1 }}>
-                Location: {item.location}
-              </Typography>
-              <Typography variant="body2">
-                Qty: {item.qtyOnHand}/{item.qtyAuth}
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <IconButton
-                size="small"
-                onClick={(e) => handleActionClick(e, item)}
-              >
-                <MoreVertIcon />
-              </IconButton>
-            </CardActions>
-          </Card>
-        </Grid>
-      ))}
-    </Grid>
-  );
-
   const renderListView = () => (
-    <Box sx={{ height: '600px', width: '100%' }}>
-      <DataGrid
+    <Box sx={{ height: 600, width: '100%' }}>
+      <StyledDataGrid
         rows={items}
         columns={columns}
         loading={loading}
@@ -570,31 +588,18 @@ const PropertyBookTable: React.FC<PropertyBookTableProps> = ({
         onRowSelectionModelChange={handleSelectionChange}
         sortModel={sortModel}
         onSortModelChange={handleSortModelChange}
-        onRowClick={handleRowClick}
-        getRowClassName={getRowClassName}
-        slots={{
-          toolbar: GridToolbar,
-        }}
-        initialState={{
-          pagination: {
-            paginationModel: { pageSize: 25 },
-          },
-        }}
-        pageSizeOptions={[25, 50, 100]}
+        getRowHeight={() => 'auto'}
         sx={{
           '& .MuiDataGrid-row': {
             cursor: 'pointer',
+            minHeight: '48px',
+          },
+          '& .MuiDataGrid-cell': {
+            padding: '12px',
           },
         }}
       />
-    </Box>
-  );
-
-  return (
-    <Box sx={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column' }}>
-      {viewMode === 'grid' ? renderGridView() : renderListView()}
       
-      {/* Action Menu */}
       <Menu
         anchorEl={actionMenuAnchor}
         open={Boolean(actionMenuAnchor)}
@@ -604,33 +609,39 @@ const PropertyBookTable: React.FC<PropertyBookTableProps> = ({
           <ListItemIcon>
             <EditIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Edit</ListItemText>
+          <ListItemText primary="Edit" />
         </MenuItem>
         <MenuItem onClick={() => handleActionSelect('transfer')}>
           <ListItemIcon>
-            <TransferIcon fontSize="small" />
+            <SwapHorizIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Transfer</ListItemText>
+          <ListItemText primary="Transfer" />
         </MenuItem>
         <MenuItem onClick={() => handleActionSelect('inventory')}>
           <ListItemIcon>
             <AssignmentIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Inventory</ListItemText>
+          <ListItemText primary="Inventory" />
         </MenuItem>
         <MenuItem onClick={() => handleActionSelect('maintenance')}>
           <ListItemIcon>
             <MaintenanceIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Maintenance</ListItemText>
+          <ListItemText primary="Maintenance" />
         </MenuItem>
         <MenuItem onClick={() => handleActionSelect('delete')}>
           <ListItemIcon>
             <DeleteIcon fontSize="small" color="error" />
           </ListItemIcon>
-          <ListItemText sx={{ color: 'error.main' }}>Delete</ListItemText>
+          <ListItemText primary="Delete" sx={{ color: 'error.main' }} />
         </MenuItem>
       </Menu>
+    </Box>
+  );
+
+  return (
+    <Box sx={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column' }}>
+      {renderListView()}
     </Box>
   );
 };

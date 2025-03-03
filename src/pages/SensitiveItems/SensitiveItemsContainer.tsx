@@ -91,6 +91,59 @@ export type {
   InventoryRequirement
 };
 
+// Mock data for Arms Room Status
+const mockArmsRoomData = {
+  location: "Alpha Company Arms Room",
+  securityStatus: "SECURE" as const,
+  lastAccess: "25FEB2025 0730",
+  lastAccessPerson: "1LT Chen",
+  lastAccessRole: "Arms Room Officer",
+  currentCustodian: "SFC Martinez",
+  custodianAppointedDate: "01JAN2025",
+  sopStatus: "Current and Verified",
+  sopRevisionDate: "10JAN2025",
+  weaponsStored: 143,
+  weaponsTotal: 150,
+  weaponsSignedOut: 7,
+  tempHandReceipts: 3,
+  maintenanceItems: 2
+};
+
+// Mock data for verification stats
+const mockVerificationStats = {
+  dailyCheckTotal: 210,
+  dailyCheckComplete: 210,
+  weeklyVerificationTotal: 210,
+  weeklyVerificationComplete: 195,
+  monthlyInventoryCompliance: 100,
+  regulationCompliance: 'FULLY COMPLIANT' as const,
+  averageInventoryTime: '1 hour 23 minutes',
+  verificationAccuracy: 99.8,
+  discrepanciesLast90Days: 2,
+  blockchainVerified: 210,
+  blockchainTotal: 210
+};
+
+// Mock data for emergency contacts
+const mockEmergencyContacts = [
+  { title: 'Company Commander', name: 'CPT Smith', phone: '555-0101' },
+  { title: 'First Sergeant', name: '1SG Johnson', phone: '555-0102' },
+  { title: 'Battalion S4', name: 'CW3 Brown', phone: '555-0103' }
+];
+
+// Mock data for hand receipts
+const mockHandReceipts = [
+  { platoon: '1st Platoon', responsible: '1LT Chen', itemCount: 143, daysOld: 1 },
+  { platoon: '2nd Platoon', responsible: 'SSG Wilson', itemCount: 63, daysOld: 2 },
+  { platoon: '3rd Platoon', responsible: 'SPC Johnson', itemCount: 4, daysOld: 3 }
+];
+
+// Mock data for categories
+const mockCategories = [
+  { category: 'Weapons', count: 143, status: 'VERIFIED', lastVerified: '25FEB2025 0730', verificationType: 'Daily Check', verifiedBy: '1LT Chen' },
+  { category: 'NVGs/Optics', count: 63, status: 'VERIFIED', lastVerified: '24FEB2025 1745', verificationType: 'Serial Verification', verifiedBy: 'SSG Wilson' }
+];
+
 // Mock data for the components
 const mockSensitiveItems: SensitiveItem[] = [
   { id: '1', category: 'Weapon', nomenclature: 'M4 Carbine', serialNumber: 'W123456', location: 'Arms Room', handReceipt: '1st Platoon', verified: true },
@@ -100,46 +153,12 @@ const mockSensitiveItems: SensitiveItem[] = [
   { id: '5', category: 'Weapon', nomenclature: 'M249 SAW', serialNumber: 'W654321', location: 'Arms Room', handReceipt: '1st Platoon', verified: false },
 ];
 
-const mockEmergencyContacts: EmergencyContact[] = [
-  { title: 'Commander', name: 'CPT Johnson', phone: '555-123-4567' },
-  { title: 'First Sergeant', name: '1SG Miller', phone: '555-123-8910' },
-  { title: 'S-2 Officer', name: 'CPT Williams', phone: '555-123-2345' },
-  { title: 'PMO Desk', phone: '555-123-9876' },
-];
-
-const mockHandReceipts: HandReceiptData[] = [
-  { platoon: '1st Platoon', responsible: 'LT Smith', itemCount: 45, daysOld: 30 },
-  { platoon: '2nd Platoon', responsible: 'LT Jones', itemCount: 38, daysOld: 45 },
-  { platoon: '3rd Platoon', responsible: 'LT Davis', itemCount: 42, daysOld: 15 },
-  { platoon: 'HQ Platoon', responsible: 'LT Wilson', itemCount: 25, daysOld: 60 },
-];
-
 const mockActivityLog: ActivityLogEntry[] = [
   { id: '1', date: '25FEB2025', time: '0730', activity: 'Daily Verification', items: 'All weapons', personnel: '1LT Chen', location: 'Arms Room', details: 'Routine daily check', status: 'Complete' },
   { id: '2', date: '24FEB2025', time: '1745', activity: 'Serial Number Verification', items: 'NVGs', personnel: 'SSG Wilson', location: 'Supply Room', details: 'Weekly serial verification', status: 'Complete' },
   { id: '3', date: '24FEB2025', time: '0630', activity: 'Weapons Inventory', items: 'All sensitive items', personnel: 'CPT Rodriguez', location: 'Company Area', details: 'Monthly 100% inventory', status: 'Complete' },
   { id: '4', date: '23FEB2025', time: '1100', activity: 'Maintenance Check', items: 'M249 SAWs', personnel: 'SFC Adams', location: 'Arms Room', details: 'Preventive maintenance', status: 'Complete' },
   { id: '5', date: '26FEB2025', time: '1300', activity: 'Scheduled Inventory', items: 'All sensitive items', personnel: 'CPT Rodriguez', location: 'Company Area', details: 'Change of command inventory', status: 'Scheduled' },
-];
-
-const mockVerificationStats: VerificationStats = {
-  dailyCheckTotal: 210,
-  dailyCheckComplete: 210,
-  weeklyVerificationTotal: 210,
-  weeklyVerificationComplete: 195,
-  monthlyInventoryCompliance: 100,
-  regulationCompliance: 'FULLY COMPLIANT',
-  averageInventoryTime: '1 hour 23 minutes',
-  verificationAccuracy: 99.8,
-  discrepanciesLast90Days: 2,
-  blockchainVerified: 210,
-  blockchainTotal: 210,
-};
-
-const mockCategories: CategoryStatus[] = [
-  { category: 'Weapons', count: 143, status: 'VERIFIED', lastVerified: '25FEB2025 0730', verificationType: 'Daily Check', verifiedBy: '1LT Chen' },
-  { category: 'NVGs/Optics', count: 63, status: 'VERIFIED', lastVerified: '24FEB2025 1745', verificationType: 'Serial Verification', verifiedBy: 'SSG Wilson' },
-  { category: 'Crypto', count: 4, status: 'VERIFIED', lastVerified: '24FEB2025 0630', verificationType: '100% Inventory', verifiedBy: 'CPT Rodriguez' },
 ];
 
 const mockInventoryRequirements: InventoryRequirement[] = [
@@ -178,6 +197,9 @@ export interface SensitiveItemsContainerProps {
     weaponsSignedOut: number;
     tempHandReceipts: number;
     maintenanceItems: number;
+    onContactArmorer: () => void;
+    onViewAccessLog: () => void;
+    onReviewSOP: () => void;
   };
   mockVerificationStats: VerificationStats;
   mockEmergencyContacts: EmergencyContact[];
@@ -240,24 +262,6 @@ const useSensitiveItemsContainer = (): SensitiveItemsContainerProps => {
     lastInventoryOfficer: "1LT Chen",
     nextRequired: "26FEB2025 0600",
     regulation: "AR 710-2"
-  };
-
-  // Arms Room Status data
-  const armsRoomData = {
-    location: "Alpha Company Arms Room",
-    securityStatus: "SECURE" as const,
-    lastAccess: "25FEB2025 0730",
-    lastAccessPerson: "1LT Chen",
-    lastAccessRole: "Arms Room Officer",
-    currentCustodian: "SFC Martinez",
-    custodianAppointedDate: "01JAN2025",
-    sopStatus: "Current and Verified",
-    sopRevisionDate: "10JAN2025",
-    weaponsStored: 143,
-    weaponsTotal: 150,
-    weaponsSignedOut: 7,
-    tempHandReceipts: 3,
-    maintenanceItems: 2
   };
 
   // Event handlers for various components
@@ -374,7 +378,12 @@ const useSensitiveItemsContainer = (): SensitiveItemsContainerProps => {
   return {
     // Data
     headerData,
-    armsRoomData,
+    armsRoomData: {
+      ...mockArmsRoomData,
+      onContactArmorer: handleContactArmorer,
+      onViewAccessLog: handleViewAccessLog,
+      onReviewSOP: handleReviewSOP
+    },
     mockVerificationStats,
     mockEmergencyContacts,
     mockHandReceipts,

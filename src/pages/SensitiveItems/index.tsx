@@ -1,371 +1,637 @@
-import React from 'react';
-import { 
-  Box, 
-  Container, 
-  Grid, 
-  Typography, 
-  Alert,
-  Button,
+import React, { useState } from 'react';
+import {
+  Box,
+  Typography,
   Paper,
-  SpeedDial,
-  SpeedDialAction,
-  Badge,
-  LinearProgress,
+  Button,
+  Card,
+  CardContent,
+  Grid,
+  Tabs,
+  Tab,
+  TextField,
+  InputAdornment,
   Chip,
-  List,
-  ListItem,
-  Accordion,
-  AccordionDetails,
-  Dialog,
-  DialogContent
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  LinearProgress,
+  alpha,
+  useTheme,
+  Avatar,
+  Divider
 } from '@mui/material';
-import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
-import VerifiedIcon from '@mui/icons-material/Verified';
-import WarningIcon from '@mui/icons-material/Warning';
-import HistoryIcon from '@mui/icons-material/History';
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { CardHeader, KpiStatsCard } from '../../components/common';
+import {
+  QrCodeScanner as QrCodeScannerIcon,
+  Search as SearchIcon,
+  FilterList as FilterListIcon,
+  FileDownload as FileDownloadIcon,
+  Shield as ShieldIcon,
+  CalendarToday as CalendarIcon,
+  CheckCircleOutline as CheckCircleIcon,
+  Assignment as AssignmentIcon,
+  Task as TaskIcon,
+  Description as DescriptionIcon,
+  Person as PersonIcon,
+  AccessTime as AccessTimeIcon,
+  VerifiedUser as VerifiedIcon,
+  Refresh as RefreshIcon
+} from '@mui/icons-material';
 
-// Import our custom container hook
-import useSensitiveItemsContainer from './SensitiveItemsContainer';
+// Mock data
+const mockData = {
+  companyInfo: "B Company, 2-87 Infantry",
+  accountabilityStats: {
+    total: 210,
+    accounted: 209,
+    percentage: 99.5
+  },
+  nextInventory: "Today 1700",
+  armsRoom: {
+    name: "Alpha Company Arms Room",
+    status: "SECURE",
+    lastAccess: {
+      timestamp: "25FEB2025 0730",
+      person: "1LT Chen",
+      role: "Arms Room Officer"
+    },
+    custodian: {
+      name: "SFC Martinez",
+      appointedDate: "01JAN2025"
+    },
+    weapons: {
+      stored: 143,
+      signedOut: 7,
+      total: 150
+    },
+    tempHandReceipts: 3,
+    maintenanceItems: 2
+  },
+  sensitiveItems: [
+    { 
+      id: '1', 
+      item: 'M4 Carbine', 
+      type: 'Weapon', 
+      serialNumber: '12496352', 
+      category: 'A', 
+      location: 'Arms Room', 
+      assignedTo: '1LT Morgan', 
+      lastVerified: '25FEB2025 0730' 
+    },
+    { 
+      id: '2', 
+      item: 'M9 Pistol', 
+      type: 'Weapon', 
+      serialNumber: '11857493', 
+      category: 'A', 
+      location: 'Arms Room', 
+      assignedTo: 'CPT Rodriguez', 
+      lastVerified: '25FEB2025 0735' 
+    },
+    { 
+      id: '3', 
+      item: 'M240B', 
+      type: 'Weapon', 
+      serialNumber: 'M2405689', 
+      category: 'A', 
+      location: 'Arms Room', 
+      assignedTo: '1LT Chen', 
+      lastVerified: '25FEB2025 0740' 
+    }
+  ]
+};
 
-// Import all component files
-import ArmsRoomStatusCard from './components/ArmsRoomStatusCard';
-import VerificationStatusCard from './components/VerificationStatusCard';
-import MissingItemResponseCard from './components/MissingItemResponseCard';
-import HandReceiptAssignmentCard from './components/HandReceiptAssignmentCard';
-import SensitiveItemActivityLog from './components/SensitiveItemActivityLog';
-import ItemDetailPanel from './components/ItemDetailPanel';
-import InventoryExecutionPanel from './components/InventoryExecutionPanel';
-import SensitiveItemsHeader from './components/SensitiveItemsHeader';
-import SensitiveItemCategoriesCard from './components/SensitiveItemCategoriesCard';
-import InventoryScheduleCard from './components/InventoryScheduleCard';
-
-const SensitiveItems: React.FC = () => {
-  const container = useSensitiveItemsContainer();
-  const [qrScannerOpen, setQrScannerOpen] = React.useState(false);
-
+// Styled ActionCard component with HandReceipt styling
+const ActionCard = ({ icon, title, subtitle, buttonText, color }: { 
+  icon: React.ReactNode; 
+  title: string; 
+  subtitle: string; 
+  buttonText: string; 
+  color: string 
+}) => {
+  const theme = useTheme();
+  
   return (
-    <Container maxWidth="xl">
-      <Box sx={{ py: 3 }}>
-        {/* Page Title */}
-        <Typography variant="h4" gutterBottom sx={{ mb: 3, fontWeight: 500 }}>
-          Sensitive Items Management - {container.headerData.companyInfo}
-        </Typography>
-
-        {/* Warning Banner */}
-        <Alert 
-          severity="warning"
-          variant="filled" 
-          icon={<WarningAmberIcon />}
-          sx={{ 
-            mb: 3, 
-            bgcolor: '#f5a623', // Orange color from screenshot
-            '& .MuiAlert-icon': {
-              color: 'black'
-            },
-            '& .MuiAlert-message': {
-              color: 'black',
-              fontWeight: 500
-            },
-            '& .MuiAlert-action .MuiButton-root': {
-              color: 'black',
-              borderColor: 'black',
-              '&:hover': {
-                borderColor: 'black',
-                backgroundColor: 'rgba(0, 0, 0, 0.1)'
-              }
-            }
-          }}
-          action={
-            <Button 
-              color="inherit" 
-              variant="outlined" 
-              size="small"
-            >
-              View Details
-            </Button>
-          }
-        >
-          SENSITIVE ITEM INVENTORY REQUIRED: {container.headerData.daysRemaining} DAYS REMAINING
-        </Alert>
-
-        {/* Metrics Grid */}
-        <Grid container spacing={4} sx={{ mb: 4 }}>
-          <Grid item xs={12} md={3}>
-            <Box>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                Total Sensitive Items
-              </Typography>
-              <Typography variant="h4" component="div" sx={{ fontWeight: 500 }}>
-                {container.headerData.totalItems}
-              </Typography>
-            </Box>
-          </Grid>
-          
-          <Grid item xs={12} md={3}>
-            <Box>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                Current Status
-              </Typography>
-              <Typography variant="h4" component="div" sx={{ color: 'success.main', fontWeight: 500 }}>
-                {container.headerData.accountedItems}/{container.headerData.totalItems} Accounted For ({Math.round((container.headerData.accountedItems / container.headerData.totalItems) * 100)}%)
-              </Typography>
-            </Box>
-          </Grid>
-          
-          <Grid item xs={12} md={3}>
-            <Box>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                Last Inventory
-              </Typography>
-              <Typography variant="h4" component="div" sx={{ fontWeight: 500 }}>
-                {container.headerData.lastInventory}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {container.headerData.lastInventoryOfficer}
-              </Typography>
-            </Box>
-          </Grid>
-          
-          <Grid item xs={12} md={3}>
-            <Box>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                Next Required
-              </Typography>
-              <Typography variant="h4" component="div" sx={{ color: 'error.main', fontWeight: 500 }}>
-                {container.headerData.nextRequired}
-              </Typography>
-              <Typography variant="caption" sx={{ bgcolor: 'primary.main', color: 'white', px: 1, py: 0.5, borderRadius: 0.5 }}>
-                AR 710-2
-              </Typography>
-            </Box>
-          </Grid>
-        </Grid>
-
-        {/* Action Buttons */}
-        <Box sx={{ mb: 4, display: 'flex', gap: 2 }}>
-          <Button
-            variant="contained"
-            size="large"
-            onClick={container.handleConductInventory}
+    <Card sx={{ 
+      mb: 2, 
+      bgcolor: 'background.paper',
+      borderRadius: 0,
+      borderLeft: `3px solid ${color}`,
+      border: '1px solid rgba(140, 140, 160, 0.12)'
+    }}>
+      <CardContent sx={{ p: 2 }}>
+        <Box sx={{ display: 'flex', mb: 1.5 }}>
+          <Avatar 
             sx={{ 
-              bgcolor: '#2196f3',
-              '&:hover': {
-                bgcolor: '#1976d2'
-              }
+              bgcolor: alpha(color, 0.15),
+              color: color,
+              width: 32,
+              height: 32,
+              mr: 1.5,
+              borderRadius: 0
             }}
           >
-            Conduct Inventory
-          </Button>
-          
-          <Button
-            variant="outlined"
-            size="large"
-            onClick={container.handlePrintList}
-          >
-            Print Sensitive Items List
-          </Button>
-          
-          <Button
-            variant="outlined"
-            color="error"
-            size="large"
-            onClick={container.handleReportMissing}
-          >
-            Report Missing Item
-          </Button>
+            {icon}
+          </Avatar>
+          <Typography variant="subtitle1" sx={{ pt: 0.5 }}>{title}</Typography>
         </Box>
-
-        {/* Verification Alert */}
-        <Alert 
-          severity="warning"
-          variant="filled" 
-          icon={<VerifiedIcon />}
-          sx={{ mb: 3 }}
-          action={
-            <Button 
-              color="inherit" 
-              variant="outlined" 
-              size="large"
-              startIcon={<QrCodeScannerIcon />}
-              onClick={() => setQrScannerOpen(true)}
-            >
-              Start Verification
-            </Button>
-          }
+        
+        <Typography variant="h5" fontWeight="500" color={color} sx={{ my: 1.5 }}>
+          {subtitle}
+        </Typography>
+        
+        <Button 
+          variant="contained" 
+          fullWidth 
+          sx={{ 
+            bgcolor: color, 
+            '&:hover': { bgcolor: color, filter: 'brightness(0.9)' },
+            borderRadius: 0
+          }}
         >
-          Next verification required by {container.headerData.nextRequired}
-        </Alert>
-
-        <Grid container spacing={3}>
-          {/* Main Content Area */}
-          <Grid item xs={12} md={8}>
-            <Paper elevation={2} sx={{ p: 2, mb: 3, height: '600px', display: 'flex', flexDirection: 'column' }}>
-              {/* Verification Progress */}
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="h6" gutterBottom>
-                  Verification Progress
-                </Typography>
-                <LinearProgress 
-                  variant="determinate" 
-                  value={(container.headerData.accountedItems / container.headerData.totalItems) * 100}
-                  sx={{ 
-                    height: 10, 
-                    borderRadius: 5,
-                    bgcolor: 'grey.200',
-                    '& .MuiLinearProgress-bar': {
-                      bgcolor: 'success.main'
-                    }
-                  }}
-                />
-                <Box sx={{ mt: 1, display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="body2" color="text.secondary">
-                    {container.headerData.accountedItems} of {container.headerData.totalItems} Items Verified
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Last verified: {container.headerData.lastInventory}
-                  </Typography>
-                </Box>
-              </Box>
-
-              {/* Serial Number Table */}
-              <Box sx={{ flexGrow: 1, minHeight: 0 }}>
-                <InventoryExecutionPanel 
-                  open={container.inventoryExecutionOpen}
-                  items={container.mockSensitiveItems}
-                  onClose={() => container.setInventoryExecutionOpen(false)}
-                  onCompleteInventory={container.handleCompleteInventory}
-                  onPauseInventory={container.handlePauseInventory}
-                  onReportDiscrepancy={container.handleReportDiscrepancy}
-                />
-              </Box>
-            </Paper>
-          </Grid>
-
-          {/* Side Panel - Verification History */}
-          <Grid item xs={12} md={4}>
-            <Paper elevation={2} sx={{ p: 2, height: '600px', overflow: 'auto' }}>
-              <Typography variant="h6" gutterBottom>
-                Verification History
-              </Typography>
-              <List>
-                {container.mockActivityLog.map((activity) => (
-                  <ListItem key={activity.id} divider>
-                    <Box sx={{ width: '100%' }}>
-                      <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
-                        {activity.activity}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {activity.date} {activity.time}
-                      </Typography>
-                      <Typography variant="body2">
-                        {activity.personnel} - {activity.items}
-                      </Typography>
-                      <Chip 
-                        label={activity.status} 
-                        color={activity.status === 'Complete' ? 'success' : 'warning'}
-                        size="small"
-                        sx={{ mt: 1 }}
-                      />
-                    </Box>
-                  </ListItem>
-                ))}
-              </List>
-            </Paper>
-          </Grid>
-        </Grid>
-
-        {/* Emergency Protocol Card */}
-        <Paper elevation={3} sx={{ mt: 3, p: 2 }}>
-          <MissingItemResponseCard 
-            emergencyContacts={container.mockEmergencyContacts}
-            onInitiateMissingItemProtocol={container.handleInitiateMissingItemProtocol}
-          />
-        </Paper>
-
-        {/* Quick Action Speed Dial */}
-        <SpeedDial
-          ariaLabel="Verification Actions"
-          sx={{ position: 'fixed', bottom: 16, right: 16 }}
-          icon={<VerifiedIcon />}
-        >
-          <SpeedDialAction
-            icon={<QrCodeScannerIcon />}
-            tooltipTitle="Scan QR Code"
-            onClick={() => setQrScannerOpen(true)}
-          />
-          <SpeedDialAction
-            icon={<WarningIcon />}
-            tooltipTitle="Report Missing"
-            onClick={container.handleReportMissing}
-          />
-          <SpeedDialAction
-            icon={<HistoryIcon />}
-            tooltipTitle="View History"
-            onClick={container.handleViewCompleteLog}
-          />
-        </SpeedDial>
-
-        {/* QR Scanner Modal */}
-        <Dialog
-          open={qrScannerOpen}
-          onClose={() => setQrScannerOpen(false)}
-          maxWidth="md"
-          fullWidth
-        >
-          <DialogContent>
-            <Typography variant="h6" gutterBottom>
-              Scan Sensitive Item QR Code
-            </Typography>
-            <Box sx={{ height: 400, bgcolor: 'grey.100', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <QrCodeScannerIcon sx={{ fontSize: 100, color: 'grey.400' }} />
-            </Box>
-          </DialogContent>
-        </Dialog>
-
-        {/* Item Detail Panel */}
-        {container.selectedItem && (
-          <ItemDetailPanel
-            open={container.itemDetailOpen}
-            item={{
-              id: container.selectedItem.id,
-              category: container.selectedItem.category,
-              nomenclature: container.selectedItem.nomenclature,
-              serialNumber: container.selectedItem.serialNumber,
-              nsn: "1005-01-567-8910",
-              lin: "L12345",
-              model: "M4A1",
-              manufacturer: "Colt",
-              value: 1254.00,
-              components: [
-                { name: "Combat Optic", serialNumber: "C123456", status: "Present" },
-                { name: "Magazine Pouch", serialNumber: "P654321", status: "Present" }
-              ],
-              verificationHistory: [
-                { date: "25FEB2025", verifier: "1LT Chen", status: "Verified", comments: "All verified" },
-                { date: "24FEB2025", verifier: "SSG Wilson", status: "Verified", comments: "Verified" }
-              ],
-              transferHistory: [
-                { date: "20JAN2025", from: "SSG Adams", to: "1LT Chen", reason: "New assignment", documentNumber: "HR-2025-001" }
-              ],
-              maintenanceHistory: [
-                { date: "10JAN2025", type: "Preventive Maintenance", technician: "SPC Lopez", resolution: "No issues found" }
-              ],
-              securityRequirements: [
-                { requirement: "Double lock storage", category: "Storage" },
-                { requirement: "24-hour surveillance", category: "Storage" }
-              ]
-            }}
-            onClose={() => container.setItemDetailOpen(false)}
-            onVerifyItem={container.handleVerifyItem}
-            onTransferItem={container.handleTransferItem}
-            onReportIssue={container.handleReportIssue}
-            onRequestMaintenance={container.handleRequestMaintenance}
-          />
-        )}
-      </Box>
-    </Container>
+          {buttonText}
+        </Button>
+      </CardContent>
+    </Card>
   );
 };
 
-export default SensitiveItems; 
+// Status chip component
+const StatusChip = ({ label, status }: { label: string, status: string }) => {
+  const theme = useTheme();
+  let color = theme.palette.info.main;
+  
+  switch(status.toLowerCase()) {
+    case 'success':
+    case 'complete':
+    case 'compliant':
+    case 'on track':
+      color = theme.palette.success.main;
+      break;
+    case 'warning':
+    case 'in progress':
+    case 'pending':
+      color = theme.palette.warning.main;
+      break;
+    case 'error':
+    case 'failed':
+    case 'overdue':
+      color = theme.palette.error.main;
+      break;
+  }
+  
+  return (
+    <Chip
+      label={label}
+      size="small"
+      sx={{ 
+        backgroundColor: alpha(color, 0.1),
+        color: color,
+        fontWeight: 500,
+        fontSize: '0.75rem',
+        borderRadius: 0,
+        height: 20
+      }}
+    />
+  );
+};
+
+const SensitiveItems = () => {
+  const theme = useTheme();
+  const [currentTab, setCurrentTab] = useState(0);
+
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
+    setCurrentTab(newValue);
+  };
+
+  return (
+    <Box sx={{ 
+      bgcolor: 'background.default', 
+      color: 'text.primary',
+      minHeight: '100vh',
+      p: 3
+    }}>
+      {/* Header */}
+      <Box 
+        component="header" 
+        sx={{ 
+          py: 1.5, 
+          px: 3, 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between',
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+          backgroundColor: 'background.default',
+          mb: 3
+        }}
+      >
+        <Typography variant="h5" fontWeight="600" color="primary">
+          Sensitive Items Management
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
+          <IconButton size="small">
+            <RefreshIcon />
+          </IconButton>
+          <Button 
+            variant="outlined" 
+            startIcon={<FileDownloadIcon />}
+            sx={{ borderRadius: 0 }}
+          >
+            Export Data
+          </Button>
+        </Box>
+      </Box>
+
+      {/* Status Cards */}
+      <Grid container spacing={2} sx={{ mb: 3, mx: 1 }}>
+        {/* Next Required Inventory */}
+        <Grid item xs={12} md={4}>
+          <KpiStatsCard 
+            icon={<CalendarIcon fontSize="small" />}
+            title="Next Required Inventory"
+            value={`Daily: ${mockData.nextInventory}`}
+            subtitle="Daily verification requirement"
+            color={theme.palette.primary.main}
+          />
+        </Grid>
+
+        {/* Accountability */}
+        <Grid item xs={12} md={4}>
+          <KpiStatsCard 
+            icon={<CheckCircleIcon fontSize="small" />}
+            title="Accountability"
+            value={`${mockData.accountabilityStats.accounted}/${mockData.accountabilityStats.total} (${mockData.accountabilityStats.percentage}%)`}
+            subtitle="Sensitive items accounted for"
+            color={theme.palette.success.main}
+          />
+        </Grid>
+
+        {/* Scan QR Code */}
+        <Grid item xs={12} md={4}>
+          <KpiStatsCard 
+            icon={<QrCodeScannerIcon fontSize="small" />}
+            title="Scan QR Code"
+            value="Code"
+            subtitle="Scan to verify sensitive items"
+            color={theme.palette.info.main}
+            bgColor={alpha(theme.palette.info.main, 0.1)}
+          />
+        </Grid>
+      </Grid>
+
+      {/* Main Content Area */}
+      <Grid container spacing={3}>
+        {/* Left Column - Arms Room and Action Cards */}
+        <Grid item xs={12} md={4}>
+          {/* Arms Room Status Card */}
+          <Paper sx={{ borderRadius: 0, p: 0, mb: 3, bgcolor: 'background.paper', border: '1px solid rgba(140, 140, 160, 0.12)' }}>
+            <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 2, borderBottom: '1px solid rgba(140, 140, 160, 0.12)' }}>
+              <Avatar 
+                sx={{ 
+                  bgcolor: alpha(theme.palette.success.main, 0.15),
+                  color: theme.palette.success.main,
+                  width: 32,
+                  height: 32,
+                  borderRadius: 0
+                }}
+              >
+                <ShieldIcon fontSize="small" />
+              </Avatar>
+              <Typography variant="h6" sx={{ fontWeight: 'medium' }}>
+                {mockData.armsRoom.name}
+              </Typography>
+              <Box sx={{ 
+                ml: 'auto', 
+                bgcolor: alpha(theme.palette.success.main, 0.1), 
+                px: 2, 
+                py: 0.5, 
+                borderRadius: 0,
+                color: theme.palette.success.main,
+                fontSize: '0.75rem',
+                fontWeight: 'bold'
+              }}>
+                {mockData.armsRoom.status}
+              </Box>
+            </Box>
+            
+            <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+              {/* Last Access */}
+              <Box sx={{ 
+                width: { xs: '100%', sm: '50%' }, 
+                p: 2, 
+                borderRight: { xs: 'none', sm: '1px solid rgba(140, 140, 160, 0.12)' }
+              }}>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                  Last Access
+                </Typography>
+                <Typography variant="h6" sx={{ fontFamily: 'monospace', fontSize: '0.9rem' }}>
+                  {mockData.armsRoom.lastAccess.timestamp}
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                  BY {mockData.armsRoom.lastAccess.person}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {mockData.armsRoom.lastAccess.role}
+                </Typography>
+              </Box>
+              
+              {/* Current Custodian */}
+              <Box sx={{ 
+                width: { xs: '100%', sm: '50%' }, 
+                p: 2
+              }}>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                  Current Custodian
+                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: 'medium' }}>
+                  {mockData.armsRoom.custodian.name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Appointed: {mockData.armsRoom.custodian.appointedDate}
+                </Typography>
+              </Box>
+            </Box>
+            
+            {/* Weapons Status */}
+            <Box sx={{ p: 2, borderTop: '1px solid rgba(140, 140, 160, 0.12)' }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Weapons Status
+              </Typography>
+              <Grid container spacing={1}>
+                <Grid item xs={4}>
+                  <Typography variant="h3" sx={{ fontWeight: 'bold' }}>
+                    {mockData.armsRoom.weapons.stored}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Stored
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography variant="h3" sx={{ fontWeight: 'bold' }}>
+                    {mockData.armsRoom.weapons.signedOut}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Signed Out
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography variant="h3" sx={{ fontWeight: 'bold' }}>
+                    {mockData.armsRoom.weapons.total}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Total
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Box>
+            
+            {/* Additional Status */}
+            <Box sx={{ 
+              display: 'flex', 
+              borderTop: '1px solid rgba(140, 140, 160, 0.12)'
+            }}>
+              <Box sx={{ 
+                width: '50%', 
+                p: 2, 
+                borderRight: '1px solid rgba(140, 140, 160, 0.12)'
+              }}>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                  Temp Hand Receipts
+                </Typography>
+                <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                  {mockData.armsRoom.tempHandReceipts}
+                </Typography>
+              </Box>
+              <Box sx={{ width: '50%', p: 2 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                  Maintenance Items
+                </Typography>
+                <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                  {mockData.armsRoom.maintenanceItems}
+                </Typography>
+              </Box>
+            </Box>
+            
+            {/* Action Buttons */}
+            <Box sx={{ 
+              display: 'flex', 
+              p: 2, 
+              gap: 2,
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              borderTop: '1px solid rgba(140, 140, 160, 0.12)'
+            }}>
+              <Button 
+                variant="outlined" 
+                startIcon={<PersonIcon />} 
+                sx={{ borderRadius: 0 }}
+              >
+                Contact Armorer
+              </Button>
+              <Button 
+                variant="outlined" 
+                startIcon={<AccessTimeIcon />} 
+                sx={{ borderRadius: 0 }}
+              >
+                Access Log
+              </Button>
+              <Button 
+                variant="outlined" 
+                startIcon={<DescriptionIcon />} 
+                sx={{ borderRadius: 0 }}
+              >
+                Review SOP
+              </Button>
+            </Box>
+          </Paper>
+
+          {/* Conduct Inventory */}
+          <ActionCard 
+            icon={<AssignmentIcon />}
+            title="Conduct Inventory"
+            subtitle="Daily Check"
+            buttonText="Start Inventory"
+            color={theme.palette.primary.main}
+          />
+
+          {/* Weekly Status */}
+          <ActionCard 
+            icon={<ShieldIcon />}
+            title="Weekly Status"
+            subtitle="7/7 Complete"
+            buttonText="View Report"
+            color={theme.palette.success.main}
+          />
+        </Grid>
+
+        {/* Right Column - Tabs and Content */}
+        <Grid item xs={12} md={8}>
+          <Paper sx={{ borderRadius: 0, overflow: 'hidden', bgcolor: 'background.paper', border: '1px solid rgba(140, 140, 160, 0.12)' }}>
+            {/* Tabs */}
+            <Tabs 
+              value={currentTab} 
+              onChange={handleTabChange}
+              sx={{ 
+                borderBottom: 1, 
+                borderColor: 'divider',
+                px: 2,
+                '& .MuiTabs-indicator': {
+                  height: 3
+                }
+              }}
+            >
+              <Tab label="Current Inventory (210)" sx={{ textTransform: 'none' }} />
+              <Tab label="Inventory History" sx={{ textTransform: 'none' }} />
+              <Tab label="Schedule" sx={{ textTransform: 'none' }} />
+              <Tab label="Reports & Analytics" sx={{ textTransform: 'none' }} />
+            </Tabs>
+
+            {/* Tab Content */}
+            <Box sx={{ p: 0 }}>
+              {/* Current Inventory Tab */}
+              {currentTab === 0 && (
+                <Box>
+                  {/* Search and Filter */}
+                  <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(140, 140, 160, 0.12)' }}>
+                    <TextField
+                      placeholder="Search by nomenclature, serial number, or location..."
+                      variant="outlined"
+                      size="small"
+                      sx={{ 
+                        width: '70%',
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 0
+                        }
+                      }}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <SearchIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                    <Box>
+                      <Button 
+                        variant="outlined" 
+                        startIcon={<FilterListIcon />} 
+                        sx={{ mr: 1, borderRadius: 0 }}
+                      >
+                        Filter
+                      </Button>
+                      <Button 
+                        variant="outlined" 
+                        startIcon={<FileDownloadIcon />} 
+                        sx={{ borderRadius: 0 }}
+                      >
+                        Export
+                      </Button>
+                    </Box>
+                  </Box>
+
+                  {/* Items Table */}
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell sx={{ 
+                            textTransform: 'uppercase', 
+                            fontWeight: 'medium', 
+                            fontSize: '0.75rem', 
+                            letterSpacing: '0.05em',
+                            backgroundColor: alpha(theme.palette.primary.main, 0.05) 
+                          }}>
+                            ITEM
+                          </TableCell>
+                          <TableCell sx={{ 
+                            textTransform: 'uppercase', 
+                            fontWeight: 'medium', 
+                            fontSize: '0.75rem', 
+                            letterSpacing: '0.05em',
+                            backgroundColor: alpha(theme.palette.primary.main, 0.05)
+                          }}>
+                            SERIAL NUMBER
+                          </TableCell>
+                          <TableCell sx={{ 
+                            textTransform: 'uppercase', 
+                            fontWeight: 'medium', 
+                            fontSize: '0.75rem', 
+                            letterSpacing: '0.05em',
+                            backgroundColor: alpha(theme.palette.primary.main, 0.05)
+                          }}>
+                            LOCATION
+                          </TableCell>
+                          <TableCell sx={{ 
+                            textTransform: 'uppercase', 
+                            fontWeight: 'medium', 
+                            fontSize: '0.75rem', 
+                            letterSpacing: '0.05em',
+                            backgroundColor: alpha(theme.palette.primary.main, 0.05)
+                          }}>
+                            ASSIGNED TO
+                          </TableCell>
+                          <TableCell sx={{ 
+                            textTransform: 'uppercase', 
+                            fontWeight: 'medium', 
+                            fontSize: '0.75rem', 
+                            letterSpacing: '0.05em',
+                            backgroundColor: alpha(theme.palette.primary.main, 0.05)
+                          }}>
+                            LAST VERIFIED
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {mockData.sensitiveItems.map((item) => (
+                          <TableRow key={item.id} sx={{ 
+                            '&:hover': { bgcolor: 'action.hover' }
+                          }}>
+                            <TableCell>
+                              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <Avatar 
+                                  sx={{ 
+                                    bgcolor: alpha(theme.palette.primary.main, 0.15),
+                                    color: theme.palette.primary.main,
+                                    width: 28,
+                                    height: 28,
+                                    mr: 1.5,
+                                    borderRadius: 0
+                                  }}
+                                >
+                                  <ShieldIcon sx={{ fontSize: 16 }} />
+                                </Avatar>
+                                <Box>
+                                  <Typography variant="body2" sx={{ fontWeight: 'medium' }}>{item.item}</Typography>
+                                  <Typography variant="caption" color="text.secondary">{item.type}</Typography>
+                                </Box>
+                              </Box>
+                            </TableCell>
+                            <TableCell>
+                              <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.75rem', letterSpacing: '0.05em' }}>{item.serialNumber}</Typography>
+                              <Typography variant="caption" color="text.secondary">CAT: {item.category}</Typography>
+                            </TableCell>
+                            <TableCell>{item.location}</TableCell>
+                            <TableCell>{item.assignedTo}</TableCell>
+                            <TableCell sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}>{item.lastVerified}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Box>
+              )}
+            </Box>
+          </Paper>
+        </Grid>
+      </Grid>
+    </Box>
+  );
+};
+
+export default SensitiveItems;

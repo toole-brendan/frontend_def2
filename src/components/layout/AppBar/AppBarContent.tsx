@@ -17,6 +17,8 @@ import {
   Theme,
   Chip,
   Tooltip,
+  alpha,
+  useTheme
 } from '@mui/material';
 import {
   Search as SearchIcon,
@@ -31,7 +33,7 @@ import {
   LightMode as LightModeIcon,
   DarkMode as DarkModeIcon,
 } from '@mui/icons-material';
-import { useTheme } from '../../../theme/ThemeProvider';
+import { useAppTheme } from '../../../theme/ThemeProvider';
 
 const DRAWER_WIDTH = 240;
 
@@ -39,8 +41,10 @@ const Search = styled('div')(({ theme }) => ({
   position: 'absolute',
   left: DRAWER_WIDTH,
   borderRadius: 0,
-  backgroundColor: '#000000',
-  border: '1px solid rgba(255, 255, 255, 0.12)',
+  backgroundColor: theme.palette.mode === 'dark' 
+    ? theme.palette.background.paper 
+    : theme.palette.background.paper,
+  border: `1px solid ${theme.palette.divider}`,
   marginRight: theme.spacing(2),
   width: '100%',
   maxWidth: '800px',
@@ -52,12 +56,14 @@ const Search = styled('div')(({ theme }) => ({
     }
   ),
   '&:hover': {
-    borderColor: 'rgba(255, 255, 255, 0.24)',
+    borderColor: theme.palette.mode === 'dark'
+      ? alpha(theme.palette.common.white, 0.24)
+      : alpha(theme.palette.common.black, 0.24),
   },
   '&:focus-within': {
-    borderColor: '#FFFFFF',
+    borderColor: theme.palette.primary.main,
     '& .SearchIconWrapper': {
-      color: '#FFFFFF',
+      color: theme.palette.primary.main,
     },
   },
   [theme.breakpoints.up('md')]: {
@@ -79,14 +85,14 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  color: 'rgba(255, 255, 255, 0.7)',
+  color: alpha(theme.palette.text.primary, 0.7),
   transition: theme.transitions.create('color', {
     duration: theme.transitions.duration.shorter,
   }),
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: '#FFFFFF',
+  color: theme.palette.text.primary,
   width: '100%',
   '& .MuiInputBase-input': {
     padding: theme.spacing(1.25, 1, 1.25, 0),
@@ -96,14 +102,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     fontSize: '0.9375rem',
     fontWeight: 400,
     '&::placeholder': {
-      color: 'rgba(255, 255, 255, 0.5)',
+      color: alpha(theme.palette.text.primary, 0.5),
       opacity: 1,
       letterSpacing: '0.02em',
       fontWeight: 300,
     },
     '&:focus': {
       '&::placeholder': {
-        color: 'rgba(255, 255, 255, 0.7)',
+        color: alpha(theme.palette.text.primary, 0.7),
       },
     },
   },
@@ -116,9 +122,11 @@ const UserInfo = styled(Box)(({ theme }) => ({
   padding: theme.spacing(0.5, 1),
   cursor: 'pointer',
   borderRadius: 0,
-  backgroundColor: 'rgba(255, 255, 255, 0.03)',
+  backgroundColor: theme.palette.mode === 'dark'
+    ? alpha(theme.palette.common.white, 0.03)
+    : alpha(theme.palette.common.black, 0.03),
   backdropFilter: 'blur(12px)',
-  border: '1px solid rgba(255, 255, 255, 0.1)',
+  border: `1px solid ${theme.palette.divider}`,
   transition: theme.transitions.create(
     ['background-color', 'transform', 'box-shadow'],
     {
@@ -127,20 +135,22 @@ const UserInfo = styled(Box)(({ theme }) => ({
     }
   ),
   '&:hover': {
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: theme.palette.mode === 'dark'
+      ? alpha(theme.palette.common.white, 0.05)
+      : alpha(theme.palette.common.black, 0.05),
     transform: 'translateY(-1px)',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
+    boxShadow: theme.shadows[2],
   },
 }));
 
 const RankChip = styled(Chip)(({ theme }) => ({
-  backgroundColor: 'rgba(0, 48, 143, 0.8)',
-  color: '#FFFFFF',
+  backgroundColor: theme.palette.primary.dark,
+  color: theme.palette.common.white,
   fontWeight: 600,
   fontSize: '0.7rem',
   height: 20,
   borderRadius: 0,
-  border: '1px solid rgba(255, 255, 255, 0.3)',
+  border: `1px solid ${alpha(theme.palette.common.white, 0.3)}`,
   '& .MuiChip-label': {
     padding: '0 8px',
   },
@@ -149,20 +159,20 @@ const RankChip = styled(Chip)(({ theme }) => ({
 const MilitaryAvatar = styled(Avatar)(({ theme }) => ({
   width: 38,
   height: 38,
-  border: '1px solid rgba(255, 255, 255, 0.3)',
-  backgroundColor: 'rgba(0, 48, 143, 0.6)',
-  color: '#FFFFFF',
+  border: `1px solid ${theme.palette.divider}`,
+  backgroundColor: theme.palette.primary.dark,
+  color: theme.palette.common.white,
   fontWeight: 600,
-  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
+  boxShadow: theme.shadows[1],
 }));
 
 const StyledMenu = styled(Menu)(({ theme }) => ({
   '& .MuiPaper-root': {
-    backgroundColor: '#000000',
+    backgroundColor: theme.palette.background.paper,
     backdropFilter: 'blur(12px)',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
+    border: `1px solid ${theme.palette.divider}`,
     borderRadius: 0,
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.5)',
+    boxShadow: theme.shadows[3],
     '& .MuiMenuItem-root': {
       transition: theme.transitions.create(
         ['background-color', 'color'],
@@ -172,17 +182,17 @@ const StyledMenu = styled(Menu)(({ theme }) => ({
         }
       ),
       '&:hover': {
-        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+        backgroundColor: theme.palette.action.hover,
       },
     },
   },
 }));
 
-const StyledBadge = styled(Badge)(() => ({
+const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
-    backgroundColor: '#FF3B3B',
-    color: '#FFFFFF',
-    boxShadow: '0 0 0 2px #000000',
+    backgroundColor: theme.palette.error.main,
+    color: theme.palette.error.contrastText,
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
   },
 }));
 
@@ -197,14 +207,14 @@ const LogoContainer = styled(Box)(({ theme }: { theme: Theme }) => ({
 }));
 
 const LogoBox = styled(Box)(({ theme }: { theme: Theme }) => ({
-  border: '1px solid rgba(255, 255, 255, 0.7)',
+  border: `1px solid ${alpha(theme.palette.text.primary, 0.7)}`,
   padding: theme.spacing(0.75, 2),
   marginRight: theme.spacing(2),
   '& h1': {
     fontSize: '1.125rem',
     fontWeight: 300,
     letterSpacing: '0.05em',
-    color: '#FFFFFF',
+    color: theme.palette.text.primary,
     margin: 0,
     fontFamily: 'Georgia, serif',
     textTransform: 'none',
@@ -225,7 +235,9 @@ export const AppBarContent: React.FC<AppBarContentProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const navigate = useNavigate();
-  const { mode, toggleTheme } = useTheme();
+  const theme = useTheme();
+  const mode = theme.palette.mode;
+  const { toggleTheme } = useAppTheme();
 
   // Parse rank and name from userDisplayName (assuming format like "CPT Michael Rodriguez")
   const nameParts = userDisplayName.split(' ');
@@ -264,10 +276,10 @@ export const AppBarContent: React.FC<AppBarContentProps> = ({
           onClick={onDrawerToggle}
           sx={{
             marginRight: 2,
-            color: 'rgba(255, 255, 255, 0.7)',
+            color: alpha(theme.palette.text.primary, 0.7),
             '&:hover': {
-              color: '#FFFFFF',
-              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              color: theme.palette.text.primary,
+              backgroundColor: theme.palette.action.hover,
             },
           }}
         >
@@ -304,7 +316,7 @@ export const AppBarContent: React.FC<AppBarContentProps> = ({
           onClick={toggleTheme}
           sx={{
             '&:hover': {
-              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              backgroundColor: theme.palette.action.hover,
             },
             mr: 1,
           }}
@@ -319,7 +331,7 @@ export const AppBarContent: React.FC<AppBarContentProps> = ({
         color="inherit"
         sx={{
           '&:hover': {
-            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            backgroundColor: theme.palette.action.hover,
           },
           mr: 1,
         }}
@@ -358,7 +370,6 @@ export const AppBarContent: React.FC<AppBarContentProps> = ({
               textTransform: 'uppercase',
               letterSpacing: '0.1em',
               fontSize: '0.7rem',
-              color: 'rgba(255, 255, 255, 0.7)',
             }}
           >
             Company Commander
@@ -385,7 +396,7 @@ export const AppBarContent: React.FC<AppBarContentProps> = ({
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <Box sx={{ px: 2, py: 1, backgroundColor: 'rgba(0, 48, 143, 0.1)' }}>
+        <Box sx={{ px: 2, py: 1, backgroundColor: alpha(theme.palette.primary.main, 0.1) }}>
           <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
             {userDisplayName}
           </Typography>
@@ -418,4 +429,4 @@ export const AppBarContent: React.FC<AppBarContentProps> = ({
   );
 };
 
-export default AppBarContent; 
+export default AppBarContent;

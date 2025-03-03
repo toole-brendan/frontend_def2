@@ -340,4 +340,14 @@ export interface SystemStatusFooterProps {
   lastUpdate: string;
   mobileAppStatus: string;
   systemNotice: string;
-} 
+}
+
+// Equipment Readiness Chart
+export interface ReadinessDataPoint {
+  name: string;
+  value: number;
+}
+
+export interface EquipmentReadinessChartProps {
+  data: ReadinessDataPoint[];
+}

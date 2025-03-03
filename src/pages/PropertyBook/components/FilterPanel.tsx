@@ -1,32 +1,28 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Paper,
-  Typography,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  FormControl,
-  FormLabel,
+  TextField,
   Select,
   MenuItem,
-  TextField,
-  InputAdornment,
+  FormControl,
+  FormLabel,
   Button,
-  Collapse,
-  Divider,
-  IconButton,
   Grid,
+  InputAdornment,
+  Typography,
+  styled,
+  alpha,
   Chip,
-  Stack,
+  IconButton,
+  Tooltip,
+  Theme,
   SelectChangeEvent,
 } from '@mui/material';
 import {
   Search as SearchIcon,
-  ExpandMore as ExpandMoreIcon,
-  ExpandLess as ExpandLessIcon,
-  FilterList as FilterListIcon,
   Clear as ClearIcon,
+  FilterList as FilterIcon,
+  ExpandMore as ExpandMoreIcon,
 } from '@mui/icons-material';
 
 // Define the filter state type
@@ -45,6 +41,36 @@ interface FilterPanelProps {
   onFilterChange: (filters: PropertyFilters) => void;
   selectedCategory: string;
 }
+
+const FilterContainer = styled(Box)(({ theme }) => ({
+  width: '100%',
+  backgroundColor: alpha(theme.palette.background.paper, 0.6),
+  borderRadius: theme.shape.borderRadius,
+}));
+
+const StyledFormLabel = styled(FormLabel)(({ theme }) => ({
+  fontSize: '0.75rem',
+  fontWeight: 500,
+  marginBottom: theme.spacing(0.5),
+  color: theme.palette.text.secondary,
+  textTransform: 'uppercase',
+  letterSpacing: '0.5px',
+}));
+
+const StyledSelect = styled(Select)(({ theme }) => ({
+  '& .MuiSelect-select': {
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+  },
+  backgroundColor: theme.palette.background.paper,
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.background.paper, 0.8),
+  },
+  '&.Mui-focused': {
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: `0 0 0 2px ${alpha(theme.palette.primary.main, 0.2)}`,
+  },
+}));
 
 const FilterPanel: React.FC<FilterPanelProps> = ({
   filters,
@@ -80,12 +106,12 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
     onFilterChange({ ...filters, status: event.target.value });
   };
 
-  const handleLocationChange = (event: SelectChangeEvent) => {
-    onFilterChange({ ...filters, location: event.target.value });
+  const handleLocationChange = (event: SelectChangeEvent<unknown>) => {
+    onFilterChange({ ...filters, location: event.target.value as string });
   };
 
-  const handleHandReceiptChange = (event: SelectChangeEvent) => {
-    onFilterChange({ ...filters, handReceiptHolder: event.target.value });
+  const handleHandReceiptChange = (event: SelectChangeEvent<unknown>) => {
+    onFilterChange({ ...filters, handReceiptHolder: event.target.value as string });
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,236 +147,198 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   ].filter(Boolean).length;
 
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        p: 2,
-        mb: 3,
-        border: '1px solid',
-        borderColor: 'divider',
-        borderRadius: 1,
-      }}
-    >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h6" fontWeight="medium">
-          Filters
-          {activeFiltersCount > 0 && (
-            <Chip
-              label={`${activeFiltersCount} active`}
-              size="small"
-              color="primary"
-              sx={{ ml: 1 }}
-            />
-          )}
-        </Typography>
-        
-        <Button
-          variant="outlined"
-          size="small"
-          startIcon={<ClearIcon />}
-          onClick={clearAllFilters}
-          disabled={activeFiltersCount === 0}
-        >
-          Clear All
-        </Button>
-      </Box>
-
-      <Grid container spacing={2}>
+    <FilterContainer>
+      <Grid container spacing={2.5} alignItems="flex-end">
         {/* Search field */}
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={4}>
+          <StyledFormLabel>Search Equipment</StyledFormLabel>
           <TextField
             fullWidth
-            placeholder="Search by item name, NSN, or serial number..."
+            placeholder="Search by name, NSN, or serial number..."
             value={filters.searchText}
             onChange={handleSearchChange}
             size="small"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon fontSize="small" />
+                  <SearchIcon fontSize="small" sx={{ color: 'primary.main' }} />
                 </InputAdornment>
               ),
+            }}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                backgroundColor: 'background.paper',
+                '&:hover': {
+                  backgroundColor: (theme: Theme) => alpha(theme.palette.background.paper, 0.8),
+                },
+                '&.Mui-focused': {
+                  backgroundColor: 'background.paper',
+                  boxShadow: (theme: Theme) => `0 0 0 2px ${alpha(theme.palette.primary.main, 0.2)}`,
+                },
+              },
             }}
           />
         </Grid>
 
-        {/* Status radio buttons */}
-        <Grid item xs={12} md={6}>
-          <FormControl component="fieldset">
-            <FormLabel component="legend" sx={{ fontSize: '0.75rem' }}>
-              Status
-            </FormLabel>
-            <RadioGroup
-              row
-              name="status-filter"
+        {/* Status filter */}
+        <Grid item xs={12} sm={6} md={2}>
+          <FormControl fullWidth size="small">
+            <StyledFormLabel>Status</StyledFormLabel>
+            <StyledSelect
               value={filters.status}
-              onChange={handleStatusChange}
+              onChange={(e) => onFilterChange({ ...filters, status: e.target.value as string })}
+              displayEmpty
+              size="small"
             >
-              <FormControlLabel
-                value="all"
-                control={<Radio size="small" />}
-                label="All"
-              />
-              <FormControlLabel
-                value="serviceable"
-                control={<Radio size="small" />}
-                label="Serviceable"
-              />
-              <FormControlLabel
-                value="unserviceable"
-                control={<Radio size="small" />}
-                label="Unserviceable"
-              />
-              <FormControlLabel
-                value="shortages"
-                control={<Radio size="small" />}
-                label="Shortages"
-              />
-            </RadioGroup>
+              <MenuItem value="all">
+                <Typography variant="body2">All Statuses</Typography>
+              </MenuItem>
+              <MenuItem value="Serviceable">
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Chip 
+                    size="small" 
+                    label="Serviceable" 
+                    sx={{ 
+                      bgcolor: 'success.main',
+                      color: 'success.contrastText',
+                      height: 20,
+                    }} 
+                  />
+                </Box>
+              </MenuItem>
+              <MenuItem value="Unserviceable">
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Chip 
+                    size="small" 
+                    label="Unserviceable" 
+                    sx={{ 
+                      bgcolor: 'error.main',
+                      color: 'error.contrastText',
+                      height: 20,
+                    }} 
+                  />
+                </Box>
+              </MenuItem>
+              <MenuItem value="Maintenance">
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Chip 
+                    size="small" 
+                    label="Maintenance" 
+                    sx={{ 
+                      bgcolor: 'warning.main',
+                      color: 'warning.contrastText',
+                      height: 20,
+                    }} 
+                  />
+                </Box>
+              </MenuItem>
+            </StyledSelect>
           </FormControl>
         </Grid>
 
         {/* Location dropdown */}
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} sm={6} md={2}>
           <FormControl fullWidth size="small">
-            <FormLabel component="legend" sx={{ fontSize: '0.75rem', mb: 1 }}>
-              Location
-            </FormLabel>
-            <Select
+            <StyledFormLabel>Location</StyledFormLabel>
+            <StyledSelect
               value={filters.location}
               onChange={handleLocationChange}
               displayEmpty
+              size="small"
             >
-              {locations.map((location) => (
+              <MenuItem value="All Locations">All Locations</MenuItem>
+              {locations.slice(1).map((location) => (
                 <MenuItem key={location} value={location}>
-                  {location}
+                  <Typography variant="body2">{location}</Typography>
                 </MenuItem>
               ))}
-            </Select>
+            </StyledSelect>
           </FormControl>
         </Grid>
 
         {/* Hand Receipt Holder dropdown */}
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} sm={6} md={2}>
           <FormControl fullWidth size="small">
-            <FormLabel component="legend" sx={{ fontSize: '0.75rem', mb: 1 }}>
-              Hand Receipt Holder
-            </FormLabel>
-            <Select
+            <StyledFormLabel>Hand Receipt Holder</StyledFormLabel>
+            <StyledSelect
               value={filters.handReceiptHolder}
               onChange={handleHandReceiptChange}
               displayEmpty
+              size="small"
             >
-              {handReceiptHolders.map((holder) => (
+              <MenuItem value="All Hand Receipt Holders">All Holders</MenuItem>
+              {handReceiptHolders.slice(1).map((holder) => (
                 <MenuItem key={holder} value={holder}>
-                  {holder}
+                  <Typography variant="body2">{holder}</Typography>
                 </MenuItem>
               ))}
-            </Select>
+            </StyledSelect>
+          </FormControl>
+        </Grid>
+
+        {/* Date verified filter */}
+        <Grid item xs={12} sm={6} md={2}>
+          <FormControl fullWidth size="small">
+            <StyledFormLabel>Verified After</StyledFormLabel>
+            <TextField
+              type="date"
+              size="small"
+              value={filters.verifiedAfter}
+              onChange={(e) => onFilterChange({
+                ...filters,
+                verifiedAfter: e.target.value
+              })}
+              InputLabelProps={{ shrink: true }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  backgroundColor: 'background.paper',
+                  '&:hover': {
+                    backgroundColor: (theme: Theme) => alpha(theme.palette.background.paper, 0.8),
+                  },
+                  '&.Mui-focused': {
+                    backgroundColor: 'background.paper',
+                    boxShadow: (theme: Theme) => `0 0 0 2px ${alpha(theme.palette.primary.main, 0.2)}`,
+                  },
+                },
+              }}
+            />
           </FormControl>
         </Grid>
       </Grid>
 
-      {/* Advanced filters toggle */}
-      <Box sx={{ mt: 2 }}>
-        <Button
-          variant="text"
-          size="small"
-          onClick={() => setShowAdvanced(!showAdvanced)}
-          endIcon={showAdvanced ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          sx={{ textTransform: 'none' }}
-        >
-          {showAdvanced ? 'Hide Advanced Filters' : 'Show Advanced Filters'}
-        </Button>
-      </Box>
-
-      {/* Advanced filters section */}
-      <Collapse in={showAdvanced}>
-        <Divider sx={{ my: 2 }} />
-        <Grid container spacing={2}>
-          {/* Verification date range */}
-          <Grid item xs={12} md={6}>
-            <FormLabel component="legend" sx={{ fontSize: '0.75rem', mb: 1 }}>
-              Verified After
-            </FormLabel>
-            <TextField
-              type="date"
-              fullWidth
-              size="small"
-              value={filters.verifiedAfter}
-              onChange={handleDateChange('verifiedAfter')}
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <FormLabel component="legend" sx={{ fontSize: '0.75rem', mb: 1 }}>
-              Verified Before
-            </FormLabel>
-            <TextField
-              type="date"
-              fullWidth
-              size="small"
-              value={filters.verifiedBefore}
-              onChange={handleDateChange('verifiedBefore')}
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-        </Grid>
-
-        {/* Active filter chips display */}
-        {activeFiltersCount > 0 && (
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
-              Active Filters:
+      {activeFiltersCount > 0 && (
+        <Box sx={{ 
+          mt: 2, 
+          pt: 2,
+          borderTop: '1px solid',
+          borderColor: 'divider',
+          display: 'flex', 
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <FilterIcon fontSize="small" sx={{ color: 'primary.main' }} />
+            <Typography variant="body2" color="primary">
+              {activeFiltersCount} {activeFiltersCount === 1 ? 'filter' : 'filters'} applied
             </Typography>
-            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-              {filters.status !== 'all' && (
-                <Chip
-                  label={`Status: ${filters.status}`}
-                  size="small"
-                  onDelete={() => onFilterChange({ ...filters, status: 'all' })}
-                />
-              )}
-              {filters.location !== 'All Locations' && (
-                <Chip
-                  label={`Location: ${filters.location}`}
-                  size="small"
-                  onDelete={() => onFilterChange({ ...filters, location: 'All Locations' })}
-                />
-              )}
-              {filters.handReceiptHolder !== 'All Hand Receipt Holders' && (
-                <Chip
-                  label={`Hand Receipt: ${filters.handReceiptHolder.split(' ')[0]}`}
-                  size="small"
-                  onDelete={() => onFilterChange({ ...filters, handReceiptHolder: 'All Hand Receipt Holders' })}
-                />
-              )}
-              {filters.verifiedAfter && (
-                <Chip
-                  label={`Verified After: ${filters.verifiedAfter}`}
-                  size="small"
-                  onDelete={() => onFilterChange({ ...filters, verifiedAfter: '' })}
-                />
-              )}
-              {filters.verifiedBefore && (
-                <Chip
-                  label={`Verified Before: ${filters.verifiedBefore}`}
-                  size="small"
-                  onDelete={() => onFilterChange({ ...filters, verifiedBefore: '' })}
-                />
-              )}
-              {selectedCategory !== 'all' && (
-                <Chip
-                  label={`Category: ${selectedCategory}`}
-                  size="small"
-                  color="primary"
-                />
-              )}
-            </Stack>
           </Box>
-        )}
-      </Collapse>
-    </Paper>
+          <Button
+            variant="text"
+            size="small"
+            startIcon={<ClearIcon />}
+            onClick={clearAllFilters}
+            sx={{ 
+              color: 'text.secondary',
+              '&:hover': {
+                color: 'primary.main',
+              },
+            }}
+          >
+            Clear All
+          </Button>
+        </Box>
+      )}
+    </FilterContainer>
   );
 };
 

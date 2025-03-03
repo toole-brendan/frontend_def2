@@ -1,11 +1,13 @@
 import React from 'react';
-import { AppBar as MuiAppBar, styled } from '@mui/material';
+import { AppBar as MuiAppBar, styled, useTheme } from '@mui/material';
 import { AppBarContent } from './AppBar/AppBarContent';
 
-const StyledAppBar = styled(MuiAppBar)(() => ({
-  backgroundColor: 'rgba(0, 0, 0, 0.9)',
+const StyledAppBar = styled(MuiAppBar)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' 
+    ? 'rgba(0, 0, 0, 0.9)' 
+    : 'rgba(255, 255, 255, 0.9)',
   backdropFilter: 'blur(12px)',
-  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+  borderBottom: `1px solid ${theme.palette.divider}`,
   boxShadow: 'none',
   '&::before': {
     content: '""',
@@ -14,7 +16,9 @@ const StyledAppBar = styled(MuiAppBar)(() => ({
     left: 0,
     right: 0,
     bottom: 0,
-    background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%)',
+    background: theme.palette.mode === 'dark'
+      ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%)'
+      : 'linear-gradient(180deg, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0) 100%)',
     pointerEvents: 'none',
   },
 }));
@@ -30,6 +34,9 @@ export const AppBar: React.FC<AppBarProps> = ({
   onDrawerToggle,
   userDisplayName,
 }) => {
+  const theme = useTheme();
+  const mode = theme.palette.mode;
+  
   return (
     <StyledAppBar
       position="fixed"
@@ -51,4 +58,4 @@ export const AppBar: React.FC<AppBarProps> = ({
   );
 };
 
-export default AppBar; 
+export default AppBar;

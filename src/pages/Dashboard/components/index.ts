@@ -24,4 +24,5 @@ export { PropertyDistributionVisualization } from './PropertyDistributionVisuali
 export { CriticalEquipmentStatusTable } from './CriticalEquipmentStatusTable';
 export { UpcomingAccountabilityRequirements } from './UpcomingAccountabilityRequirements';
 export { QuickActionPanel } from './QuickActionPanel';
-export { SystemStatusFooter } from './SystemStatusFooter'; 
+export { SystemStatusFooter } from './SystemStatusFooter';
+export { EquipmentReadinessChart } from './EquipmentReadinessChart';

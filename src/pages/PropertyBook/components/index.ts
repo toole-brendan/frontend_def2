@@ -12,9 +12,8 @@ export { default as PropertyBookSummaryCard } from './PropertyBookSummaryCard';
 export { default as HandReceiptManagementCard } from './HandReceiptManagementCard';
 export { default as SensitiveItemsStatusCard } from './SensitiveItemsStatusCard';
 export { default as PropertyTransactionHistory } from './PropertyTransactionHistory';
-
-// Re-export types to ensure consistency
-export type PropertyItem = PropertyBookTableItem;
+export { default as PropertyBookHeader } from './PropertyBookHeader';
+export { default as PropertyBookSummary } from './PropertyBookSummary';
 
 // Type definitions for components that may be used elsewhere
 export interface EquipmentCategoryTreeProps {
@@ -28,8 +27,8 @@ export interface FilterPanelProps {
 }
 
 export interface BulkActionToolbarProps {
-  selectedItems: PropertyItem[];
-  onBulkAction: (action: string, items: PropertyItem[], additionalData?: any) => void;
+  selectedItems: PropertyBookTableItem[];
+  onBulkAction: (action: string, items: PropertyBookTableItem[], additionalData?: any) => void;
   onClearSelection: () => void;
 }
 
