@@ -214,7 +214,13 @@ const SensitiveItems: React.FC = () => {
             <Button
               variant="contained"
               size="small"
-              onClick={handleScannerToggle}
+              onClick={() => {
+                // First open the inventory modal, then activate the scanner
+                handleInventoryModalOpen();
+                setTimeout(() => {
+                  handleScannerToggle();
+                }, 300);
+              }}
               sx={{ 
                 position: 'absolute', 
                 bottom: 16, 

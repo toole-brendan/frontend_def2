@@ -15,52 +15,35 @@ import {
   Warning as WarningIcon,
   VerifiedUser as VerifiedUserIcon
 } from '@mui/icons-material';
-// Chart components would normally be imported from 'chart.js' and 'react-chartjs-2'
-// Since we're just structuring files, we're creating mock implementations
-
-// Mock chart components
-const Bar = (_props: any) => (
-  <Box sx={{ 
-    width: '100%', 
-    height: '100%', 
-    display: 'flex', 
-    alignItems: 'center', 
-    justifyContent: 'center',
-    bgcolor: alpha('#3f51b5', 0.1),
-    border: '1px dashed #3f51b5'
-  }}>
-    <Typography>Bar Chart: Weekly Inventory Compliance</Typography>
-  </Box>
-);
-
-const Pie = (_props: any) => (
-  <Box sx={{ 
-    width: '100%', 
-    height: '100%', 
-    display: 'flex', 
-    alignItems: 'center', 
-    justifyContent: 'center',
-    bgcolor: alpha('#4caf50', 0.1),
-    border: '1px dashed #4caf50'
-  }}>
-    <Typography>Pie Chart: Item Category Distribution</Typography>
-  </Box>
-);
-
-const Line = (_props: any) => (
-  <Box sx={{ 
-    width: '100%', 
-    height: '100%', 
-    display: 'flex', 
-    alignItems: 'center', 
-    justifyContent: 'center',
-    bgcolor: alpha('#f50057', 0.1),
-    border: '1px dashed #f50057'
-  }}>
-    <Typography>Line Chart: Verification Trend</Typography>
-  </Box>
-);
 import { AnalyticsData } from '../../../types/sensitiveItems';
+
+// Import Chart.js components
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Bar, Pie, Line } from 'react-chartjs-2';
+
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 interface AnalyticsTabProps {
   analytics: AnalyticsData;
@@ -99,7 +82,7 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
                   },
                   plugins: {
                     legend: {
-                      position: 'top' as const,
+                      position: 'top',
                     },
                     title: {
                       display: false
@@ -125,7 +108,7 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
                   maintainAspectRatio: false,
                   plugins: {
                     legend: {
-                      position: 'right' as const,
+                      position: 'right',
                     },
                     title: {
                       display: false
@@ -155,15 +138,16 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
                       max: 100,
                       ticks: {
                         // Include a percentage sign in the ticks
-                        callback: function(value: number) {
-                          return value + '%';
+                        callback: function(tickValue: string | number) {
+                          // Only add percentage to numbers
+                          return typeof tickValue === 'number' ? tickValue + '%' : tickValue;
                         }
                       }
                     }
                   },
                   plugins: {
                     legend: {
-                      position: 'top' as const,
+                      position: 'top',
                     },
                     title: {
                       display: false
