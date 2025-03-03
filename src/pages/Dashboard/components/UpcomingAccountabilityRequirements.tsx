@@ -1,21 +1,25 @@
 import React from 'react';
-import { 
-  Box, 
-  Typography, 
-  Paper, 
-  Button, 
+import {
+  Box,
+  Typography,
+  Paper,
+  Button,
+  Divider,
   List,
   ListItem,
   ListItemText,
-  Divider,
-  Grid,
+  ListItemIcon,
   LinearProgress,
-  Chip,
-  Card,
-  CardContent,
-  CardHeader
+  alpha,
+  useTheme
 } from '@mui/material';
-import { UpcomingAccountabilityRequirementsProps } from '../types';
+import {
+  TimerOutlined as TimerIcon,
+  Assignment as InventoryIcon,
+  CheckCircleOutline as CheckIcon
+} from '@mui/icons-material';
+import { UpcomingAccountabilityRequirementsProps, Requirement } from '../types';
+import { cardWithCornerSx, sectionHeaderSx, buttonSx, linearProgressSx } from '../styles';
 
 export const UpcomingAccountabilityRequirements: React.FC<UpcomingAccountabilityRequirementsProps> = ({
   weeklyRequirements,
@@ -23,139 +27,218 @@ export const UpcomingAccountabilityRequirements: React.FC<UpcomingAccountability
   quarterlyRequirements,
   onStartInventory
 }) => {
-  // Helper function to render a requirement item
-  const renderRequirementItem = (requirement: { name: string; due: string; daysRemaining?: number; progress?: number | null; }) => {
+  const theme = useTheme();
+  
+  // Helper function to render requirement item
+  const renderRequirementItem = (requirement: Requirement) => {
+    // Default to 0 if progress is undefined or null
+    const progressValue = requirement.progress !== undefined && requirement.progress !== null 
+      ? requirement.progress 
+      : 0;
+    
+    const isDue = requirement.daysRemaining !== undefined && requirement.daysRemaining <= 3;
+    
     return (
-      <ListItem disablePadding sx={{ py: 1 }}>
-        <ListItemText
-          primary={
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Typography variant="body2" sx={{ fontWeight: 'medium' }} component="span">
-                {requirement.name}
+      <ListItem 
+        disablePadding 
+        sx={{ 
+          display: 'block', 
+          py: 1, 
+          px: 0.5 
+        }}
+      >
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 0.5 }}>
+          <Typography 
+            variant="body2" 
+            sx={{ 
+              fontWeight: 'medium',
+              fontSize: '0.8rem',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            {requirement.name}
+          </Typography>
+          <Box>
+            {requirement.daysRemaining !== undefined && (
+              <Typography 
+                variant="caption" 
+                sx={{ 
+                  color: isDue ? theme.palette.warning.main : alpha(theme.palette.text.secondary, 0.8),
+                  fontWeight: isDue ? 'bold' : 'normal',
+                  fontFamily: 'monospace',
+                  fontSize: '0.7rem',
+                }}
+              >
+                {requirement.daysRemaining === 0 ? 'DUE TODAY' : 
+                 requirement.daysRemaining < 0 ? 'OVERDUE' : 
+                 `T-${requirement.daysRemaining} days`}
               </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                {requirement.daysRemaining !== undefined && (
-                  <Chip 
-                    label={`${requirement.daysRemaining} days`}
-                    color={requirement.daysRemaining < 2 ? 'warning' : 'default'}
-                    size="small"
-                    sx={{ mr: 1 }}
-                  />
-                )}
-                <Typography variant="body2" color="text.secondary" component="span">
-                  Due: {requirement.due}
-                </Typography>
-              </Box>
-            </Box>
-          }
-          secondary={
-            requirement.progress !== undefined && requirement.progress !== null ? (
-              <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                <LinearProgress 
-                  variant="determinate" 
-                  value={requirement.progress} 
-                  sx={{ flexGrow: 1, mr: 1, height: 8, borderRadius: 1 }}
-                />
-                <Typography variant="caption" color="text.secondary">
-                  {requirement.progress}% Complete
-                </Typography>
-              </Box>
-            ) : null
-          }
-        />
+            )}
+          </Box>
+        </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+          <Typography 
+            variant="caption" 
+            sx={{ 
+              color: 'text.secondary',
+              fontSize: '0.7rem',
+              fontFamily: 'monospace',
+            }}
+          >
+            Due: {requirement.due}
+          </Typography>
+          {requirement.progress !== undefined && requirement.progress !== null && (
+            <Typography 
+              variant="caption" 
+              sx={{ 
+                color: requirement.progress >= 75 ? theme.palette.success.main : theme.palette.warning.main,
+                fontWeight: 'bold',
+                fontFamily: 'monospace',
+                fontSize: '0.7rem',
+              }}
+            >
+              {requirement.progress}% Complete
+            </Typography>
+          )}
+        </Box>
+        {requirement.progress !== undefined && requirement.progress !== null && (
+          <LinearProgress 
+            variant="determinate" 
+            value={requirement.progress} 
+            sx={linearProgressSx(
+              theme, 
+              requirement.progress >= 75 
+                ? theme.palette.success.main 
+                : requirement.progress >= 50 
+                  ? theme.palette.primary.main 
+                  : theme.palette.warning.main
+            )}
+          />
+        )}
       </ListItem>
     );
   };
 
   return (
-    <Paper elevation={2} sx={{ p: 2, borderRadius: 2 }}>
-      {/* Card Header */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h6" fontWeight="bold">
-          Required Inventories & Actions
+    <Paper 
+      sx={cardWithCornerSx(theme, alpha(theme.palette.success.main, theme.palette.mode === 'dark' ? 0.3 : 0.2))}
+    >
+      <Box sx={{ p: 2 }}>
+        {/* Card Title */}
+        <Typography 
+          variant="h6" 
+          sx={sectionHeaderSx}
+        >
+          Upcoming Accountability Requirements
         </Typography>
+
+        {/* Weekly Requirements Section */}
+        {weeklyRequirements && weeklyRequirements.length > 0 && (
+          <>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <TimerIcon fontSize="small" sx={{ mr: 1, color: theme.palette.warning.main }} />
+              <Typography 
+                variant="subtitle1" 
+                sx={{
+                  fontWeight: 'bold',
+                  textTransform: 'uppercase',
+                  fontSize: '0.8rem',
+                  letterSpacing: '0.03em',
+                }}
+              >
+                Weekly Requirements
+              </Typography>
+            </Box>
+            <List disablePadding>
+              {weeklyRequirements.map((req, index) => (
+                <React.Fragment key={index}>
+                  {renderRequirementItem(req)}
+                  {index < weeklyRequirements.length - 1 && (
+                    <Divider sx={{ my: 0.5 }} />
+                  )}
+                </React.Fragment>
+              ))}
+            </List>
+            <Divider sx={{ my: 1.5 }} />
+          </>
+        )}
+
+        {/* Monthly Requirements Section */}
+        {monthlyRequirements && monthlyRequirements.length > 0 && (
+          <>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <InventoryIcon fontSize="small" sx={{ mr: 1, color: theme.palette.primary.main }} />
+              <Typography 
+                variant="subtitle1" 
+                sx={{
+                  fontWeight: 'bold',
+                  textTransform: 'uppercase',
+                  fontSize: '0.8rem',
+                  letterSpacing: '0.03em',
+                }}
+              >
+                Monthly Requirements
+              </Typography>
+            </Box>
+            <List disablePadding>
+              {monthlyRequirements.map((req, index) => (
+                <React.Fragment key={index}>
+                  {renderRequirementItem(req)}
+                  {index < monthlyRequirements.length - 1 && (
+                    <Divider sx={{ my: 0.5 }} />
+                  )}
+                </React.Fragment>
+              ))}
+            </List>
+            <Divider sx={{ my: 1.5 }} />
+          </>
+        )}
+
+        {/* Quarterly Requirements Section */}
+        {quarterlyRequirements && quarterlyRequirements.length > 0 && (
+          <>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <CheckIcon fontSize="small" sx={{ mr: 1, color: theme.palette.success.main }} />
+              <Typography 
+                variant="subtitle1" 
+                sx={{
+                  fontWeight: 'bold',
+                  textTransform: 'uppercase',
+                  fontSize: '0.8rem',
+                  letterSpacing: '0.03em',
+                }}
+              >
+                Quarterly Requirements
+              </Typography>
+            </Box>
+            <List disablePadding>
+              {quarterlyRequirements.map((req, index) => (
+                <React.Fragment key={index}>
+                  {renderRequirementItem(req)}
+                  {index < quarterlyRequirements.length - 1 && (
+                    <Divider sx={{ my: 0.5 }} />
+                  )}
+                </React.Fragment>
+              ))}
+            </List>
+          </>
+        )}
+
+        {/* Start Inventory Button */}
         <Button 
           variant="contained" 
-          color="primary"
+          color="primary" 
+          fullWidth
           onClick={onStartInventory}
+          sx={{ 
+            mt: 2,
+            ...buttonSx,
+          }}
         >
-          Start Required Inventory
+          Start New Inventory
         </Button>
       </Box>
-      
-      <Grid container spacing={3}>
-        {/* Weekly Requirements */}
-        <Grid item xs={12} md={4}>
-          <Card variant="outlined" sx={{ height: '100%' }}>
-            <CardHeader 
-              title={
-                <Typography variant="subtitle1" fontWeight="bold">
-                  Weekly Requirements
-                </Typography>
-              }
-              sx={{ pb: 0 }}
-            />
-            <CardContent>
-              <List disablePadding>
-                {weeklyRequirements.map((req, index) => (
-                  <React.Fragment key={index}>
-                    {index > 0 && <Divider />}
-                    {renderRequirementItem(req)}
-                  </React.Fragment>
-                ))}
-              </List>
-            </CardContent>
-          </Card>
-        </Grid>
-        
-        {/* Monthly Requirements */}
-        <Grid item xs={12} md={4}>
-          <Card variant="outlined" sx={{ height: '100%' }}>
-            <CardHeader 
-              title={
-                <Typography variant="subtitle1" fontWeight="bold">
-                  Monthly Requirements
-                </Typography>
-              }
-              sx={{ pb: 0 }}
-            />
-            <CardContent>
-              <List disablePadding>
-                {monthlyRequirements.map((req, index) => (
-                  <React.Fragment key={index}>
-                    {index > 0 && <Divider />}
-                    {renderRequirementItem(req)}
-                  </React.Fragment>
-                ))}
-              </List>
-            </CardContent>
-          </Card>
-        </Grid>
-        
-        {/* Quarterly Requirements */}
-        <Grid item xs={12} md={4}>
-          <Card variant="outlined" sx={{ height: '100%' }}>
-            <CardHeader 
-              title={
-                <Typography variant="subtitle1" fontWeight="bold">
-                  Quarterly Requirements
-                </Typography>
-              }
-              sx={{ pb: 0 }}
-            />
-            <CardContent>
-              <List disablePadding>
-                {quarterlyRequirements.map((req, index) => (
-                  <React.Fragment key={index}>
-                    {index > 0 && <Divider />}
-                    {renderRequirementItem(req)}
-                  </React.Fragment>
-                ))}
-              </List>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
     </Paper>
   );
-}; 
+};

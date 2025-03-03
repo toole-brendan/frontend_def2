@@ -32,14 +32,18 @@ import {
   Person as PersonIcon,
   LightMode as LightModeIcon,
   DarkMode as DarkModeIcon,
+  ChevronRight as ChevronRightIcon,
 } from '@mui/icons-material';
 import { useAppTheme } from '../../../theme/ThemeProvider';
 
-const DRAWER_WIDTH = 240;
+// Match the drawer width in EnhancedSidebar.tsx
+const DRAWER_WIDTH = 260;
+const COLLAPSED_DRAWER_WIDTH = 72;
 
-const Search = styled('div')(({ theme }) => ({
+// Create a styled component for the search bar that adapts to the sidebar state
+const Search = styled('div')<{ sidebarCollapsed?: boolean }>(({ theme, sidebarCollapsed }) => ({
   position: 'absolute',
-  left: DRAWER_WIDTH,
+  left: sidebarCollapsed ? COLLAPSED_DRAWER_WIDTH : DRAWER_WIDTH,
   borderRadius: 0,
   backgroundColor: theme.palette.mode === 'dark' 
     ? theme.palette.background.paper 
@@ -145,12 +149,12 @@ const UserInfo = styled(Box)(({ theme }) => ({
 
 const RankChip = styled(Chip)(({ theme }) => ({
   backgroundColor: theme.palette.primary.dark,
-  color: theme.palette.common.white,
-  fontWeight: 600,
-  fontSize: '0.7rem',
+  color: theme.palette.primary.contrastText,
+  fontWeight: theme.typography.fontWeightBold,
+  fontSize: '0.7rem', // Use literal value instead of tokens
   height: 20,
-  borderRadius: 0,
-  border: `1px solid ${alpha(theme.palette.common.white, 0.3)}`,
+  borderRadius: theme.shape.borderRadius,
+  border: `1px solid ${alpha(theme.palette.primary.contrastText, 0.3)}`,
   '& .MuiChip-label': {
     padding: '0 8px',
   },
@@ -161,8 +165,8 @@ const MilitaryAvatar = styled(Avatar)(({ theme }) => ({
   height: 38,
   border: `1px solid ${theme.palette.divider}`,
   backgroundColor: theme.palette.primary.dark,
-  color: theme.palette.common.white,
-  fontWeight: 600,
+  color: theme.palette.primary.contrastText,
+  fontWeight: theme.typography.fontWeightMedium,
   boxShadow: theme.shadows[1],
 }));
 
@@ -225,6 +229,7 @@ interface AppBarContentProps {
   isMobile: boolean;
   onDrawerToggle: () => void;
   userDisplayName: string;
+  sidebarCollapsed?: boolean;
 }
 
 export const AppBarContent: React.FC<AppBarContentProps> = ({
@@ -342,39 +347,63 @@ export const AppBarContent: React.FC<AppBarContentProps> = ({
       </IconButton>
 
       <UserInfo onClick={handleMenuOpen}>
-        <MilitaryAvatar>
-          {rank.charAt(0)}
-        </MilitaryAvatar>
+        <Avatar 
+          sx={{ 
+            width: 42, 
+            height: 42, 
+            bgcolor: theme.palette.primary.main,
+            borderRadius: 0,  // Square avatar for military/industrial look
+          }}
+        >
+          {userDisplayName.charAt(0)}
+        </Avatar>
+        
         <Box sx={{ display: { xs: 'none', sm: 'flex' }, flexDirection: 'column' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <RankChip 
-              label={rank} 
-              size="small"
-              icon={<SecurityIcon style={{ fontSize: 14, color: '#FFFFFF' }} />}
-            />
-            <Typography
-              variant="subtitle2"
-              sx={{
-                fontWeight: 500,
-                letterSpacing: '0.02em',
-                ml: 0.5,
-              }}
-            >
-              {name}
-            </Typography>
-          </Box>
-          <Typography
-            variant="caption"
-            color="text.secondary"
-            sx={{
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              fontSize: '0.7rem',
+          <Typography 
+            variant="subtitle1" 
+            noWrap 
+            sx={{ 
+              fontWeight: 600,
+              letterSpacing: '0.02em',
             }}
           >
-            Company Commander
+            {userDisplayName}
           </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+            <Typography 
+              variant="body2" 
+              color="text.secondary" 
+              noWrap
+              sx={{ 
+                fontSize: '0.75rem',
+                letterSpacing: '0.01em',
+              }}
+            >
+              B Co, 2-87 IN BN
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <SecurityIcon
+                sx={{ 
+                  fontSize: 10, 
+                  color: theme.palette.success.main
+                }}
+              />
+              <Typography 
+                variant="caption" 
+                sx={{ 
+                  letterSpacing: '0.025em', 
+                  fontWeight: 500,
+                  textTransform: 'uppercase', 
+                  fontSize: '0.7rem',
+                  color: theme.palette.success.main,
+                }}
+              >
+                CONNECTED
+              </Typography>
+            </Box>
+          </Box>
         </Box>
+        
         <ArrowDownIcon
           sx={{
             fontSize: 20,

@@ -1,18 +1,26 @@
 import React from 'react';
 import { 
-  Box, 
   Fab, 
   Grid,
-  useTheme
+  Box,
+  Button,
+  useTheme,
+  alpha
 } from '@mui/material';
 import { KpiStatsCard } from '../../components/common';
 import { Plus } from 'lucide-react';
 import { 
   CheckCircle as CheckCircleIcon,
   Inventory as InventoryIcon,
-  CalendarToday
+  CalendarToday as CalendarIcon,
+  Timeline as MetricsIcon,
+  BuildCircle as MaintenanceIcon
 } from '@mui/icons-material';
 import { Package } from 'lucide-react';
+import { PageContainer, PageHeader } from '../../components/layout';
+
+// Import styles
+import { buttonSx, paperSx } from './styles';
 
 // Import components
 import { 
@@ -43,13 +51,36 @@ import {
 const Dashboard = () => {
   const theme = useTheme();
   
+  // Dashboard actions
+  const headerActions = (
+    <>
+      <Button 
+        variant="outlined" 
+        startIcon={<MetricsIcon fontSize="small" />}
+        sx={buttonSx}
+      >
+        Generate Reports
+      </Button>
+      <Button 
+        variant="outlined" 
+        startIcon={<MaintenanceIcon fontSize="small" />}
+        sx={buttonSx}
+      >
+        Unit Status
+      </Button>
+    </>
+  );
+  
   return (
-    <Box sx={{ 
-      bgcolor: 'background.default', 
-      color: 'text.primary',
-      minHeight: '100vh',
-      p: 3
-    }}>
+    <PageContainer
+      header={
+        <PageHeader 
+          title="Commander's Dashboard"
+          subtitle="Battalion Operations Status Overview"
+          actions={headerActions}
+        />
+      }
+    >
       {/* Dashboard Header */}
       <DashboardHeader 
         title="Commander's Dashboard"
@@ -61,14 +92,14 @@ const Dashboard = () => {
       />
       
       {/* Quick Stats Banner */}
-      <Grid container spacing={2} sx={{ mb: 3, mx: 1 }}>
+      <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} md={3}>
           <KpiStatsCard 
             icon={<InventoryIcon fontSize="small" />}
             title="Total Property Value"
             value="$4.2M"
             subtitle="Combined value of all accountable equipment"
-            color={theme.palette.primary.main}
+            color={theme.palette.mode === 'dark' ? theme.palette.primary.main : theme.palette.primary.dark}
           />
         </Grid>
         <Grid item xs={12} md={3}>
@@ -77,7 +108,7 @@ const Dashboard = () => {
             title="Equipment Items"
             value="721"
             subtitle="Total accountable equipment line items"
-            color={theme.palette.info.main}
+            color={theme.palette.mode === 'dark' ? theme.palette.primary.main : theme.palette.primary.dark}
           />
         </Grid>
         <Grid item xs={12} md={3}>
@@ -86,16 +117,20 @@ const Dashboard = () => {
             title="Sensitive Items"
             value="100%"
             subtitle="All items verified and accounted for"
-            color={theme.palette.success.main}
+            color={theme.palette.mode === 'dark' ? 
+              theme.palette.success.main : 
+              theme.palette.success.dark}
           />
         </Grid>
         <Grid item xs={12} md={3}>
           <KpiStatsCard 
-            icon={<CalendarToday fontSize="small" />}
+            icon={<CalendarIcon fontSize="small" />}
             title="Current Date/Time"
             value="25FEB2025"
             subtitle="0842 local time"
-            color={theme.palette.secondary.main}
+            color={theme.palette.mode === 'dark' ? 
+              theme.palette.secondary.main : 
+              theme.palette.secondary.dark}
           />
         </Grid>
       </Grid>
@@ -165,27 +200,33 @@ const Dashboard = () => {
       <Grid container spacing={3} sx={{ mb: 3 }}>
         {/* Property Distribution Visualization */}
         <Grid item xs={12} md={6}>
-          <PropertyDistributionVisualization />
+          <Box sx={paperSx(theme)}>
+            <PropertyDistributionVisualization />
+          </Box>
         </Grid>
         
         {/* Equipment Readiness Chart */}
         <Grid item xs={12} md={6}>
-          <EquipmentReadinessChart data={readinessData} />
+          <Box sx={paperSx(theme)}>
+            <EquipmentReadinessChart data={readinessData} />
+          </Box>
         </Grid>
       </Grid>
       
       {/* Critical Equipment Status */}
-      <CriticalEquipmentStatusTable 
-        equipment={criticalEquipment.map(item => ({
-          equipment: item.equipment,
-          serialBumper: item.serialNumber,
-          status: item.status as any,
-          location: item.location,
-          issue: item.issue,
-          actionRequired: item.action,
-          due: item.due
-        }))}
-      />
+      <Box sx={{ ...paperSx(theme), mb: 3 }}>
+        <CriticalEquipmentStatusTable 
+          equipment={criticalEquipment.map(item => ({
+            equipment: item.equipment,
+            serialBumper: item.serialNumber,
+            status: item.status as any,
+            location: item.location,
+            issue: item.issue,
+            actionRequired: item.action,
+            due: item.due
+          }))}
+        />
+      </Box>
       
       {/* Bottom Row */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
@@ -200,7 +241,7 @@ const Dashboard = () => {
                 daysRemaining: 3, // Mock value, would be calculated
                 progress: req.status.includes('%') 
                   ? parseInt(req.status) 
-                  : null
+                  : undefined
               }))}
             monthlyRequirements={upcomingRequirements
               .filter(req => req.type === 'monthly')
@@ -210,7 +251,7 @@ const Dashboard = () => {
                 daysRemaining: 5, // Mock value, would be calculated
                 progress: req.status.includes('%') 
                   ? parseInt(req.status) 
-                  : null
+                  : undefined
               }))}
             quarterlyRequirements={upcomingRequirements
               .filter(req => req.type === 'quarterly')
@@ -218,7 +259,7 @@ const Dashboard = () => {
                 name: req.name,
                 due: req.dueDate,
                 daysRemaining: 49, // Mock value, would be calculated
-                progress: null
+                progress: undefined
               }))}
             onStartInventory={() => console.log('Start inventory')}
           />
@@ -226,37 +267,46 @@ const Dashboard = () => {
         
         {/* Recent Activity */}
         <Grid item xs={12} md={6}>
-          <RecentActivityFeed 
-            activities={recentActivity.map(activity => ({
-              date: activity.date,
-              time: activity.time,
-              activity: activity.activity,
-              personnel: activity.personnel,
-              details: activity.details,
-              status: activity.status as any
-            }))}
-            onViewAllActivity={() => console.log('View all activity')}
-          />
+          <Box sx={paperSx(theme)}>
+            <RecentActivityFeed 
+              activities={recentActivity.map(activity => ({
+                date: activity.date,
+                time: activity.time,
+                activity: activity.activity,
+                personnel: activity.personnel,
+                details: activity.details,
+                status: activity.status as any
+              }))}
+              onViewAllActivity={() => console.log('View all activity')}
+            />
+          </Box>
         </Grid>
       </Grid>
       
       {/* Footer */}
-      <SystemStatusFooter 
-        connectionStatus="Connected to GCSS-Army"
-        lastUpdate="25FEB2025 0842"
-        mobileAppStatus="37 Users Synchronized"
-        systemNotice=""
-      />
+      <Box sx={paperSx(theme)}>
+        <SystemStatusFooter 
+          connectionStatus="Connected to GCSS-Army"
+          lastUpdate="25FEB2025 0842"
+          mobileAppStatus="37 Users Synchronized"
+          systemNotice=""
+        />
+      </Box>
       
       {/* Floating Action Button */}
       <Fab 
         color="primary" 
-        sx={{ position: 'fixed', bottom: 20, right: 20 }}
+        sx={{ 
+          position: 'fixed', 
+          bottom: 20, 
+          right: 20, 
+          borderRadius: 0,
+        }}
         aria-label="add"
       >
         <Plus />
       </Fab>
-    </Box>
+    </PageContainer>
   );
 };
 

@@ -1,9 +1,7 @@
 import React from 'react';
 import { 
   Box, 
-  Card, 
-  CardContent, 
-  CardHeader, 
+  Paper, 
   Typography, 
   List, 
   ListItem, 
@@ -12,7 +10,9 @@ import {
   IconButton, 
   Button, 
   useTheme,
-  Divider
+  Divider,
+  alpha,
+  CardHeader
 } from '@mui/material';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -45,6 +45,7 @@ export const InventoryScheduleCard: React.FC = () => {
     return matchingEvent ? matchingEvent.type : null;
   };
 
+  // Custom rendering for the calendar day
   const ServerDay = (props: any) => {
     const { day, outsideCurrentMonth, ...other } = props;
     const dateType = getDateType(day);
@@ -65,29 +66,76 @@ export const InventoryScheduleCard: React.FC = () => {
             sx={{
               width: 8,
               height: 8,
-              borderRadius: '50%',
+              borderRadius: 0,
               backgroundColor: badgeColor,
               border: `1px solid ${theme.palette.background.paper}`
             }}
           />
         }
       >
-        <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day} />
+        <PickersDay 
+          {...other} 
+          outsideCurrentMonth={outsideCurrentMonth} 
+          day={day} 
+          sx={{ 
+            fontFamily: 'monospace',
+            fontWeight: 'medium',
+            '&.Mui-selected': {
+              bgcolor: alpha(theme.palette.primary.main, 0.2),
+              color: theme.palette.primary.main,
+              fontWeight: 'bold',
+              '&:hover': {
+                bgcolor: alpha(theme.palette.primary.main, 0.3),
+              }
+            }
+          }}
+        />
       </Badge>
     );
   };
 
   return (
-    <Card elevation={2} sx={{ height: '100%' }}>
+    <Paper 
+      sx={{ 
+        height: '100%',
+        p: 0,
+        borderRadius: 0,
+        border: '2px solid rgba(140, 140, 160, 0.12)',
+        boxShadow: theme.palette.mode === 'dark' 
+          ? '0 0 0 1px rgba(226, 232, 240, 0.05), 0 2px 4px rgba(0, 0, 0, 0.2)'
+          : '0 0 0 1px rgba(74, 85, 104, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1)',
+        position: 'relative',
+        overflow: 'hidden',
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          width: 16,
+          height: 16,
+          borderStyle: 'solid',
+          borderWidth: '0 16px 16px 0',
+          borderColor: `transparent ${alpha(theme.palette.info.main, theme.palette.mode === 'dark' ? 0.3 : 0.2)} transparent transparent`,
+          zIndex: 1,
+        }
+      }}
+    >
       <CardHeader 
         title="Inventory Schedule" 
         action={
-          <IconButton aria-label="calendar">
-            <EventIcon />
+          <IconButton 
+            aria-label="calendar"
+            sx={{
+              border: '1px solid rgba(140, 140, 160, 0.2)',
+              borderRadius: 0,
+            }}
+          >
+            <EventIcon fontSize="small" />
           </IconButton>
         }
       />
-      <CardContent>
+      <Divider />
+      <Box sx={{ p: 2 }}>
         <Box sx={{ mb: 2 }}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DateCalendar 
@@ -98,6 +146,32 @@ export const InventoryScheduleCard: React.FC = () => {
               }}
               loading={false}
               renderLoading={() => <DayCalendarSkeleton />}
+              sx={{
+                '& .MuiPickersCalendarHeader-root': {
+                  pl: 2,
+                  pr: 2,
+                },
+                '& .MuiPickersCalendarHeader-label': {
+                  fontWeight: 'medium',
+                  textTransform: 'uppercase',
+                  fontSize: '0.85rem',
+                  letterSpacing: '0.03em',
+                },
+                '& .MuiDayCalendar-weekDayLabel': {
+                  width: 36,
+                  height: 36,
+                  fontWeight: 'medium',
+                  textTransform: 'uppercase',
+                  fontSize: '0.75rem',
+                },
+                '& .MuiPickersDay-root': {
+                  width: 36,
+                  height: 36,
+                  fontSize: '0.75rem',
+                  fontFamily: 'monospace',
+                  borderRadius: 0,
+                }
+              }}
             />
           </LocalizationProvider>
         </Box>
@@ -106,12 +180,32 @@ export const InventoryScheduleCard: React.FC = () => {
         
         {/* Calendar Legend */}
         <Box sx={{ mb: 2 }}>
-          <Typography variant="subtitle2" sx={{ mb: 1 }}>Legend</Typography>
+          <Typography 
+            variant="subtitle2" 
+            sx={{ 
+              mb: 1, 
+              textTransform: 'uppercase', 
+              fontSize: '0.75rem', 
+              letterSpacing: '0.05em',
+              fontWeight: 'medium',
+            }}
+          >
+            Legend
+          </Typography>
           <Stack direction="row" spacing={2} flexWrap="wrap">
             {inventoryTypes.map((type) => (
               <Stack key={type.type} direction="row" alignItems="center" spacing={0.5}>
-                <FiberManualRecordIcon sx={{ color: type.color, fontSize: 16 }} />
-                <Typography variant="caption">{type.name}</Typography>
+                <Box
+                  sx={{
+                    width: 8,
+                    height: 8,
+                    backgroundColor: type.color,
+                    borderRadius: 0
+                  }}
+                />
+                <Typography variant="caption" sx={{ fontSize: '0.7rem', fontWeight: 'medium' }}>
+                  {type.name}
+                </Typography>
               </Stack>
             ))}
           </Stack>
@@ -120,7 +214,18 @@ export const InventoryScheduleCard: React.FC = () => {
         <Divider sx={{ mb: 2 }} />
         
         {/* Upcoming Requirements List */}
-        <Typography variant="subtitle1" sx={{ mb: 1 }}>Upcoming Requirements</Typography>
+        <Typography 
+          variant="subtitle1" 
+          sx={{ 
+            mb: 1,
+            textTransform: 'uppercase',
+            fontSize: '0.75rem',
+            letterSpacing: '0.05em',
+            fontWeight: 'medium',
+          }}
+        >
+          Upcoming Requirements
+        </Typography>
         <List dense disablePadding>
           {upcomingRequirements.map((req, index) => {
             // Find the color for this requirement type
@@ -129,11 +234,22 @@ export const InventoryScheduleCard: React.FC = () => {
             
             return (
               <ListItem key={index} disablePadding sx={{ mb: 1 }}>
-                <FiberManualRecordIcon sx={{ color: dotColor, fontSize: 16, mr: 1 }} />
+                <Box
+                  sx={{
+                    width: 8,
+                    height: 8,
+                    backgroundColor: dotColor,
+                    mr: 1,
+                    borderRadius: 0
+                  }}
+                />
                 <ListItemText 
                   primary={
-                    <Typography variant="body2">
-                      <strong>{req.date}:</strong> {req.title}
+                    <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>
+                      <Box component="span" sx={{ fontFamily: 'monospace', fontWeight: 'medium', letterSpacing: '0.03em' }}>
+                        {req.date}:
+                      </Box>{' '}
+                      {req.title}
                     </Typography>
                   }
                 />
@@ -142,24 +258,52 @@ export const InventoryScheduleCard: React.FC = () => {
           })}
         </List>
         
-        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
+        <Box 
+          sx={{ 
+            mt: 2,
+            pt: 2,
+            display: 'flex', 
+            justifyContent: 'space-between',
+            borderTop: `1px solid ${alpha(theme.palette.divider, 0.5)}`,
+          }}
+        >
           <Button 
             size="small" 
-            startIcon={<AddCircleOutlineIcon />} 
+            startIcon={<AddCircleOutlineIcon fontSize="small" />} 
             variant="outlined"
+            sx={{ 
+              borderRadius: 0,
+              borderColor: 'rgba(140, 140, 160, 0.2)',
+              fontWeight: 'medium',
+              letterSpacing: '0.03em',
+              fontSize: '0.75rem',
+            }}
           >
             Add to Schedule
           </Button>
           <Box>
-            <IconButton size="small">
-              <PrintIcon />
+            <IconButton 
+              size="small"
+              sx={{
+                border: '1px solid rgba(140, 140, 160, 0.2)',
+                borderRadius: 0,
+                mr: 1
+              }}
+            >
+              <PrintIcon fontSize="small" />
             </IconButton>
-            <IconButton size="small">
-              <NotificationsIcon />
+            <IconButton 
+              size="small"
+              sx={{
+                border: '1px solid rgba(140, 140, 160, 0.2)',
+                borderRadius: 0
+              }}
+            >
+              <NotificationsIcon fontSize="small" />
             </IconButton>
           </Box>
         </Box>
-      </CardContent>
-    </Card>
+      </Box>
+    </Paper>
   );
-}; 
+};

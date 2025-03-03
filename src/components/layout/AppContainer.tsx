@@ -146,20 +146,13 @@ const AppContainer: React.FC<AppContainerProps> = ({ children }) => {
           pt: { xs: 8, md: 10 },
           height: '100vh',
           overflow: 'auto',
-          bgcolor: theme.palette.background.default,
+          // Force lighter background for dark mode
+          bgcolor: theme => theme.palette.mode === 'dark' ? '#191919' : theme.palette.background.default,
           transition: theme.transitions.create(['width', 'margin'], {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.enteringScreen,
           }),
-          // Add subtle grid pattern for Defense Industrial Modern Design
-          ...(theme.palette.mode === 'light' && {
-            backgroundImage: 'linear-gradient(rgba(203, 213, 224, 0.05) 1px, transparent 1px), linear-gradient(to right, rgba(203, 213, 224, 0.05) 1px, transparent 1px)',
-            backgroundSize: '40px 40px',
-          }),
-          ...(theme.palette.mode === 'dark' && {
-            backgroundImage: 'linear-gradient(rgba(226, 232, 240, 0.03) 1px, transparent 1px), linear-gradient(to right, rgba(226, 232, 240, 0.03) 1px, transparent 1px)',
-            backgroundSize: '40px 40px',
-          }),
+          // Removed grid pattern background
         }}
       >
         <Box 

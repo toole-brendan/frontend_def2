@@ -34,7 +34,8 @@ import {
   InputBase,
   Avatar
 } from '@mui/material';
-import { CardHeader } from '../../components/common';
+import { CardHeader, StatusChip } from '../../components/common';
+import { PageContainer, PageHeader } from '../../components/layout';
 import {
   Print as PrintIcon,
   FileDownload as ExportIcon,
@@ -49,41 +50,6 @@ import {
   Tune as TuneIcon,
   Refresh as RefreshIcon
 } from '@mui/icons-material';
-import { PieChart, pieArcLabelClasses } from '@mui/x-charts/PieChart';
-
-// Status chip component
-const StatusChip = ({ status, label }: { status: string, label: string }) => {
-  const theme = useTheme();
-  let color;
-  switch (status.toLowerCase()) {
-    case 'serviceable':
-      color = theme.palette.success.main;
-      break;
-    case 'limited':
-      color = theme.palette.warning.main;
-      break;
-    case 'shortage':
-      color = theme.palette.error.main;
-      break;
-    default:
-      color = theme.palette.info.main;
-  }
-  
-  return (
-    <Chip
-      label={label}
-      size="small"
-      sx={{ 
-        backgroundColor: alpha(color, 0.2),
-        color: color,
-        fontWeight: 500,
-        fontSize: '0.75rem',
-        borderRadius: 0,
-        height: 20
-      }}
-    />
-  );
-};
 
 // Verification chip component
 const VerificationChip = ({ verified, ...props }: { verified: boolean, [x: string]: any }) => {
@@ -186,55 +152,41 @@ export const PropertyBook: React.FC = () => {
     setDetailTab(newValue);
   };
 
-  return (
-    <Box sx={{ 
-      bgcolor: 'background.default', 
-      color: 'text.primary',
-      minHeight: '100vh',
-      p: 3
-    }}>
-      {/* Header */}
-      <Box 
-        component="header" 
-        sx={{ 
-          py: 1.5, 
-          px: 3, 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'space-between',
-          borderBottom: '1px solid',
-          borderColor: 'divider',
-          backgroundColor: 'background.default',
-          mb: 3
-        }}
+  const headerActions = (
+    <>
+      <Button 
+        variant="outlined" 
+        startIcon={<PrintIcon />}
+        sx={{ borderRadius: 0 }}
       >
-        <Typography variant="h5" fontWeight="600" color="primary">
-          Property Book
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button 
-            variant="outlined" 
-            startIcon={<PrintIcon />}
-            sx={{ borderRadius: 0 }}
-          >
-            Print Property Book
-          </Button>
-          <Button 
-            variant="outlined" 
-            startIcon={<ExportIcon />}
-            sx={{ borderRadius: 0 }}
-          >
-            Export to Excel
-          </Button>
-          <Button 
-            variant="outlined" 
-            startIcon={<DocumentIcon />}
-            sx={{ borderRadius: 0 }}
-          >
-            Generate DA Form
-          </Button>
-        </Box>
-      </Box>
+        Print Property Book
+      </Button>
+      <Button 
+        variant="outlined" 
+        startIcon={<ExportIcon />}
+        sx={{ borderRadius: 0 }}
+      >
+        Export to Excel
+      </Button>
+      <Button 
+        variant="outlined" 
+        startIcon={<DocumentIcon />}
+        sx={{ borderRadius: 0 }}
+      >
+        Generate DA Form
+      </Button>
+    </>
+  );
+
+  return (
+    <PageContainer
+      header={
+        <PageHeader 
+          title="Property Book" 
+          actions={headerActions}
+        />
+      }
+    >
 
       {/* Welcome Header */}
       <Box sx={{ 
@@ -505,7 +457,7 @@ export const PropertyBook: React.FC = () => {
           </Paper>
         </Grid>
       </Grid>
-    </Box>
+    </PageContainer>
   );
 };
 

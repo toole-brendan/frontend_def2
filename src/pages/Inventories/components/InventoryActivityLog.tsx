@@ -1,9 +1,7 @@
 import React from 'react';
 import {
   Box,
-  Card,
-  CardContent,
-  CardHeader,
+  Paper,
   Typography,
   List,
   ListItem,
@@ -14,7 +12,9 @@ import {
   IconButton,
   Button,
   Divider,
-  useTheme
+  alpha,
+  useTheme,
+  CardHeader,
 } from '@mui/material';
 import HistoryIcon from '@mui/icons-material/History';
 import FilterListIcon from '@mui/icons-material/FilterList';
@@ -25,6 +25,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 // Mock activity data
 const activityData = [
@@ -152,40 +153,101 @@ export const InventoryActivityLog: React.FC = () => {
   };
 
   return (
-    <Card elevation={2}>
+    <Paper 
+      sx={{ 
+        p: 0, 
+        borderRadius: 0,
+        border: '2px solid rgba(140, 140, 160, 0.12)',
+        boxShadow: theme.palette.mode === 'dark' 
+          ? '0 0 0 1px rgba(226, 232, 240, 0.05), 0 2px 4px rgba(0, 0, 0, 0.2)'
+          : '0 0 0 1px rgba(74, 85, 104, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1)',
+        position: 'relative',
+        overflow: 'hidden',
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          width: 16,
+          height: 16,
+          borderStyle: 'solid',
+          borderWidth: '0 16px 16px 0',
+          borderColor: `transparent ${alpha(theme.palette.secondary.main, theme.palette.mode === 'dark' ? 0.3 : 0.2)} transparent transparent`,
+          zIndex: 1,
+        }
+      }}
+    >
       <CardHeader 
         title="Inventory Activity Log" 
         action={
           <Box>
-            <IconButton aria-label="filter" size="small" sx={{ mr: 1 }}>
-              <FilterListIcon />
+            <IconButton 
+              aria-label="filter" 
+              size="small" 
+              sx={{ 
+                mr: 1,
+                border: '1px solid rgba(140, 140, 160, 0.2)',
+                borderRadius: 0,
+              }}
+            >
+              <FilterListIcon fontSize="small" />
             </IconButton>
-            <IconButton aria-label="refresh" size="small">
-              <RefreshIcon />
+            <IconButton 
+              aria-label="refresh" 
+              size="small"
+              sx={{
+                border: '1px solid rgba(140, 140, 160, 0.2)',
+                borderRadius: 0,
+              }}
+            >
+              <RefreshIcon fontSize="small" />
             </IconButton>
           </Box>
         }
       />
-      <CardContent sx={{ pt: 0 }}>
-        <List sx={{ maxHeight: 400, overflow: 'auto' }}>
+      <Divider />
+      <Box sx={{ p: 2, pt: 0 }}>
+        <List 
+          sx={{ 
+            maxHeight: 400, 
+            overflow: 'auto',
+            '&::-webkit-scrollbar': {
+              width: '6px',
+              backgroundColor: alpha(theme.palette.divider, 0.1),
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: alpha(theme.palette.divider, 0.3),
+              borderRadius: 0,
+            }
+          }}
+        >
           {activityData.map((activity, index) => (
             <React.Fragment key={activity.id}>
               <ListItem 
                 alignItems="flex-start" 
                 sx={{ 
                   py: 1.5,
+                  px: 1,
+                  mb: 0.5,
+                  border: '1px solid transparent',
                   '&:hover': {
-                    backgroundColor: theme.palette.action.hover,
-                    borderRadius: 1
+                    backgroundColor: alpha(theme.palette.primary.main, 0.02),
+                    border: `1px solid ${alpha(getAvatarColor(activity.status), 0.2)}`,
                   }
                 }}
               >
                 <ListItemAvatar>
                   <Avatar 
                     sx={{ 
-                      bgcolor: getAvatarColor(activity.status),
+                      bgcolor: alpha(getAvatarColor(activity.status), 0.2),
+                      color: getAvatarColor(activity.status),
                       width: 36,
-                      height: 36
+                      height: 36,
+                      borderRadius: 0,
+                      border: `1px solid ${alpha(getAvatarColor(activity.status), 0.3)}`,
+                      fontFamily: 'monospace',
+                      fontWeight: 'bold',
+                      fontSize: '0.75rem',
                     }}
                   >
                     {activity.userInitials}
@@ -197,7 +259,11 @@ export const InventoryActivityLog: React.FC = () => {
                       <Typography 
                         variant="subtitle2" 
                         component="span" 
-                        sx={{ mr: 1 }}
+                        sx={{ 
+                          mr: 1,
+                          fontSize: '0.8rem',
+                          fontWeight: 'medium',
+                        }}
                       >
                         {activity.action} {activity.item}
                       </Typography>
@@ -210,7 +276,11 @@ export const InventoryActivityLog: React.FC = () => {
                         variant="body2"
                         color="text.primary"
                         component="span"
-                        sx={{ display: 'block', mb: 0.5 }}
+                        sx={{ 
+                          display: 'block', 
+                          mb: 0.5,
+                          fontSize: '0.75rem',
+                        }}
                       >
                         {activity.details}
                       </Typography>
@@ -219,18 +289,26 @@ export const InventoryActivityLog: React.FC = () => {
                           variant="caption"
                           color="text.secondary"
                           component="span"
+                          sx={{ 
+                            fontFamily: 'monospace',
+                            fontSize: '0.7rem',
+                            letterSpacing: '0.03em',
+                          }}
                         >
                           {activity.user} • {formatTimestamp(activity.timestamp)}
                         </Typography>
                         <Chip 
                           label={activity.action} 
-                          size="small" 
-                          variant="outlined"
+                          size="small"
                           sx={{ 
                             height: 20, 
-                            fontSize: '0.6rem',
-                            borderColor: getAvatarColor(activity.status),
-                            color: getAvatarColor(activity.status)
+                            fontSize: '0.65rem',
+                            bgcolor: alpha(getAvatarColor(activity.status), 0.1),
+                            color: getAvatarColor(activity.status),
+                            borderRadius: 0,
+                            fontWeight: 'medium',
+                            letterSpacing: '0.03em',
+                            textTransform: 'uppercase',
                           }}
                         />
                       </Box>
@@ -238,22 +316,37 @@ export const InventoryActivityLog: React.FC = () => {
                   }
                 />
               </ListItem>
-              {index < activityData.length - 1 && <Divider variant="inset" component="li" />}
+              {index < activityData.length - 1 && <Divider component="li" sx={{ ml: 0 }} />}
             </React.Fragment>
           ))}
         </List>
         
-        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+        <Box 
+          sx={{ 
+            mt: 2,
+            pt: 2, 
+            display: 'flex', 
+            justifyContent: 'center',
+            borderTop: `1px solid ${alpha(theme.palette.divider, 0.5)}`,
+          }}
+        >
           <Button
             variant="text"
-            color="primary"
-            startIcon={<VisibilityIcon />}
+            color="secondary"
+            endIcon={<ArrowForwardIcon fontSize="small" />}
             size="small"
+            sx={{ 
+              fontWeight: 'medium',
+              letterSpacing: '0.03em',
+              borderRadius: 0,
+              fontSize: '0.75rem',
+              textTransform: 'none',
+            }}
           >
             View Complete Activity History
           </Button>
         </Box>
-      </CardContent>
-    </Card>
+      </Box>
+    </Paper>
   );
-}; 
+};

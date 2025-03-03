@@ -1,7 +1,6 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
-import { createTheme } from './index';
-import { getColors } from './colors';
+import { createTheme, tokens } from './index';
 import { Box, Switch, styled, alpha } from '@mui/material';
 import { WbSunny as LightIcon, NightlightRound as DarkIcon } from '@mui/icons-material';
 
@@ -179,7 +178,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   
   // Industrial-themed toggle component
   const ThemeToggle: React.FC = () => {
-    const colors = getColors(mode);
+    const colors = tokens.colors[mode];
     
     return (
       <Box 

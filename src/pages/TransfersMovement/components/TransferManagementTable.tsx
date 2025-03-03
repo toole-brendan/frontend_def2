@@ -1,387 +1,275 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Box,
+  Paper,
   Button,
-  Card,
-  CardContent,
-  Chip,
   IconButton,
-  Tooltip,
+  Chip,
   Typography,
-  useTheme
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  alpha,
+  useTheme,
 } from '@mui/material';
+import { CardHeader, StatusChip } from '../../../components/common';
+import { TransferManagementTableProps } from '../types';
+import TypeChip from './TypeChip';
+
 import {
-  DataGrid,
-  GridColDef,
-  GridRenderCellParams,
-  GridToolbar
-} from '@mui/x-data-grid';
-import {
-  Visibility as ViewIcon,
-  ThumbUp as ApproveIcon,
-  ThumbDown as DenyIcon,
-  Description as DocumentIcon,
-  Flag as FlagIcon
+  CloudDownload as DownloadIcon,
+  Description as FileTextIcon,
+  MoreVert as MoreVerticalIcon,
 } from '@mui/icons-material';
-import { format } from 'date-fns';
-import { 
-  TransferManagementTableProps, 
-  TransferPriority, 
-  TransferStage, 
-  TransferType, 
-  DocumentType,
-  Transfer
-} from '../types';
 
-// Helper function to format dates
-const formatDate = (dateString: string | undefined): string => {
-  if (!dateString) return 'Not specified';
-  
-  try {
-    const date = new Date(dateString);
-    return format(date, 'MMM d, yyyy');
-  } catch (error) {
-    console.error('Invalid date format:', error);
-    return 'Invalid date';
-  }
-};
-
-const TransferManagementTable: React.FC<TransferManagementTableProps> = ({
-  transfers,
-  onViewDetails,
-  onApprove,
-  onDeny,
-  onGenerateDocument,
-  activeFilters,
-  onFilterChange
-}) => {
+/**
+ * TransferManagementTable component for TransfersMovement
+ * 
+ * Displays a comprehensive table of all transfers with detailed information
+ */
+const TransferManagementTable: React.FC<TransferManagementTableProps> = ({ transfers }) => {
   const theme = useTheme();
-  const [pageSize, setPageSize] = useState<number>(10);
-  
-  // Define the columns for the data grid
-  const columns: GridColDef[] = [
-    { 
-      field: 'id', 
-      headerName: 'Transfer ID', 
-      width: 140,
-      renderCell: (params: GridRenderCellParams) => (
-        <Typography variant="body2" fontWeight="medium">
-          {params.row.id}
-        </Typography>
-      )
-    },
-    { 
-      field: 'type', 
-      headerName: 'Type', 
-      width: 150,
-      renderCell: (params: GridRenderCellParams) => {
-        const transfer = params.row as Transfer;
-        const typeValue = transfer.type;
-        let color;
-        
-        switch (typeValue) {
-          case TransferType.LATERAL:
-            color = '#3F51B5'; // Indigo
-            break;
-          case TransferType.RECEIPT:
-            color = '#009688'; // Teal
-            break;
-          case TransferType.TURN_IN:
-            color = '#795548'; // Brown
-            break;
-          case TransferType.MAINTENANCE:
-            color = '#FF5722'; // Deep Orange
-            break;
-          case TransferType.TEMPORARY:
-            color = '#673AB7'; // Deep Purple
-            break;
-          case TransferType.RANGE:
-            color = '#E91E63'; // Pink
-            break;
-          default:
-            color = '#757575'; // Grey
-        }
-        
-        return (
-          <Chip
-            label={typeValue}
-            size="small"
-            sx={{
-              backgroundColor: `${color}20`,
-              color: color,
-              fontWeight: 500,
-              borderRadius: 1
-            }}
-          />
-        );
-      }
-    },
-    { 
-      field: 'stage', 
-      headerName: 'Status', 
-      width: 170,
-      renderCell: (params: GridRenderCellParams) => {
-        const transfer = params.row as Transfer;
-        const stageValue = transfer.stage;
-        let color;
-        
-        switch (stageValue) {
-          case TransferStage.INITIATED:
-            color = '#2196F3'; // Blue
-            break;
-          case TransferStage.PENDING_APPROVAL:
-            color = '#FFC107'; // Amber
-            break;
-          case TransferStage.IN_TRANSIT:
-            color = '#FF9800'; // Orange
-            break;
-          case TransferStage.PENDING_RECEIPT:
-            color = '#F44336'; // Red
-            break;
-          case TransferStage.COMPLETED:
-            color = '#4CAF50'; // Green
-            break;
-          default:
-            color = '#757575'; // Grey
-        }
-        
-        return (
-          <Chip
-            label={stageValue}
-            size="small"
-            sx={{
-              backgroundColor: `${color}20`,
-              color: color,
-              fontWeight: 500,
-              borderRadius: 1
-            }}
-          />
-        );
-      }
-    },
-    { 
-      field: 'priority', 
-      headerName: 'Priority', 
-      width: 120,
-      renderCell: (params: GridRenderCellParams) => {
-        const transfer = params.row as Transfer;
-        const priorityValue = transfer.priority;
-        let color;
-        
-        switch (priorityValue) {
-          case TransferPriority.HIGH:
-            color = '#D32F2F'; // Red
-            break;
-          case TransferPriority.MEDIUM:
-            color = '#F57C00'; // Orange
-            break;
-          case TransferPriority.ROUTINE:
-            color = '#388E3C'; // Green
-            break;
-          default:
-            color = '#757575'; // Grey
-        }
-        
-        return (
-          <Box display="flex" alignItems="center">
-            {priorityValue === TransferPriority.HIGH && (
-              <FlagIcon fontSize="small" sx={{ color, mr: 0.5 }} />
-            )}
-            <Chip
-              label={priorityValue}
-              size="small"
-              sx={{
-                backgroundColor: `${color}20`,
-                color: color,
-                fontWeight: 500,
-                borderRadius: 1
-              }}
-            />
-          </Box>
-        );
-      }
-    },
-    { 
-      field: 'dateInitiated', 
-      headerName: 'Date Initiated', 
-      width: 140,
-      renderCell: (params: GridRenderCellParams) => {
-        const transfer = params.row as Transfer;
-        return <Typography variant="body2">{formatDate(transfer.dateInitiated)}</Typography>;
-      }
-    },
-    { 
-      field: 'dueDate', 
-      headerName: 'Due Date', 
-      width: 140,
-      renderCell: (params: GridRenderCellParams) => {
-        const transfer = params.row as Transfer;
-        const dueDate = transfer.dueDate;
-        const date = new Date(dueDate);
-        const today = new Date();
-        const isOverdue = date < today;
-        const isDueToday = date.toDateString() === today.toDateString();
-        
-        return (
-          <Typography 
-            variant="body2"
-            sx={{ 
-              color: isOverdue ? 'error.main' : isDueToday ? 'warning.main' : 'inherit',
-              fontWeight: isOverdue || isDueToday ? 'bold' : 'normal'
-            }}
-          >
-            {formatDate(dueDate)}
-          </Typography>
-        );
-      }
-    },
-    { 
-      field: 'from', 
-      headerName: 'From', 
-      width: 180,
-      renderCell: (params: GridRenderCellParams) => {
-        const transfer = params.row as Transfer;
-        return <Typography variant="body2">{transfer.from.name}</Typography>;
-      }
-    },
-    { 
-      field: 'to', 
-      headerName: 'To', 
-      width: 180,
-      renderCell: (params: GridRenderCellParams) => {
-        const transfer = params.row as Transfer;
-        return <Typography variant="body2">{transfer.to.name}</Typography>;
-      }
-    },
-    { 
-      field: 'items', 
-      headerName: 'Items', 
-      width: 100,
-      align: 'center',
-      headerAlign: 'center',
-      renderCell: (params: GridRenderCellParams) => {
-        const transfer = params.row as Transfer;
-        const itemCount = transfer.items.length;
-        return (
-          <Chip
-            label={`${itemCount} item${itemCount !== 1 ? 's' : ''}`}
-            size="small"
-            variant="outlined"
-          />
-        );
-      }
-    },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      width: 240,
-      sortable: false,
-      filterable: false,
-      disableColumnMenu: true,
-      renderCell: (params: GridRenderCellParams) => {
-        const transfer = params.row as Transfer;
-        
-        return (
-          <Box>
-            <Tooltip title="View details">
-              <IconButton 
-                size="small"
-                onClick={() => onViewDetails(transfer.id)}
-                sx={{ mr: 1 }}
-              >
-                <ViewIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-            
-            {onApprove && transfer.stage === TransferStage.PENDING_APPROVAL && (
-              <Tooltip title="Approve transfer">
-                <IconButton 
-                  size="small"
-                  color="success"
-                  onClick={() => onApprove(transfer.id)}
-                  sx={{ mr: 1 }}
-                >
-                  <ApproveIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            )}
-            
-            {onDeny && transfer.stage === TransferStage.PENDING_APPROVAL && (
-              <Tooltip title="Deny transfer">
-                <IconButton 
-                  size="small"
-                  color="error"
-                  onClick={() => onDeny(transfer.id)}
-                  sx={{ mr: 1 }}
-                >
-                  <DenyIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            )}
-            
-            {onGenerateDocument && (
-              <Tooltip title="Generate document">
-                <IconButton 
-                  size="small"
-                  color="primary"
-                  onClick={() => {
-                    // This would typically open a dropdown or dialog to select document type
-                    // For now, we'll just use a default document type
-                    onGenerateDocument(transfer.id, 'DA_FORM_3161' as DocumentType);
-                  }}
-                >
-                  <DocumentIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            )}
-          </Box>
-        );
-      }
-    }
-  ];
+
+  // Helper function to get priority color
+  const getPriorityColor = (priority: string) => {
+    if (priority === 'HIGH') return theme.palette.error.main;
+    if (priority === 'MEDIUM') return theme.palette.warning.main;
+    return theme.palette.success.main;
+  };
 
   return (
-    <Card sx={{ height: '100%', boxShadow: theme.shadows[2] }}>
-      <CardContent sx={{ height: '100%', p: 0 }}>
-        <Box sx={{ height: '100%', width: '100%', minHeight: 400, overflow: 'auto' }}>
-          <DataGrid
-            rows={transfers}
-            columns={columns}
-            initialState={{
-              pagination: {
-                paginationModel: { pageSize: pageSize },
-              },
-            }}
-            pageSizeOptions={[5, 10, 20, 50]}
-            onPaginationModelChange={(model) => setPageSize(model.pageSize)}
-            checkboxSelection
-            disableRowSelectionOnClick
-            slots={{
-              toolbar: GridToolbar
-            }}
-            slotProps={{
-              toolbar: {
-                showQuickFilter: true,
-                quickFilterProps: { debounceMs: 500 }
+    <Paper sx={{ 
+      p: 0, 
+      mb: 3, 
+      borderRadius: 0,
+      border: '2px solid rgba(140, 140, 160, 0.12)',
+      boxShadow: theme.palette.mode === 'dark' 
+        ? '0 0 0 1px rgba(226, 232, 240, 0.05), 0 2px 4px rgba(0, 0, 0, 0.2)'
+        : '0 0 0 1px rgba(74, 85, 104, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1)',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      <CardHeader 
+        title="Transfer Management"
+        subtitle="DA FORM 3161/2062"
+        action={
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button
+              variant="outlined"
+              startIcon={<DownloadIcon fontSize="small" />}
+              size="small"
+              sx={{ 
+                color: 'text.secondary',
+                borderRadius: 0,
+                borderColor: 'rgba(140, 140, 160, 0.2)',
+              }}
+            >
+              Export
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<FileTextIcon fontSize="small" />}
+              size="small"
+              sx={{ 
+                color: 'text.secondary', 
+                borderRadius: 0,
+                borderColor: 'rgba(140, 140, 160, 0.2)',
+              }}
+            >
+              Documents
+            </Button>
+          </Box>
+        }
+      />
+      
+      <TableContainer>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell sx={{ 
+                textTransform: 'uppercase', 
+                fontWeight: 'medium', 
+                fontSize: '0.75rem', 
+                letterSpacing: '0.05em',
+                backgroundColor: alpha(theme.palette.primary.main, 0.05) 
+              }}>
+                DOC #
+              </TableCell>
+              <TableCell sx={{ 
+                textTransform: 'uppercase', 
+                fontWeight: 'medium', 
+                fontSize: '0.75rem', 
+                letterSpacing: '0.05em',
+                backgroundColor: alpha(theme.palette.primary.main, 0.05) 
+              }}>
+                TYPE
+              </TableCell>
+              <TableCell sx={{ 
+                textTransform: 'uppercase', 
+                fontWeight: 'medium', 
+                fontSize: '0.75rem', 
+                letterSpacing: '0.05em',
+                backgroundColor: alpha(theme.palette.primary.main, 0.05) 
+              }}>
+                ITEMS
+              </TableCell>
+              <TableCell sx={{ 
+                textTransform: 'uppercase', 
+                fontWeight: 'medium', 
+                fontSize: '0.75rem', 
+                letterSpacing: '0.05em',
+                backgroundColor: alpha(theme.palette.primary.main, 0.05) 
+              }}>
+                FROM
+              </TableCell>
+              <TableCell sx={{ 
+                textTransform: 'uppercase', 
+                fontWeight: 'medium', 
+                fontSize: '0.75rem', 
+                letterSpacing: '0.05em',
+                backgroundColor: alpha(theme.palette.primary.main, 0.05) 
+              }}>
+                TO
+              </TableCell>
+              <TableCell sx={{ 
+                textTransform: 'uppercase', 
+                fontWeight: 'medium', 
+                fontSize: '0.75rem', 
+                letterSpacing: '0.05em',
+                backgroundColor: alpha(theme.palette.primary.main, 0.05) 
+              }}>
+                DUE/RETURN
+              </TableCell>
+              <TableCell sx={{ 
+                textTransform: 'uppercase', 
+                fontWeight: 'medium', 
+                fontSize: '0.75rem', 
+                letterSpacing: '0.05em',
+                backgroundColor: alpha(theme.palette.primary.main, 0.05) 
+              }}>
+                STATUS
+              </TableCell>
+              <TableCell sx={{ 
+                textTransform: 'uppercase', 
+                fontWeight: 'medium', 
+                fontSize: '0.75rem', 
+                letterSpacing: '0.05em',
+                backgroundColor: alpha(theme.palette.primary.main, 0.05) 
+              }}>
+                PRIORITY
+              </TableCell>
+              <TableCell sx={{ 
+                textTransform: 'uppercase', 
+                fontWeight: 'medium', 
+                fontSize: '0.75rem', 
+                letterSpacing: '0.05em',
+                backgroundColor: alpha(theme.palette.primary.main, 0.05) 
+              }}>
+                ACTIONS
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {transfers.map((transfer) => (
+              <TableRow 
+                key={transfer.id} 
+                hover
+                sx={{
+                  '&:hover': { bgcolor: 'action.hover' }
+                }}
+              >
+                <TableCell sx={{ fontFamily: 'monospace', fontSize: '0.75rem', letterSpacing: '0.05em' }}>{transfer.id}</TableCell>
+                <TableCell>
+                  <TypeChip type={transfer.type} />
+                </TableCell>
+                <TableCell sx={{ fontSize: '0.75rem', fontWeight: 'medium' }}>{transfer.items}</TableCell>
+                <TableCell sx={{ fontSize: '0.75rem' }}>{transfer.from}</TableCell>
+                <TableCell sx={{ fontSize: '0.75rem' }}>{transfer.to}</TableCell>
+                <TableCell>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: transfer.due === 'TODAY' ? 'error.main' : 'text.secondary',
+                      fontFamily: 'monospace',
+                      fontSize: '0.75rem',
+                      letterSpacing: '0.05em',
+                      fontWeight: transfer.due === 'TODAY' ? 'bold' : 'normal',
+                    }}
+                  >
+                    {transfer.due}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <StatusChip 
+                    label={transfer.status} 
+                    status={transfer.status}
+                  />
+                </TableCell>
+                <TableCell>
+                  <Chip 
+                    label={transfer.priority} 
+                    size="small"
+                    sx={{ 
+                      bgcolor: alpha(getPriorityColor(transfer.priority), 0.1), 
+                      color: getPriorityColor(transfer.priority),
+                      borderRadius: 0,
+                      height: 20,
+                      fontSize: '0.7rem',
+                      fontWeight: 'medium',
+                      letterSpacing: '0.03em',
+                    }} 
+                  />
+                </TableCell>
+                <TableCell>
+                  <IconButton 
+                    size="small"
+                    sx={{
+                      border: '1px solid rgba(140, 140, 160, 0.2)',
+                      borderRadius: 0,
+                    }}
+                  >
+                    <MoreVerticalIcon fontSize="small" />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <Box 
+          sx={{ 
+            p: 1.5, 
+            borderTop: '1px solid rgba(140, 140, 160, 0.12)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            bgcolor: theme.palette.mode === 'dark' ? alpha(theme.palette.primary.main, 0.03) : alpha(theme.palette.grey[100], 0.5),
+          }}
+        >
+          <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.75rem', fontWeight: 'medium' }}>
+            Displaying {transfers.length} of 89 transfers
+          </Typography>
+          <Typography 
+            variant="body2" 
+            sx={{ 
+              color: theme.palette.primary.main,
+              cursor: 'pointer',
+              fontSize: '0.75rem',
+              fontWeight: 'medium',
+              letterSpacing: '0.03em',
+              '&:hover': { 
+                textDecoration: 'underline',
+                color: alpha(theme.palette.primary.main, 0.8),
               }
             }}
-            sx={{
-              border: 'none',
-              '& .MuiDataGrid-cell:focus': {
-                outline: 'none'
-              },
-              '& .MuiDataGrid-columnHeaders': {
-                backgroundColor: theme.palette.mode === 'dark' 
-                  ? theme.palette.background.default
-                  : theme.palette.grey[100]
-              },
-              width: '100%'
-            }}
-          />
+          >
+            View all transfers
+          </Typography>
         </Box>
-      </CardContent>
-    </Card>
+      </TableContainer>
+    </Paper>
   );
 };
 
-export default TransferManagementTable; 
+export default TransferManagementTable;

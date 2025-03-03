@@ -10,41 +10,30 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Chip
+  Chip,
+  alpha,
+  useTheme
 } from '@mui/material';
 import { CommandActionItemsCardProps } from '../types';
+import { cardWithCornerSx, sectionHeaderSx, buttonSx, chipSx, tableHeadCellSx, tableCellSx } from '../styles';
+import { getPriorityColor } from '../utils';
 
 export const CommandActionItemsCard: React.FC<CommandActionItemsCardProps> = ({
   actions,
   onViewAllActions
 }) => {
+  const theme = useTheme();
+  
   // Helper function to render priority indicator
   const renderPriorityIndicator = (priority: string) => {
-    let color: 'error' | 'warning' | 'success' = 'success';
-    let icon = '⚠️';
-    
-    switch (priority) {
-      case 'HIGH':
-        color = 'error';
-        break;
-      case 'MEDIUM':
-        color = 'warning';
-        break;
-      default:
-        color = 'success';
-        icon = '✓';
-    }
+    const priorityColor = getPriorityColor(priority, theme);
+    const icon = priority.toUpperCase() === 'LOW' ? '✓' : '⚠️';
     
     return (
       <Chip 
         label={`${icon} ${priority}`} 
-        color={color} 
         size="small"
-        sx={{ 
-          fontWeight: 'bold',
-          height: 24,
-          '& .MuiChip-label': { px: 1 }
-        }}
+        sx={chipSx(theme, priorityColor)}
       />
     );
   };
@@ -52,75 +41,115 @@ export const CommandActionItemsCard: React.FC<CommandActionItemsCardProps> = ({
   // Helper function for deadline styling
   const getDeadlineStyling = (deadline: string) => {
     if (deadline === 'TODAY') {
-      return { color: 'warning.main', fontWeight: 'bold' };
+      return { 
+        color: theme.palette.warning.main, 
+        fontWeight: 'bold',
+        fontFamily: 'monospace'
+      };
     }
     if (deadline === 'OVERDUE') {
-      return { color: 'error.main', fontWeight: 'bold' };
+      return { 
+        color: theme.palette.error.main, 
+        fontWeight: 'bold',
+        fontFamily: 'monospace'
+      };
     }
-    return { color: 'text.primary' };
+    return { 
+      color: 'text.primary',
+      fontFamily: 'monospace'
+    };
   };
 
   return (
-    <Paper elevation={2} sx={{ height: '100%', p: 2, borderRadius: 2 }}>
-      {/* Card Header */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h6" fontWeight="bold">
+    <Paper 
+      sx={cardWithCornerSx(theme, alpha(theme.palette.secondary.main, theme.palette.mode === 'dark' ? 0.3 : 0.2))}
+    >
+      <Box sx={{ p: 2 }}>
+        {/* Card Header */}
+        <Typography variant="h6" sx={sectionHeaderSx}>
           Requires Your Action ({actions.length})
         </Typography>
-      </Box>
 
-      {/* Actions Table */}
-      <TableContainer sx={{ mb: 2 }}>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell width="15%">Priority</TableCell>
-              <TableCell width="25%">Item</TableCell>
-              <TableCell width="15%">Type</TableCell>
-              <TableCell width="15%">Deadline</TableCell>
-              <TableCell width="30%">Action</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {actions.map((action, index) => (
-              <TableRow key={index} hover>
-                <TableCell>
-                  {renderPriorityIndicator(action.priority)}
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'medium' }}>
-                  {action.item}
-                </TableCell>
-                <TableCell>
-                  {action.type}
-                </TableCell>
-                <TableCell sx={getDeadlineStyling(action.deadline)}>
-                  {action.deadline}
-                </TableCell>
-                <TableCell>
-                  <Button 
-                    variant="outlined" 
-                    size="small" 
-                    color="primary"
-                    fullWidth
-                  >
-                    {action.action}
-                  </Button>
-                </TableCell>
+        {/* Actions Table */}
+        <TableContainer sx={{ mb: 2 }}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell width="15%" sx={tableHeadCellSx}>Priority</TableCell>
+                <TableCell width="25%" sx={tableHeadCellSx}>Item</TableCell>
+                <TableCell width="15%" sx={tableHeadCellSx}>Type</TableCell>
+                <TableCell width="15%" sx={tableHeadCellSx}>Deadline</TableCell>
+                <TableCell width="30%" sx={tableHeadCellSx}>Action</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {actions.map((action, index) => (
+                <TableRow 
+                  key={index} 
+                  hover
+                  sx={{
+                    '&:hover': {
+                      bgcolor: alpha(theme.palette.primary.main, 0.05),
+                    }
+                  }}
+                >
+                  <TableCell sx={tableCellSx}>
+                    {renderPriorityIndicator(action.priority)}
+                  </TableCell>
+                  <TableCell sx={{
+                    ...tableCellSx,
+                    fontWeight: 'medium',
+                    fontSize: '0.8rem',
+                  }}>
+                    {action.item}
+                  </TableCell>
+                  <TableCell sx={{
+                    ...tableCellSx,
+                    fontSize: '0.75rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.02em',
+                  }}>
+                    {action.type}
+                  </TableCell>
+                  <TableCell sx={{
+                    ...tableCellSx,
+                    ...getDeadlineStyling(action.deadline),
+                    fontSize: '0.75rem',
+                  }}>
+                    {action.deadline}
+                  </TableCell>
+                  <TableCell sx={tableCellSx}>
+                    <Button 
+                      variant="outlined" 
+                      size="small" 
+                      color="primary"
+                      fullWidth
+                      sx={{
+                        ...buttonSx,
+                        fontSize: '0.7rem',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {action.action}
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-      {/* View All Button */}
-      <Button 
-        variant="contained" 
-        color="primary" 
-        fullWidth
-        onClick={onViewAllActions}
-      >
-        View All Pending Actions
-      </Button>
+        {/* View All Button */}
+        <Button 
+          variant="contained" 
+          color="primary" 
+          fullWidth
+          onClick={onViewAllActions}
+          sx={buttonSx}
+        >
+          View All Pending Actions
+        </Button>
+      </Box>
     </Paper>
   );
-}; 
+};

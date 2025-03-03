@@ -25,7 +25,8 @@ import {
   Avatar,
   Divider
 } from '@mui/material';
-import { CardHeader, KpiStatsCard } from '../../components/common';
+import { CardHeader, KpiStatsCard, StatusChip } from '../../components/common';
+import { PageContainer, PageHeader } from '../../components/layout';
 import {
   QrCodeScanner as QrCodeScannerIcon,
   Search as SearchIcon,
@@ -161,45 +162,7 @@ const ActionCard = ({ icon, title, subtitle, buttonText, color }: {
   );
 };
 
-// Status chip component
-const StatusChip = ({ label, status }: { label: string, status: string }) => {
-  const theme = useTheme();
-  let color = theme.palette.info.main;
-  
-  switch(status.toLowerCase()) {
-    case 'success':
-    case 'complete':
-    case 'compliant':
-    case 'on track':
-      color = theme.palette.success.main;
-      break;
-    case 'warning':
-    case 'in progress':
-    case 'pending':
-      color = theme.palette.warning.main;
-      break;
-    case 'error':
-    case 'failed':
-    case 'overdue':
-      color = theme.palette.error.main;
-      break;
-  }
-  
-  return (
-    <Chip
-      label={label}
-      size="small"
-      sx={{ 
-        backgroundColor: alpha(color, 0.1),
-        color: color,
-        fontWeight: 500,
-        fontSize: '0.75rem',
-        borderRadius: 0,
-        height: 20
-      }}
-    />
-  );
-};
+// Use imported StatusChip from common components
 
 const SensitiveItems = () => {
   const theme = useTheme();
@@ -209,44 +172,30 @@ const SensitiveItems = () => {
     setCurrentTab(newValue);
   };
 
-  return (
-    <Box sx={{ 
-      bgcolor: 'background.default', 
-      color: 'text.primary',
-      minHeight: '100vh',
-      p: 3
-    }}>
-      {/* Header */}
-      <Box 
-        component="header" 
-        sx={{ 
-          py: 1.5, 
-          px: 3, 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'space-between',
-          borderBottom: '1px solid',
-          borderColor: 'divider',
-          backgroundColor: 'background.default',
-          mb: 3
-        }}
+  const headerActions = (
+    <>
+      <IconButton size="small">
+        <RefreshIcon />
+      </IconButton>
+      <Button 
+        variant="outlined" 
+        startIcon={<FileDownloadIcon />}
+        sx={{ borderRadius: 0 }}
       >
-        <Typography variant="h5" fontWeight="600" color="primary">
-          Sensitive Items Management
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
-          <IconButton size="small">
-            <RefreshIcon />
-          </IconButton>
-          <Button 
-            variant="outlined" 
-            startIcon={<FileDownloadIcon />}
-            sx={{ borderRadius: 0 }}
-          >
-            Export Data
-          </Button>
-        </Box>
-      </Box>
+        Export Data
+      </Button>
+    </>
+  );
+
+  return (
+    <PageContainer
+      header={
+        <PageHeader 
+          title="Sensitive Items Management"
+          actions={headerActions}
+        />
+      }
+    >
 
       {/* Status Cards */}
       <Grid container spacing={2} sx={{ mb: 3, mx: 1 }}>
@@ -630,7 +579,7 @@ const SensitiveItems = () => {
           </Paper>
         </Grid>
       </Grid>
-    </Box>
+    </PageContainer>
   );
 };
 

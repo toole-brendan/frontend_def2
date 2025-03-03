@@ -20,10 +20,7 @@ const Inventories = React.lazy(() => import('../pages/Inventories/index'));
 const TransfersMovement = React.lazy(() => import('../pages/TransfersMovement/index'));
 const EquipmentReadiness = React.lazy(() => import('../pages/EquipmentReadiness/index'));
 const Reports = React.lazy(() => import('../pages/Reports/index'));
-const UserManagement = React.lazy(() => import('../pages/UserManagement/index'));
-const Settings = React.lazy(() => import('../pages/Settings/index'));
 const SensitiveItems = React.lazy(() => import('../pages/SensitiveItems/index'));
-const Admin = React.lazy(() => import('../pages/Admin/index'));
 
 export const ROUTES = {
   // 1. Dashboard
@@ -255,12 +252,12 @@ const AppRoutes: React.FC = () => {
         <Route path={ROUTES.FLIPL} element={<Reports />} />
         <Route path={ROUTES.DOCUMENT_ARCHIVE} element={<Reports />} />
         
-        {/* Admin routes */}
-        <Route path={ROUTES.ADMIN} element={<Admin />} />
-        <Route path={ROUTES.USER_MANAGEMENT} element={<UserManagement />} />
-        <Route path={ROUTES.UNIT_CONFIGURATION} element={<Settings />} />
-        <Route path={ROUTES.SYSTEM_INTEGRATION} element={<Settings />} />
-        <Route path={ROUTES.SECURITY_SETTINGS} element={<Settings />} />
+        {/* Admin routes - temporarily redirect to Dashboard since pages were deleted */}
+        <Route path={ROUTES.ADMIN} element={<Dashboard />} />
+        <Route path={ROUTES.USER_MANAGEMENT} element={<Dashboard />} />
+        <Route path={ROUTES.UNIT_CONFIGURATION} element={<Dashboard />} />
+        <Route path={ROUTES.SYSTEM_INTEGRATION} element={<Dashboard />} />
+        <Route path={ROUTES.SECURITY_SETTINGS} element={<Dashboard />} />
         
         {/* User Profile */}
         <Route path={ROUTES.PROFILE} element={<Dashboard />} />

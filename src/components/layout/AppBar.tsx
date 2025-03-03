@@ -1,11 +1,11 @@
 import React from 'react';
-import { AppBar as MuiAppBar, styled, useTheme } from '@mui/material';
+import { AppBar as MuiAppBar, styled, useTheme, alpha } from '@mui/material';
 import { AppBarContent } from './AppBar/AppBarContent';
 
 const StyledAppBar = styled(MuiAppBar)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' 
-    ? 'rgba(0, 0, 0, 0.9)' 
-    : 'rgba(255, 255, 255, 0.9)',
+    ? theme.semantic.background.tertiary
+    : alpha(theme.palette.background.paper, 0.9),
   backdropFilter: 'blur(12px)',
   borderBottom: `1px solid ${theme.palette.divider}`,
   boxShadow: 'none',
