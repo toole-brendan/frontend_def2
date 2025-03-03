@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { CircularProgress, Backdrop } from '@mui/material';
 import mockData from '../utils/mockData';
 import { SensitiveItem, FilterState } from '../../../types/sensitiveItems';
 
@@ -6,6 +7,10 @@ import { SensitiveItem, FilterState } from '../../../types/sensitiveItems';
  * Custom hook for managing sensitive items state
  */
 const useSensitiveItems = () => {
+  // Loading states
+  const [isLoading, setIsLoading] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   // Tab state
   const [currentTab, setCurrentTab] = useState(0);
   
@@ -154,18 +159,49 @@ const useSensitiveItems = () => {
   };
 
   // Simulate scan complete
-  const simulateScanComplete = () => {
+  const simulateScanComplete = useCallback(() => {
+    setIsVerifying(true);
     setTimeout(() => {
       setScanComplete(true);
+      setIsVerifying(false);
     }, 1500);
-  };
+  }, []);
+  
+  // Simulate data loading
+  const refreshData = useCallback(() => {
+    setIsLoading(true);
+    // Simulate API call to refresh data
+    setTimeout(() => {
+      setIsLoading(false);
+      // In a real implementation, this would fetch fresh data from the API
+      console.log('Data refreshed');
+    }, 1000);
+  }, []);
 
   // Apply initial filters
   useEffect(() => {
     applyFilters();
   }, [searchTerm, selectedFilters]);
 
+  // Global loading backdrop
+  const LoadingBackdrop = () => (
+    <Backdrop
+      sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      open={isLoading || isExporting}
+    >
+      <CircularProgress color="inherit" />
+    </Backdrop>
+  );
+
   return {
+    // Loading states
+    isLoading,
+    setIsLoading,
+    isVerifying,
+    isExporting,
+    setIsExporting,
+    LoadingBackdrop,
+    refreshData,
     // Data
     mockData,
     filteredItems,

@@ -15,6 +15,51 @@ import {
   Warning as WarningIcon,
   VerifiedUser as VerifiedUserIcon
 } from '@mui/icons-material';
+// Chart components would normally be imported from 'chart.js' and 'react-chartjs-2'
+// Since we're just structuring files, we're creating mock implementations
+
+// Mock chart components
+const Bar = (_props: any) => (
+  <Box sx={{ 
+    width: '100%', 
+    height: '100%', 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center',
+    bgcolor: alpha('#3f51b5', 0.1),
+    border: '1px dashed #3f51b5'
+  }}>
+    <Typography>Bar Chart: Weekly Inventory Compliance</Typography>
+  </Box>
+);
+
+const Pie = (_props: any) => (
+  <Box sx={{ 
+    width: '100%', 
+    height: '100%', 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center',
+    bgcolor: alpha('#4caf50', 0.1),
+    border: '1px dashed #4caf50'
+  }}>
+    <Typography>Pie Chart: Item Category Distribution</Typography>
+  </Box>
+);
+
+const Line = (_props: any) => (
+  <Box sx={{ 
+    width: '100%', 
+    height: '100%', 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center',
+    bgcolor: alpha('#f50057', 0.1),
+    border: '1px dashed #f50057'
+  }}>
+    <Typography>Line Chart: Verification Trend</Typography>
+  </Box>
+);
 import { AnalyticsData } from '../../../types/sensitiveItems';
 
 interface AnalyticsTabProps {
@@ -41,14 +86,27 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
             <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'medium' }}>
               Weekly Inventory Compliance
             </Typography>
-            <Box sx={{ 
-              height: 250, 
-              bgcolor: alpha(theme.palette.primary.main, 0.1), 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center' 
-            }}>
-              <Typography>Weekly Inventory Compliance Chart</Typography>
+            <Box sx={{ height: 250 }}>
+              <Bar 
+                data={analytics.weeklyInventories} 
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      beginAtZero: true
+                    }
+                  },
+                  plugins: {
+                    legend: {
+                      position: 'top' as const,
+                    },
+                    title: {
+                      display: false
+                    }
+                  }
+                }}
+              />
             </Box>
           </Paper>
         </Grid>
@@ -59,14 +117,22 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
             <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'medium' }}>
               Item Category Distribution
             </Typography>
-            <Box sx={{ 
-              height: 250, 
-              bgcolor: alpha(theme.palette.primary.main, 0.1), 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center' 
-            }}>
-              <Typography>Item Category Distribution Chart</Typography>
+            <Box sx={{ height: 250, display: 'flex', justifyContent: 'center' }}>
+              <Pie 
+                data={analytics.itemCategoryDistribution} 
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: 'right' as const,
+                    },
+                    title: {
+                      display: false
+                    }
+                  }
+                }}
+              />
             </Box>
           </Paper>
         </Grid>
@@ -77,14 +143,34 @@ const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
             <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'medium' }}>
               Verification Trend (Last 6 Months)
             </Typography>
-            <Box sx={{ 
-              height: 300, 
-              bgcolor: alpha(theme.palette.primary.main, 0.1), 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center' 
-            }}>
-              <Typography>Verification Trend Chart</Typography>
+            <Box sx={{ height: 300 }}>
+              <Line 
+                data={analytics.verificationTrend} 
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      min: 95,
+                      max: 100,
+                      ticks: {
+                        // Include a percentage sign in the ticks
+                        callback: function(value: number) {
+                          return value + '%';
+                        }
+                      }
+                    }
+                  },
+                  plugins: {
+                    legend: {
+                      position: 'top' as const,
+                    },
+                    title: {
+                      display: false
+                    }
+                  }
+                }}
+              />
             </Box>
           </Paper>
         </Grid>

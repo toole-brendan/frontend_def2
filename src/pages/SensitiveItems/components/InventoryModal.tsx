@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -36,6 +36,65 @@ import {
   CheckCircle as CheckCircleCompleteIcon
 } from '@mui/icons-material';
 
+// Mock QR Scanner Component
+const QrScanner = ({ onResult, isActive }: { onResult: (result: string) => void, isActive: boolean }) => {
+  useEffect(() => {
+    // Simulate finding a QR code after 2 seconds
+    if (isActive) {
+      const timer = setTimeout(() => {
+        onResult('WEAPON-M4-991234567');
+      }, 2000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isActive, onResult]);
+  
+  return (
+    <Box sx={{ 
+      width: '100%', 
+      height: 300, 
+      bgcolor: alpha('#000', 0.9), 
+      display: 'flex', 
+      flexDirection: 'column',
+      alignItems: 'center', 
+      justifyContent: 'center',
+      position: 'relative',
+      overflow: 'hidden',
+      mb: 3
+    }}>
+      {/* Scanner overlay with animated scanner line */}
+      <Box sx={{ 
+        position: 'absolute',
+        width: '80%',
+        height: '80%',
+        border: '2px solid rgba(0, 255, 0, 0.5)',
+        borderRadius: 1
+      }}>
+        <Box sx={{ 
+          position: 'absolute',
+          width: '100%',
+          height: '2px',
+          backgroundColor: 'rgba(0, 255, 0, 0.7)',
+          animation: 'scan 2s infinite',
+          '@keyframes scan': {
+            '0%': { top: '0%' },
+            '50%': { top: '100%' },
+            '100%': { top: '0%' }
+          }
+        }} />
+      </Box>
+      
+      <QrCodeScannerIcon sx={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: 40, mb: 2 }} />
+      <Typography variant="body1" color="white">
+        Camera Viewfinder Active
+      </Typography>
+      <Typography variant="caption" color="rgba(255, 255, 255, 0.7)" sx={{ mt: 1 }}>
+        Position QR code within the green box
+      </Typography>
+    </Box>
+  );
+};
+
 interface InventoryModalProps {
   open: boolean;
   onClose: () => void;
@@ -57,6 +116,33 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
   simulateScanComplete
 }) => {
   const theme = useTheme();
+  const [scanProgress, setScanProgress] = useState(0);
+  const [scannedItems, setScannedItems] = useState<string[]>([]);
+  const [isScanning, setIsScanning] = useState(false);
+  
+  // Handle QR scan result
+  const handleScanResult = (result: string) => {
+    setScannedItems(prev => [...prev, result]);
+    setScanProgress(prev => {
+      const newProgress = prev + 1;
+      // Once we've "scanned" a few items, complete the process
+      if (newProgress >= 3) {
+        setTimeout(() => {
+          simulateScanComplete();
+          setIsScanning(false);
+        }, 1000);
+      }
+      return newProgress;
+    });
+  };
+  
+  // Start scanning function
+  const startScanning = () => {
+    setIsScanning(true);
+    handleScannerToggle();
+    setScanProgress(0);
+    setScannedItems([]);
+  };
 
   return (
     <Dialog
@@ -152,10 +238,7 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
                       variant="contained" 
                       fullWidth 
                       startIcon={<CameraIcon />} 
-                      onClick={() => {
-                        handleScannerToggle();
-                        simulateScanComplete();
-                      }}
+                      onClick={startScanning}
                       sx={{ borderRadius: 0 }}
                     >
                       Start Scanning
@@ -243,26 +326,38 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
           <Box sx={{ textAlign: 'center', py: 3 }}>
             {!scanComplete ? (
               <>
-                <Box sx={{ 
-                  width: '100%', 
-                  height: 300, 
-                  bgcolor: 'black', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  mb: 3
-                }}>
-                  <Typography variant="body1" color="white">
-                    Camera Viewfinder Active
-                  </Typography>
-                </Box>
+                {/* QR Scanner Component */}
+                <QrScanner onResult={handleScanResult} isActive={isScanning} />
+                
                 <Typography variant="subtitle1" sx={{ mb: 2 }}>
                   Scanning for QR Codes...
                 </Typography>
-                <CircularProgress />
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-                  Point camera at QR code on sensitive item
-                </Typography>
+                
+                {scannedItems.length > 0 && (
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
+                      Scanned Items: ({scannedItems.length})
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, justifyContent: 'center' }}>
+                      {scannedItems.map((item, index) => (
+                        <Chip
+                          key={index}
+                          label={item}
+                          size="small"
+                          color="primary"
+                          sx={{ borderRadius: 0 }}
+                        />
+                      ))}
+                    </Box>
+                  </Box>
+                )}
+                
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+                  <CircularProgress size={60} variant={scanProgress > 0 ? "determinate" : "indeterminate"} value={scanProgress > 0 ? (scanProgress / 3) * 100 : undefined} />
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                    {scanProgress === 0 ? "Point camera at QR code on sensitive item" : `${scanProgress} items scanned - continue scanning...`}
+                  </Typography>
+                </Box>
               </>
             ) : (
               <>

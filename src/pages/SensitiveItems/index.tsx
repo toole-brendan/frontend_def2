@@ -71,6 +71,15 @@ function TabPanel(props: {
 const SensitiveItems: React.FC = () => {
   const theme = useTheme();
   const {
+    // Loading states
+    isLoading,
+    setIsLoading,
+    isVerifying,
+    isExporting,
+    setIsExporting,
+    LoadingBackdrop,
+    refreshData,
+    
     // Data
     mockData,
     filteredItems,
@@ -119,15 +128,36 @@ const SensitiveItems: React.FC = () => {
     simulateScanComplete
   } = useSensitiveItems();
 
+  // Export to Excel function
+  const exportToExcel = () => {
+    console.log('Exporting sensitive items to Excel...');
+    // Show loading indicator
+    setIsExporting(true);
+    
+    // In a real implementation, this would use xlsx library:
+    // const worksheet = utils.json_to_sheet(filteredItems);
+    // const workbook = utils.book_new();
+    // utils.book_append_sheet(workbook, worksheet, 'Sensitive Items');
+    // writeFile(workbook, 'sensitive_items_inventory.xlsx');
+    
+    // Simulate export delay
+    setTimeout(() => {
+      setIsExporting(false);
+      // For now, we'll just mock the functionality
+      alert('Exported sensitive_items_inventory.xlsx successfully!');
+    }, 1500);
+  };
+
   // Get Header actions
   const headerActions = (
     <>
-      <IconButton size="small">
+      <IconButton size="small" onClick={refreshData}>
         <RefreshIcon />
       </IconButton>
       <Button 
         variant="outlined" 
         startIcon={<FileDownloadIcon />}
+        onClick={exportToExcel}
         sx={{ borderRadius: 0 }}
       >
         Export Data
@@ -136,6 +166,9 @@ const SensitiveItems: React.FC = () => {
   );
 
   return (
+    <>
+      {/* Global loading backdrop */}
+      <LoadingBackdrop />
     <PageContainer
       header={
         <PageHeader 
@@ -325,6 +358,7 @@ const SensitiveItems: React.FC = () => {
         simulateScanComplete={simulateScanComplete}
       />
     </PageContainer>
+    </>
   );
 };
 
