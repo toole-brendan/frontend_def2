@@ -24,59 +24,59 @@ const SensitiveItems = React.lazy(() => import('../pages/SensitiveItems/index'))
 
 export const ROUTES = {
   // 1. Dashboard
-  DASHBOARD: '/defense/dashboard',
+  DASHBOARD: '/dashboard',
   
   // 2. Property Book
-  PROPERTY_BOOK: '/defense/property-book',
-  HAND_RECEIPTS: '/defense/property-book/hand-receipts',
-  SUB_HAND_RECEIPTS: '/defense/property-book/sub-hand-receipts',
-  COMPONENT_HAND_RECEIPTS: '/defense/property-book/component-hand-receipts',
-  SHORTAGE_ANNEXES: '/defense/property-book/shortage-annexes',
+  PROPERTY_BOOK: '/property-book',
+  HAND_RECEIPTS: '/property-book/hand-receipts',
+  SUB_HAND_RECEIPTS: '/property-book/sub-hand-receipts',
+  COMPONENT_HAND_RECEIPTS: '/property-book/component-hand-receipts',
+  SHORTAGE_ANNEXES: '/property-book/shortage-annexes',
   
   // 3. Sensitive Items Management
-  SENSITIVE_ITEMS: '/defense/sensitive-items',
-  SENSITIVE_INVENTORY: '/defense/sensitive-items/inventory',
-  SENSITIVE_DASHBOARD: '/defense/sensitive-items/dashboard',
-  SERIAL_VERIFICATION: '/defense/sensitive-items/verification',
-  MISSING_ITEM_RESPONSE: '/defense/sensitive-items/missing',
+  SENSITIVE_ITEMS: '/sensitive-items',
+  SENSITIVE_INVENTORY: '/sensitive-items/inventory',
+  SENSITIVE_DASHBOARD: '/sensitive-items/dashboard',
+  SERIAL_VERIFICATION: '/sensitive-items/verification',
+  MISSING_ITEM_RESPONSE: '/sensitive-items/missing',
   
   // 4. Transfers & Movement
-  TRANSFERS: '/defense/transfers',
-  LATERAL_TRANSFERS: '/defense/transfers/lateral',
-  TURN_IN_PROCESS: '/defense/transfers/turn-in',
-  ISSUE_PROCESS: '/defense/transfers/issue',
-  TEMP_HAND_RECEIPTS: '/defense/transfers/temporary',
-  MAINTENANCE_TRANSFERS: '/defense/transfers/maintenance',
+  TRANSFERS: '/transfers',
+  LATERAL_TRANSFERS: '/transfers/lateral',
+  TURN_IN_PROCESS: '/transfers/turn-in',
+  ISSUE_PROCESS: '/transfers/issue',
+  TEMP_HAND_RECEIPTS: '/transfers/temporary',
+  MAINTENANCE_TRANSFERS: '/transfers/maintenance',
   
   // 5. Inventories & Inspections
-  INVENTORIES: '/defense/inventories',
-  INVENTORY_SCHEDULE: '/defense/inventories/schedule',
-  INVENTORY_EXECUTION: '/defense/inventories/execution',
-  CHANGE_OF_COMMAND: '/defense/inventories/change-of-command',
-  CSDP: '/defense/inventories/csdp',
+  INVENTORIES: '/inventories',
+  INVENTORY_SCHEDULE: '/inventories/schedule',
+  INVENTORY_EXECUTION: '/inventories/execution',
+  CHANGE_OF_COMMAND: '/inventories/change-of-command',
+  CSDP: '/inventories/csdp',
   
   // 6. Equipment Readiness
-  EQUIPMENT_READINESS: '/defense/equipment-readiness',
-  READINESS_DASHBOARD: '/defense/equipment-readiness/dashboard',
-  MAINTENANCE_MANAGEMENT: '/defense/equipment-readiness/maintenance',
-  MISSION_IMPACT: '/defense/equipment-readiness/mission-impact',
-  OPERATOR_QUALIFICATIONS: '/defense/equipment-readiness/qualifications',
+  EQUIPMENT_READINESS: '/equipment-readiness',
+  READINESS_DASHBOARD: '/equipment-readiness/dashboard',
+  MAINTENANCE_MANAGEMENT: '/equipment-readiness/maintenance',
+  MISSION_IMPACT: '/equipment-readiness/mission-impact',
+  OPERATOR_QUALIFICATIONS: '/equipment-readiness/qualifications',
   
   // 7. Reports & Documentation
-  REPORTS: '/defense/reports',
-  STANDARD_FORMS: '/defense/reports/forms',
-  COMMAND_REPORTS: '/defense/reports/command',
-  FLIPL: '/defense/reports/flipl',
-  DOCUMENT_ARCHIVE: '/defense/reports/archive',
+  REPORTS: '/reports',
+  STANDARD_FORMS: '/reports/forms',
+  COMMAND_REPORTS: '/reports/command',
+  FLIPL: '/reports/flipl',
+  DOCUMENT_ARCHIVE: '/reports/archive',
   
   // 8. Admin & Settings
-  ADMIN: '/defense/admin',
-  USER_MANAGEMENT: '/defense/admin/users',
-  UNIT_CONFIGURATION: '/defense/admin/unit',
-  SYSTEM_INTEGRATION: '/defense/admin/integration',
-  SECURITY_SETTINGS: '/defense/admin/security',
+  ADMIN: '/admin',
+  USER_MANAGEMENT: '/admin/users',
+  UNIT_CONFIGURATION: '/admin/unit',
+  SYSTEM_INTEGRATION: '/admin/integration',
+  SECURITY_SETTINGS: '/admin/security',
   
-  PROFILE: '/defense/profile',
+  PROFILE: '/profile',
 } as const;
 
 export const NAV_ITEMS = [
