@@ -1,14 +1,21 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { 
   Fab, 
   Grid,
   Box,
   Button,
   useTheme,
-  alpha
+  alpha,
+  Snackbar,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Typography
 } from '@mui/material';
 import { KpiStatsCard } from '../../components/common';
-import { Plus } from 'lucide-react';
+import { Plus, AlertCircle } from 'lucide-react';
 import { 
   CheckCircle as CheckCircleIcon,
   Inventory as InventoryIcon,
@@ -21,6 +28,23 @@ import { PageContainer, PageHeader } from '../../components/layout';
 
 // Import styles
 import { buttonSx, paperSx } from './styles';
+
+// Action notification states
+type ActionType = 'success' | 'info' | 'warning' | 'error';
+interface NotificationState {
+  open: boolean;
+  message: string;
+  type: ActionType;
+}
+
+// Dialog states
+interface DialogState {
+  open: boolean;
+  title: string;
+  content: React.ReactNode | string;
+  action?: () => void;
+  actionText?: string;
+}
 
 // Import components
 import { 
@@ -50,14 +74,114 @@ import {
 
 const Dashboard = () => {
   const theme = useTheme();
+  const [notification, setNotification] = useState<NotificationState>({
+    open: false,
+    message: '',
+    type: 'info'
+  });
+  const [dialog, setDialog] = useState<DialogState>({
+    open: false,
+    title: '',
+    content: ''
+  });
   
-  // Dashboard actions
+  // Handle showing notifications
+  const showNotification = useCallback((message: string, type: ActionType = 'info') => {
+    setNotification({
+      open: true,
+      message,
+      type
+    });
+  }, []);
+
+  // Handle closing notifications
+  const handleNotificationClose = useCallback(() => {
+    setNotification(prev => ({
+      ...prev,
+      open: false
+    }));
+  }, []);
+  
+  // Handle showing dialogs
+  const showDialog = useCallback((title: string, content: React.ReactNode | string, actionText?: string, action?: () => void) => {
+    setDialog({
+      open: true,
+      title,
+      content,
+      action,
+      actionText
+    });
+  }, []);
+  
+  // Handle closing dialogs
+  const handleDialogClose = useCallback(() => {
+    setDialog(prev => ({
+      ...prev,
+      open: false
+    }));
+  }, []);
+  
+  // Handle dialog action
+  const handleDialogAction = useCallback(() => {
+    if (dialog.action) {
+      dialog.action();
+    }
+    handleDialogClose();
+  }, [dialog, handleDialogClose]);
+  
+  // Common handlers for various actions
+  const handleStartInventory = useCallback(() => {
+    showDialog(
+      "Start Inventory",
+      "Are you sure you want to initiate a new inventory action? This will notify all hand receipt holders.",
+      "Start Inventory",
+      () => {
+        showNotification("Inventory process initiated successfully", "success");
+      }
+    );
+  }, [showDialog, showNotification]);
+  
+  const handleViewAllActions = useCallback(() => {
+    showDialog(
+      "Pending Actions", 
+      <Typography>
+        There are 12 total pending actions requiring your attention across all systems:
+        <ul>
+          <li>High Priority: 4 items</li>
+          <li>Medium Priority: 5 items</li>
+          <li>Low Priority: 3 items</li>
+        </ul>
+      </Typography>,
+      "View in Command Center"
+    );
+  }, [showDialog]);
+  
+  const handleViewNTCPlan = useCallback(() => {
+    showDialog(
+      "NTC Rotation 25-08 Preparation Plan",
+      <Typography>
+        The NTC Rotation 25-08 Preparation Plan is currently 64% complete. Critical milestones include:
+        <ul>
+          <li>Initial Sourcing Plan: Due 01MAR (4 days)</li>
+          <li>Maintenance Completion: 15MAY</li>
+          <li>Load Plans Due: 01JUN</li>
+        </ul>
+        <Typography variant="body2" sx={{ mt: 2, fontWeight: 'bold' }}>
+          You have 121 days remaining until deployment.
+        </Typography>
+      </Typography>,
+      "Download Full Plan"
+    );
+  }, [showDialog]);
+  
+  // Dashboard header actions
   const headerActions = (
     <>
       <Button 
         variant="outlined" 
         startIcon={<MetricsIcon fontSize="small" />}
         sx={buttonSx}
+        onClick={() => showNotification("Generating reports...", "info")}
       >
         Generate Reports
       </Button>
@@ -65,6 +189,7 @@ const Dashboard = () => {
         variant="outlined" 
         startIcon={<MaintenanceIcon fontSize="small" />}
         sx={buttonSx}
+        onClick={() => showDialog("Unit Status", "Unit is currently at 93% operational readiness. No critical issues reported.")}
       >
         Unit Status
       </Button>
@@ -81,6 +206,45 @@ const Dashboard = () => {
         />
       }
     >
+      {/* Notification Snackbar */}
+      <Snackbar
+        open={notification.open}
+        autoHideDuration={4000}
+        onClose={handleNotificationClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert 
+          onClose={handleNotificationClose} 
+          severity={notification.type} 
+          sx={{ width: '100%' }}
+        >
+          {notification.message}
+        </Alert>
+      </Snackbar>
+      
+      {/* Action Dialog */}
+      <Dialog
+        open={dialog.open}
+        onClose={handleDialogClose}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ fontWeight: 'bold' }}>{dialog.title}</DialogTitle>
+        <DialogContent>
+          {typeof dialog.content === 'string' ? (
+            <Typography>{dialog.content}</Typography>
+          ) : dialog.content}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose}>Close</Button>
+          {dialog.action && dialog.actionText && (
+            <Button onClick={handleDialogAction} variant="contained" color="primary">
+              {dialog.actionText}
+            </Button>
+          )}
+        </DialogActions>
+      </Dialog>
+      
       {/* Dashboard Header */}
       <DashboardHeader 
         title="Commander's Dashboard"
@@ -153,7 +317,7 @@ const Dashboard = () => {
               lastVerified: cat.lastVerified,
               note: cat.status === 'warning' ? 'Needs attention' : undefined
             }))}
-            onStartInventory={() => console.log('Start inventory')}
+            onStartInventory={handleStartInventory}
           />
         </Grid>
         
@@ -167,7 +331,7 @@ const Dashboard = () => {
               deadline: item.deadline,
               action: 'Review and approve'
             }))}
-            onViewAllActions={() => console.log('View all actions')}
+            onViewAllActions={handleViewAllActions}
           />
         </Grid>
         
@@ -191,7 +355,7 @@ const Dashboard = () => {
               date: milestone.date,
               daysRemaining: milestone.status === 'complete' ? null : 4 // Mock value, would be calculated
             }))}
-            onViewNTCPlan={() => console.log('View NTC plan')}
+            onViewNTCPlan={handleViewNTCPlan}
           />
         </Grid>
       </Grid>
@@ -261,7 +425,7 @@ const Dashboard = () => {
                 daysRemaining: 49, // Mock value, would be calculated
                 progress: undefined
               }))}
-            onStartInventory={() => console.log('Start inventory')}
+            onStartInventory={handleStartInventory}
           />
         </Grid>
         
@@ -277,7 +441,11 @@ const Dashboard = () => {
                 details: activity.details,
                 status: activity.status as any
               }))}
-              onViewAllActivity={() => console.log('View all activity')}
+              onViewAllActivity={() => showDialog(
+                "Recent Activity Log",
+                "Viewing the complete activity log for the last 30 days. This includes all property transactions, inventories, and maintenance actions.",
+                "Export to PDF"
+              )}
             />
           </Box>
         </Grid>
@@ -303,6 +471,24 @@ const Dashboard = () => {
           borderRadius: 0,
         }}
         aria-label="add"
+        onClick={() => showDialog(
+          "Quick Actions",
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Button variant="contained" color="primary" fullWidth startIcon={<AlertCircle />}>
+              Conduct Sensitive Item Inventory
+            </Button>
+            <Button variant="outlined" color="primary" fullWidth>
+              Sign Pending Hand Receipts
+            </Button>
+            <Button variant="outlined" color="primary" fullWidth>
+              Review Transfer Requests
+            </Button>
+            <Button variant="outlined" color="primary" fullWidth>
+              Generate Property Report
+            </Button>
+          </Box>,
+          "Close"
+        )}
       >
         <Plus />
       </Fab>

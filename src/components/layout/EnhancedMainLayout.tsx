@@ -61,7 +61,7 @@ const EnhancedMainLayout: React.FC<EnhancedMainLayoutProps> = ({ children }) => 
           flexGrow: 1,
           p: { xs: 1, sm: 2, md: 3 },
           mt: 8, // Height of AppBar
-          backgroundColor: theme.palette.background.default,
+          backgroundColor: 'transparent',
           minHeight: '100vh',
           width: '100%',
           display: 'flex',

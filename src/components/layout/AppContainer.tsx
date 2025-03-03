@@ -146,13 +146,12 @@ const AppContainer: React.FC<AppContainerProps> = ({ children }) => {
           pt: { xs: 8, md: 10 },
           height: '100vh',
           overflow: 'auto',
-          // Force lighter background for dark mode
-          bgcolor: theme => theme.palette.mode === 'dark' ? '#191919' : theme.palette.background.default,
+          // Use consistent background color (no blue overlay)
+          bgcolor: 'transparent',
           transition: theme.transitions.create(['width', 'margin'], {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.enteringScreen,
           }),
-          // Removed grid pattern background
         }}
       >
         <Box 

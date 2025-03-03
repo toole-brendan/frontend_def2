@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, CssBaseline, useMediaQuery, useTheme } from '@mui/material';
 import AppBar from './AppBar';
-import Sidebar from './Sidebar';
+import SidebarComponent from './SidebarComponent';
 import { NAV_ITEMS, SYSTEM_STATUS } from '../../app/routes';
 
 interface MainLayoutProps {
@@ -27,7 +27,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         userDisplayName="CPT Michael Rodriguez" // User display name
       />
       
-      <Sidebar 
+      <SidebarComponent 
         variant={isMobile ? "temporary" : "permanent"}
         isMobile={isMobile}
         open={sidebarOpen}
@@ -42,7 +42,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           flexGrow: 1,
           p: { xs: 1, sm: 2, md: 3 }, // Responsive padding
           mt: 8, // Height of AppBar
-          backgroundColor: theme.palette.background.default,
+          backgroundColor: 'transparent',
           minHeight: '100vh',
           display: 'flex',
           flexDirection: 'column',
@@ -55,4 +55,4 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   );
 };
 
-export default MainLayout; 
+export default MainLayout;
