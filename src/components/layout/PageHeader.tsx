@@ -1,56 +1,70 @@
-import React, { ReactNode } from 'react';
-import { Box, Typography, Divider, useTheme } from '@mui/material';
+import React from 'react';
+import { Box, Typography, useTheme } from '@mui/material';
+import PageTitle from '../common/PageTitle';
+
+// We'll use the primary color from theme instead of hardcoding the color
 
 interface PageHeaderProps {
   title: string;
   subtitle?: string;
-  actions?: ReactNode;
-  divider?: boolean;
+  actions?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 /**
- * Standardized header for all pages in the application
- * Ensures consistent title, subtitle, and action button layout
+ * PageHeader component that provides consistent spacing and styling for all page headers
+ * This component ensures that all page headers (Dashboard, Inventory, Transfers, etc.)
+ * have the same spacing from the sidebar and app bar.
  */
 const PageHeader: React.FC<PageHeaderProps> = ({ 
   title, 
   subtitle, 
   actions,
-  divider = true
+  children 
 }) => {
   const theme = useTheme();
-  
+
   return (
     <Box 
-      component="header" 
       sx={{ 
-        py: 1.5, 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'space-between',
-        ...(divider && {
-          borderBottom: '1px solid',
-          borderColor: 'divider',
-        }),
-        mb: divider ? 3 : 2
+        mb: 3, 
+        pb: 2,
+        borderBottom: `1px solid ${theme.palette.divider}`,
       }}
     >
-      <Box>
-        <Typography variant="h5" fontWeight="600" color="primary">
-          {title}
-        </Typography>
-        {subtitle && (
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-            {subtitle}
-          </Typography>
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'flex-start',
+        flexWrap: { xs: 'wrap', md: 'nowrap' },
+        gap: 2
+      }}>
+        <Box>
+          <PageTitle 
+            variant="h4" 
+            gutterBottom={!!subtitle}
+            sx={{ 
+              color: theme.palette.primary.main, // Use the primary color from theme
+              fontSize: { xs: '1.5rem', md: '1.75rem' }, // Smaller font size
+            }}
+          >
+            {title}
+          </PageTitle>
+          {subtitle && (
+            <Typography variant="body1" color="text.secondary">
+              {subtitle}
+            </Typography>
+          )}
+        </Box>
+        
+        {actions && (
+          <Box sx={{ mt: { xs: 1, md: 0 } }}>
+            {actions}
+          </Box>
         )}
       </Box>
       
-      {actions && (
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          {actions}
-        </Box>
-      )}
+      {children}
     </Box>
   );
 };

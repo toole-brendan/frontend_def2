@@ -16,13 +16,14 @@ import {
   FilterList as FilterListIcon
 } from '@mui/icons-material';
 import { ToolbarProps } from './types';
+import { buttonSx, toolbarSx, textFieldSx, iconButtonSx } from '../../../theme/patterns';
 
 /**
  * Enhanced table toolbar component
  * Displays the table title, search field, and action buttons
  */
 export const EnhancedTableToolbar = ({
-  numSelected,
+  numSelected = 0,
   title,
   selectionActions = [],
   actions = [],
@@ -34,6 +35,7 @@ export const EnhancedTableToolbar = ({
 }: ToolbarProps) => {
   const theme = useTheme();
   const [searchValue, setSearchValue] = useState('');
+  const [filterOpen, setFilterOpen] = useState(false);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -43,125 +45,128 @@ export const EnhancedTableToolbar = ({
     }
   };
 
+  const toggleFilter = () => {
+    setFilterOpen(!filterOpen);
+    if (onFilter) {
+      onFilter();
+    }
+  };
+
+  // Check if any rows are selected
+  const hasSelected = numSelected > 0;
+
   return (
     <Toolbar
-      sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.mode === 'light' ? 0.1 : 0.2),
-        }),
-        borderBottom: `1px solid ${theme.palette.divider}`,
-      }}
+      sx={toolbarSx(theme, hasSelected)}
     >
-      {numSelected > 0 ? (
+      {hasSelected ? (
         <Typography
           sx={{ flex: '1 1 100%' }}
           color="inherit"
           variant="subtitle1"
-          component="div"
         >
           {numSelected} selected
         </Typography>
       ) : (
         <Typography
-          sx={{ flex: '1 1 100%' }}
+          sx={{ flex: '1 1 100%', fontWeight: 500 }}
           variant="h6"
           id="tableTitle"
-          component="div"
         >
           {title}
         </Typography>
       )}
 
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        {numSelected > 0 ? (
-          <Stack direction="row" spacing={1}>
-            {selectionActions
-              .filter(action => {
-                if (typeof action.visible === 'function') {
-                  return action.visible([]);
-                }
-                return action.visible !== false;
-              })
-              .map((action, index) => (
-                <Button
-                  key={action.key || `selection-action-${index}`}
-                  size="small"
-                  startIcon={action.icon}
-                  color={action.color || 'primary'}
-                  variant={action.variant || 'text'}
-                  onClick={action.onClick}
-                >
-                  {action.label}
-                </Button>
-              ))}
-          </Stack>
-        ) : (
-          <>
-            {searchable && (
-              <TextField
-                size="small"
-                placeholder="Search..."
-                value={searchValue}
-                onChange={handleSearch}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon fontSize="small" />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{
-                  mr: 2,
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: 1,
-                    fontSize: '0.875rem',
-                    bgcolor: theme.palette.mode === 'dark' 
-                      ? alpha(theme.palette.background.paper, 0.15)
-                      : alpha(theme.palette.common.white, 0.9),
-                  }
-                }}
-              />
-            )}
-            {filterable && (
-              <>
-                {filterComponent || (
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    startIcon={<FilterListIcon />}
-                    onClick={onFilter}
-                    sx={{ mr: 1 }}
-                  >
-                    Filter
-                  </Button>
-                )}
-              </>
-            )}
-            {actions
-              .filter(action => {
-                if (typeof action.visible === 'function') {
-                  return action.visible([]);
-                }
-                return action.visible !== false;
-              })
-              .map((action, index) => (
-                <Button
-                  key={action.key || `action-${index}`}
-                  size="small"
-                  startIcon={action.icon}
-                  color={action.color || 'primary'}
-                  variant={action.variant || 'contained'}
-                  onClick={action.onClick}
-                  sx={{ ml: index > 0 ? 1 : 0 }}
-                >
-                  {action.label}
-                </Button>
-              ))}
-          </>
-        )}
-      </Box>
+      {/* Search Field */}
+      {searchable && !hasSelected && (
+        <TextField
+          size="small"
+          variant="outlined"
+          placeholder="Search..."
+          value={searchValue}
+          onChange={handleSearch}
+          sx={{
+            marginRight: 2,
+            width: { xs: '100%', md: '240px' },
+            ...textFieldSx(theme)
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon fontSize="small" />
+              </InputAdornment>
+            ),
+          }}
+        />
+      )}
+
+      {/* Filter button */}
+      {filterable && !hasSelected && (
+        <IconButton 
+          onClick={toggleFilter}
+          sx={{
+            ...iconButtonSx(theme),
+            marginRight: 1,
+            color: filterOpen ? theme.palette.primary.main : 'inherit',
+            backgroundColor: filterOpen 
+              ? alpha(theme.palette.primary.main, 0.1) 
+              : 'transparent',
+          }}
+          aria-label="Toggle filters"
+          size="small"
+        >
+          <FilterListIcon />
+        </IconButton>
+      )}
+
+      {/* Selection action buttons */}
+      {hasSelected && (
+        <Box>
+          {selectionActions.map((action, index) => (
+            <Button
+              key={index}
+              onClick={action.onClick}
+              sx={{
+                ...buttonSx(theme, action.color || 'primary'),
+                mr: index < selectionActions.length - 1 ? 1 : 0
+              }}
+              variant={action.variant || 'contained'}
+              color={action.color || 'primary'}
+              startIcon={action.icon}
+              size="small"
+            >
+              {action.label}
+            </Button>
+          ))}
+        </Box>
+      )}
+
+      {/* Regular action buttons */}
+      {!hasSelected && (
+        <Box>
+          {actions.map((action, index) => (
+            <Button
+              key={index}
+              onClick={action.onClick}
+              sx={{
+                ...buttonSx(theme, action.color || 'primary'),
+                mr: index < actions.length - 1 ? 1 : 0
+              }}
+              variant={action.variant || 'contained'}
+              color={action.color || 'primary'}
+              startIcon={action.icon}
+              size="small"
+            >
+              {action.label}
+            </Button>
+          ))}
+        </Box>
+      )}
+
+      {/* Filter panel */}
+      {filterable && filterOpen && filterComponent && (
+        <Box sx={{ width: '100%', mt: 2 }}>{filterComponent}</Box>
+      )}
     </Toolbar>
   );
 };

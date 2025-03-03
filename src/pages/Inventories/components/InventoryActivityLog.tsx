@@ -284,7 +284,9 @@ export const InventoryActivityLog: React.FC = () => {
                       >
                         {activity.details}
                       </Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <Box
+                        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                      >
                         <Typography
                           variant="caption"
                           color="text.secondary"

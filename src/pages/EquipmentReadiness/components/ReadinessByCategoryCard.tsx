@@ -12,7 +12,8 @@ import {
 } from '@mui/material';
 import { Timeline as MetricsIcon, ErrorOutline as NonMissionCapableIcon } from '@mui/icons-material';
 import { getStatusColor } from '../utils';
-import { cardWithCornerSx, sectionHeaderSx, buttonSx } from '../styles';
+import { cardWithCornerSx, buttonSx } from '../styles';
+import { titleTypographySx } from '../../../theme/patterns';
 
 interface CategoryData {
   category: string;
@@ -37,7 +38,13 @@ export const ReadinessByCategoryCard: React.FC<ReadinessByCategoryCardProps> = (
       <Box sx={{ p: 3 }}>
         <Typography 
           variant="h6" 
-          sx={sectionHeaderSx}
+          component="div"
+          sx={{
+            ...titleTypographySx(theme, 'medium'),
+            fontSize: '1.25rem', 
+            fontWeight: 600,
+            letterSpacing: '0.01em'
+          }}
         >
           Readiness by Category
         </Typography>

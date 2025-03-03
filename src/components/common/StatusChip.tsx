@@ -1,5 +1,12 @@
 import React from 'react';
-import { Chip, alpha, useTheme } from '@mui/material';
+import { Chip, alpha, useTheme, Theme } from '@mui/material';
+import { 
+  statusFMCSx,
+  statusPMCSx, 
+  statusNMCSx, 
+  statusAdminSx,
+  chipSx
+} from '../../theme/patterns';
 
 export type StatusType = 
   | 'success' 
@@ -10,7 +17,11 @@ export type StatusType =
   | 'serviceable'
   | 'limited'
   | 'shortage'
-  | 'inactive';
+  | 'inactive'
+  | 'FMC'
+  | 'PMC'
+  | 'NMC'
+  | 'ADMIN';
 
 interface StatusChipProps {
   status: StatusType | string;
@@ -31,32 +42,47 @@ const StatusChip: React.FC<StatusChipProps> = ({
 }) => {
   const theme = useTheme();
   
-  // Map status to color
-  const getStatusColor = (status: string) => {
+  // Get the appropriate styling based on status
+  const getStatusStyle = (status: string, theme: Theme) => {
     const normalizedStatus = status.toLowerCase();
     
+    // Special military statuses
+    if (normalizedStatus === 'fmc') return statusFMCSx(theme);
+    if (normalizedStatus === 'pmc') return statusPMCSx(theme);
+    if (normalizedStatus === 'nmc') return statusNMCSx(theme);
+    if (normalizedStatus === 'admin') return statusAdminSx(theme);
+    
     // Map to theme palette colors
+    let color: string;
+    
     switch (normalizedStatus) {
       case 'success':
       case 'serviceable':
-        return theme.palette.success.main;
+        color = theme.semantic.status.success;
+        break;
       case 'warning':
       case 'limited':
-        return theme.palette.warning.main;
+        color = theme.semantic.status.warning;
+        break;
       case 'error':
       case 'shortage':
-        return theme.palette.error.main;
+        color = theme.semantic.status.error;
+        break;
       case 'info':
-        return theme.palette.info.main;
+        color = theme.semantic.status.info;
+        break;
       case 'inactive':
-        return theme.palette.text.disabled;
+        color = theme.semantic.status.inactive;
+        break;
       default:
-        return theme.palette.primary.main;
+        color = theme.palette.primary.main;
     }
+    
+    return chipSx(theme, color);
   };
   
-  const color = getStatusColor(status);
   const displayLabel = label || status;
+  const statusStyle = getStatusStyle(status, theme);
   
   return (
     <Chip
@@ -64,14 +90,14 @@ const StatusChip: React.FC<StatusChipProps> = ({
       size={size}
       variant={outlined ? 'outlined' : 'filled'}
       sx={{ 
-        backgroundColor: outlined ? 'transparent' : alpha(color, 0.15),
-        color: color,
-        fontWeight: 500,
-        fontSize: size === 'small' ? '0.75rem' : '0.875rem',
-        borderRadius: 0,
-        height: size === 'small' ? 20 : 24,
+        ...statusStyle,
         ...(outlined && {
-          borderColor: color,
+          bgcolor: 'transparent',
+          borderColor: statusStyle.color,
+        }),
+        ...(size === 'medium' && {
+          height: 24,
+          fontSize: '0.875rem',
         })
       }}
     />

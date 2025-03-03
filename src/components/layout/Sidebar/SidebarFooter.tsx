@@ -106,7 +106,7 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({
             mt: 1, 
             display: 'flex', 
             alignItems: 'center', 
-            justifyContent: 'space-between'
+            justifyContent: 'flex-start'
           }}>
             {/* Logout Button */}
             <Button
@@ -128,28 +128,6 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({
             >
               Logout
             </Button>
-            
-                        {/* Collapse Sidebar Button */}
-            <Tooltip title="Collapse sidebar">
-              <IconButton 
-                onClick={handleToggleCollapse} 
-                aria-label="Collapse sidebar"
-                sx={{
-                  border: `2px solid ${alpha(theme.palette.primary.main, 0.8)}`,
-                  borderRadius: 0,
-                  backgroundColor: alpha(theme.palette.primary.main, 0.15),
-                  color: theme.palette.primary.main,
-                  width: 36,
-                  height: 36,
-                  '&:hover': {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.25),
-                    borderColor: theme.palette.primary.main,
-                  },
-                }}
-              >
-                <ChevronLeftIcon />
-              </IconButton>
-            </Tooltip>
           </Box>
         </>
       ) : (
@@ -167,7 +145,6 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({
             v{systemStatus.version.split(' ')[2]}
           </Typography>
           
-          {/* Special Expand button - given prominence in collapsed view */}
           <Box sx={{ 
             pt: 1,
             pb: 1,
@@ -175,27 +152,6 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({
             flexDirection: 'column',
             alignItems: 'center'
           }}>
-            <Tooltip title="Expand sidebar">
-              <IconButton 
-                onClick={handleToggleCollapse} 
-                aria-label="Expand sidebar"
-                sx={{
-                  border: `2px solid ${alpha(theme.palette.primary.main, 0.8)}`,
-                  borderRadius: 0,
-                  backgroundColor: alpha(theme.palette.primary.main, 0.2),
-                  color: theme.palette.primary.main,
-                  width: 46,
-                  height: 36,
-                  mb: 1,
-                  '&:hover': {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.3),
-                  },
-                }}
-              >
-                <ChevronRightIcon />
-              </IconButton>
-            </Tooltip>
-            
             <Box sx={{ 
               borderTop: `1px solid ${alpha(theme.palette.divider, 0.5)}`,
               pt: 1,

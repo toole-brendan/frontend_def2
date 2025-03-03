@@ -37,27 +37,13 @@ const TransferPipeline: React.FC<TransferPipelineProps> = ({ transfers }) => {
 
   return (
     <Paper sx={{ 
-      p: 0, 
-      mb: 2, 
-      borderRadius: 0, 
-      border: '2px solid rgba(140, 140, 160, 0.12)',
-      boxShadow: theme.palette.mode === 'dark' 
-        ? '0 0 0 1px rgba(226, 232, 240, 0.05), 0 2px 4px rgba(0, 0, 0, 0.2)'
-        : '0 0 0 1px rgba(74, 85, 104, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1)',
+      p: 2, 
+      mb: 3, 
+      borderRadius: 1,
+      border: `1px solid ${theme.palette.divider}`,
+      boxShadow: theme.shadows[1],
       position: 'relative',
       overflow: 'hidden',
-      '&::after': {
-        content: '""',
-        position: 'absolute',
-        top: 0,
-        right: 0,
-        width: 16,
-        height: 16,
-        borderStyle: 'solid',
-        borderWidth: '0 16px 16px 0',
-        borderColor: `transparent ${alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.3 : 0.2)} transparent transparent`,
-        zIndex: 1,
-      }
     }}>
       <CardHeader 
         title="Transfer Pipeline"
@@ -69,7 +55,7 @@ const TransferPipeline: React.FC<TransferPipelineProps> = ({ transfers }) => {
             sx={{ 
               bgcolor: alpha(theme.palette.primary.main, 0.1), 
               color: theme.palette.primary.main,
-              borderRadius: 0,
+              borderRadius: 1,
               height: 20,
               fontSize: '0.75rem',
               fontWeight: 'medium',
@@ -79,7 +65,7 @@ const TransferPipeline: React.FC<TransferPipelineProps> = ({ transfers }) => {
       />
       
       {/* Transfer Pipeline Visualization */}
-      <Box sx={{ p: 3, pt: 2 }}>
+      <Box sx={{ pt: 2 }}>
         <Box 
           sx={{ 
             display: 'flex', 
@@ -278,8 +264,8 @@ const TransferPipeline: React.FC<TransferPipelineProps> = ({ transfers }) => {
         </Tabs>
 
         {/* Transfer Table */}
-        <TableContainer sx={{ mt: 2 }}>
-          <Table size="small">
+        <TableContainer sx={{ mt: 3 }}>
+          <Table>
             <TableHead>
               <TableRow>
                 <TableCell sx={{ 
@@ -338,16 +324,16 @@ const TransferPipeline: React.FC<TransferPipelineProps> = ({ transfers }) => {
                     '&:hover': { bgcolor: 'action.hover' }
                   }}
                 >
-                  <TableCell sx={{ fontFamily: 'monospace', fontSize: '0.75rem', letterSpacing: '0.05em' }}>{transfer.id}</TableCell>
-                  <TableCell>
+                  <TableCell sx={{ fontFamily: 'monospace', fontSize: '0.75rem', letterSpacing: '0.05em', p: 2 }}>{transfer.id}</TableCell>
+                  <TableCell sx={{ p: 2 }}>
                     <TypeChip type={transfer.type} />
                   </TableCell>
-                  <TableCell>
-                    <Typography variant="body2" sx={{ fontSize: '0.75rem', fontWeight: 'medium' }}>
+                  <TableCell sx={{ p: 2 }}>
+                    <Typography variant="body2" sx={{ fontSize: '0.8rem', fontWeight: 'medium' }}>
                       {transfer.from.substring(0, 12)} → {transfer.to.substring(0, 12)}
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  <TableCell sx={{ p: 2 }}>
                     <Typography
                       variant="body2"
                       sx={{
@@ -360,7 +346,7 @@ const TransferPipeline: React.FC<TransferPipelineProps> = ({ transfers }) => {
                       {transfer.due}
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  <TableCell sx={{ p: 2 }}>
                     <StatusChip 
                       label={transfer.status} 
                       status={transfer.status}

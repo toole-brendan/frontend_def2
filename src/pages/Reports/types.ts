@@ -1,5 +1,7 @@
 export type ReportType = 'inventory' | 'transfers' | 'maintenance' | 'custom';
 
+export type ReportStatus = 'draft' | 'pending' | 'approved' | 'rejected' | 'published';
+
 export interface MetricChange {
   value: string;
   timeframe: string;
@@ -44,12 +46,35 @@ export interface Personnel {
   unit: string;
 }
 
+export interface Report {
+  id: string;
+  title: string;
+  description?: string;
+  type: string;
+  status: 'draft' | 'pending' | 'approved' | 'rejected';
+  createdAt: string;
+  updatedAt: string;
+  createdBy: {
+    id: string;
+    name: string;
+  };
+  approvedBy?: {
+    id: string;
+    name: string;
+  };
+}
+
 export interface BlockchainRecord {
   transactionId: string;
-  action: 'REPORT_CREATED' | 'REPORT_UPDATED' | 'REPORT_APPROVED' | 'REPORT_REJECTED';
+  blockNumber: number;
   timestamp: string;
-  personnel: Personnel;
-  details: Record<string, unknown>;
+  action: 'REPORT_CREATED' | 'REPORT_UPDATED' | 'REPORT_APPROVED' | 'REPORT_REJECTED';
+  reportId: string;
+  personnel: {
+    id: string;
+    name: string;
+  };
+  signature: string;
 }
 
 export interface ReportData {
@@ -58,12 +83,16 @@ export interface ReportData {
   title: string;
   description?: string;
   createdAt: string;
+  updatedAt?: string;
+  dueDate?: string;
   createdBy: Personnel;
   lastGenerated: string;
   format: string;
-  status: 'draft' | 'pending' | 'approved' | 'rejected';
+  status: ReportStatus;
   blockchainHash: string;
   blockchainRecords: BlockchainRecord[];
+  author?: string;
+  reportType?: string;
   data?: {
     filters: ReportFilter;
   };
@@ -105,4 +134,27 @@ export interface CustomReportConfig {
     type: 'bar' | 'line' | 'pie' | 'table';
     config: Record<string, unknown>;
   }[];
+}
+
+export interface TableColumn {
+  id: string;
+  label: string;
+  minWidth?: number;
+  align?: 'right' | 'left' | 'center';
+  format?: (value: any) => string;
+}
+
+export interface SortConfig {
+  field: keyof ReportData;
+  direction: 'asc' | 'desc';
+}
+
+export interface FilterConfig {
+  status: ReportStatus[];
+  type: ReportType[];
+  dateRange: {
+    start: string | null;
+    end: string | null;
+  };
+  searchTerm: string;
 } 

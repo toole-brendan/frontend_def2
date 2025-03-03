@@ -35,7 +35,16 @@ import { mockPropertyItems } from './mockData';
 
 // Main component
 const PropertyBookContent: React.FC = () => {
-  const { propertyItems, selectedItems, da2062ModalOpen, closeDA2062Modal } = usePropertyBook();
+  const { 
+    propertyItems, 
+    selectedItems, 
+    da2062ModalOpen, 
+    closeDA2062Modal,
+    itemDetailsModalOpen,
+    closeItemDetails,
+    itemDetailsId,
+    getItemById
+  } = usePropertyBook();
   
   // Get the selected property items for the DA2062 modal
   const selectedPropertyItems = selectedItems
@@ -55,48 +64,25 @@ const PropertyBookContent: React.FC = () => {
           />
         }
       >
-        {/* Welcome Header */}
-        <Box sx={{ 
-          mb: 3, 
-          pb: 2,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-end',
-          borderBottom: '1px solid',
-          borderColor: 'divider',
-          mx: 3
-        }}>
-          <Box>
-            <Typography variant="h4" fontWeight="500">
-              B Company, 2-87 Infantry
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
-              <Typography variant="body2" color="text.secondary">
-                Total Line Items: {mockPropertyItems.length}
-              </Typography>
-              <Divider orientation="vertical" flexItem sx={{ mx: 1, height: 12, alignSelf: 'center' }} />
-              <Typography variant="body2" color="text.secondary">
-                Total Value: ${mockPropertyItems.reduce((sum, item) => sum + item.value, 0).toLocaleString()}
-              </Typography>
-            </Box>
-          </Box>
-          
-          {/* Buttons removed as requested */}
-        </Box>
-
         {/* Summary Section */}
         <Paper sx={{ 
           p: 2, 
           mb: 3,
-          bgcolor: '#121212',
-          color: 'white'
+          bgcolor: theme.palette.mode === 'dark' ? '#121212' : theme.palette.background.paper,
+          color: theme.palette.mode === 'dark' ? 'white' : theme.palette.text.primary
         }}>
           <Typography variant="h6" gutterBottom>PROPERTY BOOK SUMMARY</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          <Typography variant="body2" sx={{ 
+            mb: 2,
+            color: theme.palette.mode === 'dark' ? 'text.secondary' : alpha(theme.palette.text.primary, 0.7)
+          }}>
             Overview of property book status and requirements
           </Typography>
           
-          <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)', my: 2 }} />
+          <Divider sx={{ 
+            borderColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)', 
+            my: 2 
+          }} />
           
           <Grid container spacing={2}>
             <Grid item xs={12} md={6} sx={{ mb: 2 }}>
@@ -121,7 +107,10 @@ const PropertyBookContent: React.FC = () => {
             </Grid>
           </Grid>
           
-          <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)', my: 2 }} />
+          <Divider sx={{ 
+            borderColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)', 
+            my: 2 
+          }} />
           
           <Box sx={{ 
             display: 'flex',
@@ -151,13 +140,19 @@ const PropertyBookContent: React.FC = () => {
               borderRadius: 0, 
               position: 'sticky', 
               top: 16,
-              bgcolor: '#121212',
-              color: 'white'
+              bgcolor: theme.palette.mode === 'dark' ? '#121212' : theme.palette.background.paper,
+              color: theme.palette.mode === 'dark' ? 'white' : theme.palette.text.primary
             }}>
               <Typography variant="h6" fontWeight="bold" gutterBottom>PROPERTY DETAILS</Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>Summary and statistics</Typography>
+              <Typography variant="body2" sx={{ 
+                mb: 3,
+                color: theme.palette.mode === 'dark' ? 'text.secondary' : alpha(theme.palette.text.primary, 0.7)
+              }}>Summary and statistics</Typography>
               
-              <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)', my: 2 }} />
+              <Divider sx={{ 
+                borderColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)', 
+                my: 2 
+              }} />
               
               <Typography variant="body2" color="text.secondary" gutterBottom>Equipment Authorized</Typography>
               <Typography 
@@ -213,7 +208,11 @@ const PropertyBookContent: React.FC = () => {
         </Grid>
         
         {/* Modal Components */}
-        <ItemDetailsModal />
+        <ItemDetailsModal 
+          open={itemDetailsModalOpen}
+          onClose={closeItemDetails}
+          item={itemDetailsId ? getItemById(itemDetailsId) || null : null}
+        />
         <TransferModal />
         <InventoryModal />
         <AddItemModal />

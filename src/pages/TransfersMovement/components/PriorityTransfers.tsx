@@ -13,7 +13,7 @@ import {
   alpha,
   useTheme,
 } from '@mui/material';
-import { CardHeader } from '../../../components/common';
+import { CardHeader, SectionHeader } from '../../../components/common';
 import { PriorityTransfersProps } from '../types';
 import TypeChip from './TypeChip';
 
@@ -27,28 +27,13 @@ const PriorityTransfers: React.FC<PriorityTransfersProps> = ({ transfers }) => {
 
   return (
     <Paper sx={{ 
-      p: 0, 
-      mb: 2, 
-      borderRadius: 0, 
-      border: '2px solid rgba(140, 140, 160, 0.12)', 
+      p: 2, 
+      mb: 3, 
       height: '100%',
-      boxShadow: theme.palette.mode === 'dark' 
-        ? '0 0 0 1px rgba(226, 232, 240, 0.05), 0 2px 4px rgba(0, 0, 0, 0.2)'
-        : '0 0 0 1px rgba(74, 85, 104, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1)',
-      position: 'relative',
-      overflow: 'hidden',
-      '&::after': {
-        content: '""',
-        position: 'absolute',
-        top: 0,
-        right: 0,
-        width: 16,
-        height: 16,
-        borderStyle: 'solid',
-        borderWidth: '0 16px 16px 0',
-        borderColor: `transparent ${alpha(theme.palette.error.main, theme.palette.mode === 'dark' ? 0.3 : 0.2)} transparent transparent`,
-        zIndex: 1,
-      }
+      borderRadius: 1,
+      boxShadow: theme.shadows[1],
+      border: `1px solid ${theme.palette.divider}`,
+      borderLeft: `3px solid ${theme.palette.error.main}`,
     }}>
       <CardHeader 
         title="High Priority Transfers"
@@ -60,111 +45,67 @@ const PriorityTransfers: React.FC<PriorityTransfersProps> = ({ transfers }) => {
             sx={{ 
               bgcolor: alpha(theme.palette.error.main, 0.1),
               color: theme.palette.error.main,
-              borderRadius: 0,
-              height: 20,
-              fontSize: '0.75rem',
-              fontWeight: 'medium',
-            }}
+              borderRadius: 1,
+              fontSize: '0.7rem',
+              fontWeight: 600,
+              height: 24
+            }} 
           />
         }
       />
       
-      <TableContainer>
-        <Table size="small">
+      <TableContainer sx={{ maxHeight: 400 }}>
+        <Table>
           <TableHead>
-            <TableRow>
-              <TableCell sx={{ 
-                textTransform: 'uppercase', 
-                fontWeight: 'medium', 
-                fontSize: '0.75rem', 
-                letterSpacing: '0.05em',
-                backgroundColor: alpha(theme.palette.error.main, 0.05) 
-              }}>
-                ID
-              </TableCell>
-              <TableCell sx={{ 
-                textTransform: 'uppercase', 
-                fontWeight: 'medium', 
-                fontSize: '0.75rem', 
-                letterSpacing: '0.05em',
-                backgroundColor: alpha(theme.palette.error.main, 0.05) 
-              }}>
-                TYPE
-              </TableCell>
-              <TableCell sx={{ 
-                textTransform: 'uppercase', 
-                fontWeight: 'medium', 
-                fontSize: '0.75rem', 
-                letterSpacing: '0.05em',
-                backgroundColor: alpha(theme.palette.error.main, 0.05) 
-              }}>
-                ITEMS
-              </TableCell>
-              <TableCell sx={{ 
-                textTransform: 'uppercase', 
-                fontWeight: 'medium', 
-                fontSize: '0.75rem', 
-                letterSpacing: '0.05em',
-                backgroundColor: alpha(theme.palette.error.main, 0.05) 
-              }}>
-                DUE
-              </TableCell>
-              <TableCell sx={{ 
-                textTransform: 'uppercase', 
-                fontWeight: 'medium', 
-                fontSize: '0.75rem', 
-                letterSpacing: '0.05em',
-                backgroundColor: alpha(theme.palette.error.main, 0.05) 
-              }}>
-                ACTION
-              </TableCell>
+            <TableRow sx={{ 
+              bgcolor: alpha(theme.palette.background.default, 0.5),
+              '& th': { fontWeight: 600, padding: '8px 16px' }
+            }}>
+              <TableCell sx={{ width: '30%', p: 2 }}>Transfer</TableCell>
+              <TableCell sx={{ width: '30%', p: 2 }}>Due</TableCell>
+              <TableCell sx={{ width: '20%', p: 2 }}>Type</TableCell>
+              <TableCell sx={{ width: '20%', p: 2 }}>Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {transfers.map((transfer) => (
-              <TableRow 
-                key={transfer.id} 
-                hover 
-                sx={{
-                  '&:hover': { bgcolor: 'action.hover' }
-                }}
-              >
-                <TableCell sx={{ fontFamily: 'monospace', fontSize: '0.75rem', letterSpacing: '0.05em' }}>{transfer.id}</TableCell>
-                <TableCell>
-                  <TypeChip type={transfer.type} />
-                </TableCell>
-                <TableCell>
-                  <Typography variant="body2" sx={{ fontSize: '0.75rem', fontWeight: 'medium' }}>{transfer.items}</Typography>
-                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>{transfer.fromTo}</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: transfer.due === 'TODAY' ? 'error.main' : 'text.secondary',
-                      fontFamily: 'monospace',
-                      fontSize: '0.75rem',
-                      letterSpacing: '0.05em',
-                      fontWeight: transfer.due === 'TODAY' ? 'bold' : 'normal',
-                    }}
-                  >
-                    {transfer.due}
+            {transfers.map((transfer, index) => (
+              <TableRow key={index} sx={{ '&:hover': { bgcolor: alpha(theme.palette.background.default, 0.3) } }}>
+                <TableCell sx={{ p: 2 }}>
+                  <Typography variant="body2" fontWeight="medium">
+                    {transfer.docNumber}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {transfer.unit}
                   </Typography>
                 </TableCell>
-                <TableCell>
-                  <Button 
-                    variant="contained" 
-                    size="small"
+                <TableCell sx={{ p: 2 }}>
+                  <Typography variant="body2" fontWeight="medium" color={transfer.status === 'OVERDUE' ? 'error.main' : 'text.primary'}>
+                    {transfer.dueDate}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {transfer.daysLeft}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ p: 2 }}>
+                  <TypeChip type={transfer.type} size="small" />
+                </TableCell>
+                <TableCell sx={{ p: 2 }}>
+                  <Chip 
+                    label={transfer.status} 
+                    size="small" 
                     sx={{ 
-                      borderRadius: 0,
+                      bgcolor: transfer.status === 'OVERDUE' 
+                        ? alpha(theme.palette.error.main, 0.1)
+                        : alpha(theme.palette.warning.main, 0.1),
+                      color: transfer.status === 'OVERDUE' 
+                        ? theme.palette.error.main
+                        : theme.palette.warning.main,
+                      borderRadius: 1,
                       fontSize: '0.7rem',
-                      fontWeight: 'medium',
-                      letterSpacing: '0.03em',
-                      boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.1)',
-                    }}
-                  >
-                    {transfer.action}
-                  </Button>
+                      fontWeight: 500,
+                      height: 24
+                    }} 
+                  />
                 </TableCell>
               </TableRow>
             ))}

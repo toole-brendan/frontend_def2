@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
+import { titleTypographySx } from '../../theme/patterns';
 
 interface CardHeaderProps {
   title: string;
@@ -23,7 +24,13 @@ const CardHeader: React.FC<CardHeaderProps> = ({ title, subtitle, action }) => {
       borderBottom: `1px solid ${theme.palette.divider}`
     }}>
       <Box>
-        <Typography variant="h6" component="div" sx={{ mb: 0.5 }}>{title}</Typography>
+        <Typography 
+          variant="h6" 
+          component="div" 
+          sx={titleTypographySx(theme, 'medium')}
+        >
+          {title}
+        </Typography>
         {subtitle && (
           <Typography variant="body2" component="div" color="text.secondary">
             {subtitle}

@@ -12,7 +12,8 @@ import {
 } from '@mui/material';
 import { BuildCircle as MaintenanceIcon, CalendarMonth as ScheduleIcon, Assignment as WorkOrderIcon, WarningAmber as DeadlinedIcon } from '@mui/icons-material';
 import { getStatusColor } from '../utils';
-import { cardWithCornerSx, sectionHeaderSx, chipSx } from '../styles';
+import { cardWithCornerSx, chipSx } from '../styles';
+import { titleTypographySx } from '../../../theme/patterns';
 
 interface OverallReadinessCardProps {
   overallReadiness: number;
@@ -44,7 +45,13 @@ export const OverallReadinessCard: React.FC<OverallReadinessCardProps> = ({
       <Box sx={{ p: 3 }}>
         <Typography 
           variant="h6" 
-          sx={sectionHeaderSx}
+          component="div"
+          sx={{
+            ...titleTypographySx(theme, 'medium'),
+            fontSize: '1.25rem', 
+            fontWeight: 600,
+            letterSpacing: '0.01em'
+          }}
         >
           Overall Equipment Readiness
         </Typography>

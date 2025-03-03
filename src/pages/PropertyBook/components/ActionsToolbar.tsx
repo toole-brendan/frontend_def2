@@ -20,6 +20,12 @@ import {
   Description as DocumentIcon,
 } from '@mui/icons-material';
 import { usePropertyBook } from '../context/PropertyBookContext';
+import { 
+  buttonSx, 
+  actionButtonSx,
+  toolbarContainerSx,
+  selectionIndicatorSx 
+} from '../../../theme/patterns';
 
 interface ActionsToolbarProps {
   disableBorder?: boolean;
@@ -40,27 +46,11 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({ disableBorder = 
   const hasSelectedItems = selectedItems.length > 0;
   
   return (
-    <Box sx={{ 
-      display: 'flex', 
-      flexWrap: 'wrap',
-      gap: { xs: 1, md: 2 },
-      bgcolor: hasSelectedItems ? alpha(theme.palette.primary.main, 0.05) : 'transparent',
-      borderRadius: disableBorder ? 0 : 1,
-      border: !disableBorder && hasSelectedItems ? `1px solid ${alpha(theme.palette.primary.main, 0.2)}` : 'none',
-      transition: 'all 0.2s ease-in-out',
-      ...(disableBorder ? {} : { mb: 3, p: hasSelectedItems ? 2 : 1.5 })
-    }}>
+    <Box sx={toolbarContainerSx(theme, hasSelectedItems, disableBorder)}>
       {/* Selection indicator */}
       {hasSelectedItems && (
         <>
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            px: 1.5,
-            py: 0.75,
-            borderRadius: 1,
-            bgcolor: alpha(theme.palette.primary.main, 0.1),
-          }}>
+          <Box sx={selectionIndicatorSx(theme)}>
             <Typography variant="body2" fontWeight="medium" color="primary">
               {selectedItems.length} item{selectedItems.length !== 1 ? 's' : ''} selected
             </Typography>
@@ -68,78 +58,82 @@ export const ActionsToolbar: React.FC<ActionsToolbarProps> = ({ disableBorder = 
         </>
       )}
       
-      {/* Group 1: Item-specific actions */}
-      <Box sx={{ 
-        display: 'flex', 
-        gap: 1,
-        ml: hasSelectedItems ? 2 : 0 
-      }}>
-        <Button
-          variant={hasSelectedItems ? "contained" : "outlined"}
-          startIcon={<TransferIcon />}
-          size="small"
-          onClick={openTransferModal}
-          disabled={!hasSelectedItems}
-        >
-          Transfer Selected
-        </Button>
+      {/* Primary actions */}
+      <Box sx={{ display: 'flex', gap: { xs: 1, md: 1.5 }, flexWrap: 'wrap' }}>
+        {/* Only show these buttons if items are selected */}
+        {hasSelectedItems && (
+          <>
+            <Button
+              startIcon={<TransferIcon />}
+              size="small"
+              variant="contained"
+              color="primary"
+              onClick={() => openTransferModal()}
+              sx={actionButtonSx}
+            >
+              Transfer
+            </Button>
+            
+            <Button
+              startIcon={<InventoryIcon />}
+              size="small"
+              variant="contained"
+              color="primary"
+              onClick={() => openInventoryModal()}
+              sx={actionButtonSx}
+            >
+              Inventory
+            </Button>
+            
+            <Button
+              startIcon={<DocumentIcon />}
+              size="small"
+              variant="contained"
+              color="primary"
+              onClick={() => generateDA2062()}
+              sx={actionButtonSx}
+            >
+              DA 2062
+            </Button>
+            
+            <Divider orientation="vertical" flexItem />
+          </>
+        )}
         
         <Button
-          variant="outlined"
-          startIcon={<InventoryIcon />}
+          startIcon={<AddIcon />}
           size="small"
-          onClick={openInventoryModal}
-          disabled={!hasSelectedItems}
+          variant="contained"
+          sx={actionButtonSx}
+          onClick={() => openAddItemModal()}
         >
-          Conduct Inventory
+          Add Item
         </Button>
         
-        <Button
-          variant="outlined"
-          startIcon={<DocumentIcon />}
-          size="small"
-          onClick={() => generateDA2062()}
-          disabled={!hasSelectedItems}
-        >
-          Generate DA 2062
-        </Button>
+        <Tooltip title="Export to Excel">
+          <Button
+            startIcon={<ExportIcon />}
+            size="small"
+            variant="outlined"
+            sx={actionButtonSx}
+            onClick={() => exportToExcel()}
+          >
+            Export
+          </Button>
+        </Tooltip>
+        
+        <Tooltip title="Print Property Book">
+          <Button
+            startIcon={<PrintIcon />}
+            size="small"
+            variant="outlined"
+            sx={actionButtonSx}
+            onClick={() => printPropertyBook()}
+          >
+            Print
+          </Button>
+        </Tooltip>
       </Box>
-      
-      {/* Divider between button groups */}
-      <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
-      
-      {/* Group 2: Export/Print actions */}
-      <Box sx={{ display: 'flex', gap: 1 }}>
-        <Button
-          variant="outlined"
-          startIcon={<PrintIcon />}
-          size="small"
-          onClick={printPropertyBook}
-        >
-          Print
-        </Button>
-        
-        <Button
-          variant="outlined"
-          startIcon={<ExportIcon />}
-          size="small"
-          onClick={exportToExcel}
-        >
-          Export
-        </Button>
-      </Box>
-
-      {/* Add Item Button - Always available */}
-      <Box sx={{ flexGrow: 1 }} />
-      <Button
-        variant="contained"
-        color="success"
-        startIcon={<AddIcon />}
-        size="medium"
-        onClick={openAddItemModal}
-      >
-        Add New Item
-      </Button>
     </Box>
   );
 };

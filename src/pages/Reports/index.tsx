@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Box,
   Grid,
@@ -8,887 +8,811 @@ import {
   Tab,
   Card,
   CardContent,
-  CardHeader,
   Button,
   Chip,
-  Badge,
-  Alert,
-  Table,
-  TableBody,
-  TableCell,
   TableContainer,
-  TableHead,
-  TableRow,
-  Divider,
-  List,
-  ListItem,
-  ListItemText,
   IconButton,
-  LinearProgress,
-  Tooltip,
-  Container,
   Dialog,
   DialogTitle,
-  DialogContent
+  DialogContent,
+  DialogActions,
+  Menu,
+  MenuItem,
+  useTheme,
+  Snackbar,
+  Alert,
+  Divider,
+  Avatar,
+  alpha
 } from '@mui/material';
 import { 
-  Calendar, 
-  Clock, 
   FileText, 
   AlertTriangle, 
   Check, 
   Download, 
   Search, 
-  File, 
   Edit, 
   PlusCircle, 
-  ChevronRight, 
   MoreVertical, 
-  Clipboard, 
   FileCheck, 
-  Users, 
   AlertCircle,
   BarChart as BarChartIcon,
-  PieChart as PieChartIcon
+  PieChart as PieChartIcon,
+  Plus,
+  RefreshCw,
+  Filter
 } from 'lucide-react';
+import { PageContainer, PageHeader } from '../../components/layout';
+import { 
+  ReportsList, 
+  ReportFilters,
+  ReportStatusBadge,
+  ReportMetricsCard,
+  PendingApprovals,
+  ActivityTracker,
+  ReportChart,
+  ReportDetail,
+  ReportGenerator,
+  ReportHistoryTimeline,
+  BlockchainVerificationModal,
+  CustomReportForm,
+  GenerateReportModal
+} from './components';
+import { buttonSx, paperSx, sectionHeaderSx, statusChipSx, cardWithCornerSx } from './styles';
+import { ReportData, FilterConfig, ReportStatus, ReportType } from './types';
+import { mockReports, mockReportMetrics, mockBlockchainRecords } from './mockData';
+import { filterReports } from './utils';
 
-// Import components
-import { ReportFilters } from './components/ReportFilters';
-import { ReportChart } from './components/ReportChart';
-import { GenerateReportModal } from './components/GenerateReportModal';
-import { BlockchainVerificationModal } from './components/BlockchainVerificationModal';
-import { CustomReportForm } from './components/CustomReportForm';
-import type { ReportType, ReportData } from './types';
-
-// Interfaces for mock data
-interface Report {
-  id: number;
-  type: string;
-  dueDate: string;
-  frequency: string;
-  status: string;
-  lastSubmitted: string;
-  assignee: string;
-  actions: string[];
+// Action notification states
+type ActionType = 'success' | 'info' | 'warning' | 'error';
+interface NotificationState {
+  open: boolean;
+  message: string;
+  type: ActionType;
 }
 
-interface PendingSignature {
-  id: number;
-  document: string;
-  type: string;
-  requestor: string;
-  received: string;
-  due: string;
-  priority: string;
-  actions: string[];
-}
-
-interface Document {
-  id: string;
-  type: string;
+// Dialog states
+interface DialogState {
+  open: boolean;
   title: string;
-  created: string;
-  status: string;
-  lastModified: string;
-  verification: string;
-  actions: string[];
+  content: React.ReactNode | string;
+  action?: () => void;
+  actionText?: string;
 }
 
-interface FLIPL {
-  id: string;
-  items: string;
-  value: string;
-  initiated: string;
-  stage: string;
-  assignedTo: string;
-  dueDate: string;
+// Tab Panel component
+function TabPanel(props: { 
+  children: React.ReactNode; 
+  value: number; 
+  index: number; 
+  padding?: number 
+}) {
+  const { children, value, index, padding = 2, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`report-tabpanel-${index}`}
+      aria-labelledby={`report-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: padding }}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
 }
 
-interface ActivityLog {
-  date: string;
-  time: string;
-  activity: string;
-  document: string;
-  personnel: string;
-  action: string;
-  status: string;
+// Fix for ReportChart types
+interface ReportChartProps {
+  type?: 'inventory' | 'transfers' | 'maintenance';
 }
 
 const Reports: React.FC = () => {
-  // State variables
-  const [tabValue, setTabValue] = useState(0);
-  const [selectedDocument, setSelectedDocument] = useState<Document | undefined>(undefined);
-  const [openGenerateModal, setOpenGenerateModal] = useState(false);
-  const [openVerificationModal, setOpenVerificationModal] = useState(false);
-  const [openCustomReportForm, setOpenCustomReportForm] = useState(false);
-  const [selectedReportType, setSelectedReportType] = useState<ReportType>('inventory');
+  const theme = useTheme();
+  const [currentTab, setCurrentTab] = useState(0);
+  const [reports, setReports] = useState<ReportData[]>(mockReports);
+  const [filteredReports, setFilteredReports] = useState<ReportData[]>(mockReports);
+  const [filters, setFilters] = useState<FilterConfig>({
+    status: [],
+    type: [],
+    dateRange: { start: null, end: null },
+    searchTerm: ''
+  });
+  
+  // Modal states
+  const [generateModalOpen, setGenerateModalOpen] = useState(false);
+  const [verificationModalOpen, setVerificationModalOpen] = useState(false);
+  const [selectedReport, setSelectedReport] = useState<ReportData | null>(null);
+  
+  // Action handling states
+  const [notification, setNotification] = useState<NotificationState>({
+    open: false,
+    message: '',
+    type: 'info'
+  });
+  const [dialog, setDialog] = useState<DialogState>({
+    open: false,
+    title: '',
+    content: ''
+  });
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
 
-  // Handle tab change
-  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
+  // Tab handling
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setCurrentTab(newValue);
   };
 
-  // Handle document selection
-  const handleDocumentSelect = (document: Document) => {
-    setSelectedDocument(document);
+  // Filter handling
+  const handleFilterChange = useCallback((newFilters: FilterConfig) => {
+    setFilters(newFilters);
+    
+    let filtered = [...mockReports];
+    
+    // Apply search term filter
+    if (newFilters.searchTerm) {
+      filtered = filterReports(filtered, newFilters.searchTerm);
+    }
+    
+    // Apply status filter
+    if (newFilters.status.length > 0) {
+      filtered = filtered.filter(report => 
+        newFilters.status.includes(report.status as ReportStatus)
+      );
+    }
+    
+    // Apply type filter
+    if (newFilters.type.length > 0) {
+      filtered = filtered.filter(report => 
+        newFilters.type.includes(report.type as any)
+      );
+    }
+    
+    // Apply date range filter
+    if (newFilters.dateRange.start || newFilters.dateRange.end) {
+      filtered = filtered.filter(report => {
+        const createdAt = new Date(report.createdAt).getTime();
+        const startDate = newFilters.dateRange.start 
+          ? new Date(newFilters.dateRange.start).getTime() 
+          : 0;
+        const endDate = newFilters.dateRange.end 
+          ? new Date(newFilters.dateRange.end).getTime() 
+          : Infinity;
+        
+        return createdAt >= startDate && createdAt <= endDate;
+      });
+    }
+    
+    setFilteredReports(filtered);
+  }, []);
+
+  // Report actions
+  const handleViewReport = (report: ReportData) => {
+    setSelectedReport(report);
+    setNotification({
+      open: true,
+      message: `Viewing report: ${report.title}`,
+      type: 'info'
+    });
   };
 
-  // Handle generate report modal
-  const handleOpenGenerateModal = (type: ReportType) => {
-    setSelectedReportType(type);
-    setOpenGenerateModal(true);
+  const handleDownloadReport = (report: ReportData) => {
+    setNotification({
+      open: true,
+      message: `Downloading ${report.format} report: ${report.title}`,
+      type: 'success'
+    });
   };
 
-  const handleCloseGenerateModal = () => {
-    setOpenGenerateModal(false);
+  const handleEditReport = (report: ReportData) => {
+    setSelectedReport(report);
+    setDialog({
+      open: true,
+      title: 'Edit Report',
+      content: `You are about to edit the report: ${report.title}`,
+      action: () => {
+        setNotification({
+          open: true,
+          message: `Report "${report.title}" is now being edited`,
+          type: 'info'
+        });
+        setDialog({ open: false, title: '', content: '' });
+      },
+      actionText: 'Continue'
+    });
   };
 
-  const handleGenerateReport = (data: ReportData) => {
-    console.log('Generated report:', data);
-    setOpenGenerateModal(false);
+  const handleCreateNewReport = () => {
+    setGenerateModalOpen(true);
   };
 
-  // Handle verification modal
-  const handleOpenVerificationModal = () => {
-    setOpenVerificationModal(true);
+  const handleMoreOptions = (report: ReportData, event: React.MouseEvent<HTMLButtonElement>) => {
+    setSelectedReport(report);
+    setMenuAnchorEl(event.currentTarget);
   };
 
-  const handleCloseVerificationModal = () => {
-    setOpenVerificationModal(false);
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
   };
 
-  // Handle custom report form
-  const handleOpenCustomReportForm = () => {
-    setOpenCustomReportForm(true);
-  };
-
-  const handleCloseCustomReportForm = () => {
-    setOpenCustomReportForm(false);
-  };
-
-  // Mock data for reports
-  const requiredReports: Report[] = [
-    { id: 1, type: 'Supply Activity Report', dueDate: '01MAR2025', frequency: 'Monthly', status: 'Due Soon (3 days)', lastSubmitted: '01FEB2025', assignee: 'CPT Rodriguez', actions: ['Generate'] },
-    { id: 2, type: 'CSDP Certification', dueDate: '15MAR2025', frequency: 'Monthly', status: 'Upcoming (18 days)', lastSubmitted: '15FEB2025', assignee: '1SG Martinez', actions: ['View'] },
-    { id: 3, type: 'Sensitive Items Report', dueDate: 'COMPLETE', frequency: 'Weekly', status: 'Complete', lastSubmitted: '23FEB2025', assignee: 'CPT Rodriguez', actions: ['Review'] }
-  ];
-
-  // Mock data for documents pending signature
-  const pendingSignatures: PendingSignature[] = [
-    { id: 1, document: 'Hand Receipt - 3rd PLT', type: 'DA 2062', requestor: '1LT Williams', received: '24FEB2025', due: '27FEB2025', priority: 'High', actions: ['Review & Sign'] },
-    { id: 2, document: 'Supply Activity Report', type: 'Command', requestor: 'BN S4', received: '25FEB2025', due: '01MAR2025', priority: 'Medium', actions: ['Review & Sign'] },
-    { id: 3, document: 'JLTV Transfer', type: 'DA 3161', requestor: 'SSG Wilson', received: '23FEB2025', due: '28FEB2025', priority: 'Medium', actions: ['Review & Sign'] }
-  ];
-
-  // Mock data for document management
-  const documents: Document[] = [
-    { id: 'HR-B-2025-112', type: 'DA 2062', title: '1st PLT Hand Receipt', created: '21FEB2025', status: 'Active', lastModified: '21FEB2025', verification: 'Verified', actions: ['View'] },
-    { id: 'TRX-2025-087', type: 'DA 3161', title: 'JLTV Transfer', created: '20FEB2025', status: 'Pending', lastModified: '24FEB2025', verification: 'Pending', actions: ['Sign'] },
-    { id: 'SAR-2025-02', type: 'Custom', title: 'Supply Activity Report', created: '01FEB2025', status: 'Approved', lastModified: '03FEB2025', verification: 'Verified', actions: ['Archive'] },
-    { id: 'FLIPL-2025-004', type: 'DD 200', title: 'ACOG Sight Investigation', created: '18FEB2025', status: 'In Progress', lastModified: '24FEB2025', verification: 'N/A', actions: ['Update'] }
-  ];
-
-  // Mock data for FLIPLs
-  const fliplData: FLIPL[] = [
-    { id: '2025-004', items: 'ACOG Sight', value: '$1,200', initiated: '18FEB2025', stage: 'Investigation', assignedTo: '1LT Morgan', dueDate: '18MAR2025' },
-    { id: '2025-003', items: 'Radio Components', value: '$4,250', initiated: '12FEB2025', stage: 'Legal Review', assignedTo: 'MAJ Ellis', dueDate: '02MAR2025' }
-  ];
-
-  // Mock data for activity log
-  const activityLog: ActivityLog[] = [
-    { date: '25FEB2025', time: '1430', activity: 'Signature', document: '3rd PLT Hand Receipt', personnel: '1LT Williams', action: 'Signed', status: 'Complete' },
-    { date: '25FEB2025', time: '1045', activity: 'Creation', document: 'PMCS Records', personnel: 'SSG Wilson', action: 'Generated', status: 'Complete' },
-    { date: '24FEB2025', time: '0915', activity: 'Submission', document: 'Supply Activity Report', personnel: 'CPT Rodriguez', action: 'Submitted to BN', status: 'Pending' }
-  ];
-
-  // Generate status chip based on status
-  const getStatusChip = (status: string) => {
-    if (status === 'Complete' || status === 'Verified' || status === 'Active' || status === 'Approved') {
-      return <Chip color="success" label={status} size="small" icon={<Check size={16} />} />;
-    } else if (status === 'Pending') {
-      return <Chip color="warning" label={status} size="small" />;
-    } else if (status === 'Due Soon (3 days)') {
-      return <Chip color="error" label={status} size="small" icon={<AlertTriangle size={16} />} />;
-    } else if (status === 'Upcoming (18 days)') {
-      return <Chip color="info" label={status} size="small" icon={<Clock size={16} />} />;
-    } else if (status === 'In Progress') {
-      return <Chip color="primary" label={status} size="small" />;
-    } else {
-      return <Chip label={status} size="small" />;
+  const handleApprove = () => {
+    if (selectedReport) {
+      setNotification({
+        open: true,
+        message: `Report "${selectedReport.title}" has been approved`,
+        type: 'success'
+      });
+      handleMenuClose();
     }
   };
 
+  const handleReject = () => {
+    if (selectedReport) {
+      setDialog({
+        open: true,
+        title: 'Reject Report',
+        content: 'Please provide a reason for rejecting this report:',
+        action: () => {
+          setNotification({
+            open: true,
+            message: `Report "${selectedReport.title}" has been rejected`,
+            type: 'warning'
+          });
+          setDialog({ open: false, title: '', content: '' });
+          handleMenuClose();
+        },
+        actionText: 'Reject Report'
+      });
+    }
+  };
+
+  const handleDelete = () => {
+    if (selectedReport) {
+      setDialog({
+        open: true,
+        title: 'Delete Report',
+        content: `Are you sure you want to delete the report "${selectedReport.title}"? This action cannot be undone.`,
+        action: () => {
+          // In a real app, we would call an API to delete the report
+          const updatedReports = reports.filter(report => report.id !== selectedReport.id);
+          setReports(updatedReports);
+          setFilteredReports(filteredReports.filter(report => report.id !== selectedReport.id));
+          
+          setNotification({
+            open: true,
+            message: `Report "${selectedReport.title}" has been deleted`,
+            type: 'success'
+          });
+          setDialog({ open: false, title: '', content: '' });
+          handleMenuClose();
+        },
+        actionText: 'Delete'
+      });
+    }
+  };
+
+  const handleVerifyBlockchain = () => {
+    if (selectedReport) {
+      setVerificationModalOpen(true);
+      handleMenuClose();
+    }
+  };
+
+  const handleCloseNotification = () => {
+    setNotification({
+      ...notification,
+      open: false
+    });
+  };
+
+  const handleCloseDialog = () => {
+    setDialog({
+      ...dialog,
+      open: false
+    });
+  };
+
+  const refreshData = () => {
+    setNotification({
+      open: true,
+      message: 'Refreshing reports data...',
+      type: 'info'
+    });
+    
+    // In a real app, we would fetch fresh data from the API
+    setTimeout(() => {
+      setNotification({
+        open: true,
+        message: 'Reports data refreshed successfully',
+        type: 'success'
+      });
+    }, 1000);
+  };
+
+  // Get Header actions
+  const headerActions = (
+    <>
+      <IconButton size="small" onClick={refreshData}>
+        <RefreshCw size={18} />
+      </IconButton>
+      <Button 
+        variant="outlined" 
+        startIcon={<Plus size={18} />}
+        onClick={handleCreateNewReport}
+        sx={buttonSx}
+      >
+        New Report
+      </Button>
+    </>
+  );
+
   return (
-    <Container maxWidth="xl" sx={{ mt: 3 }}>
-      {/* Page Header */}
-      <Box sx={{ mb: 3 }}>
-        <Grid container spacing={2} sx={{ alignItems: 'center' }}>
-          <Grid item xs={12} lg={6}>
-            <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-              Reports & Documentation - B Company, 2-87 Infantry
-            </Typography>
-          </Grid>
-          <Grid item xs={12} lg={6} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button 
-              variant="contained" 
-              color="primary" 
-              sx={{ mr: 2 }} 
-              startIcon={<PlusCircle size={20} />}
-              onClick={() => handleOpenGenerateModal('inventory')}
-            >
-              Generate New Document
-            </Button>
-            <Button 
-              variant="outlined" 
-              sx={{ mr: 2 }} 
-              startIcon={<FileText size={20} />}
-            >
-              Required Reports
-            </Button>
-            <Button 
-              variant="outlined" 
-              startIcon={<FileCheck size={20} />}
-            >
-              Document Library
-            </Button>
+    <PageContainer
+      header={
+        <PageHeader 
+          title="Reports Management"
+          actions={headerActions}
+        />
+      }
+    >
+      {/* Summary Section - Similar to PropertyBook */}
+      <Paper sx={{ 
+        p: 2, 
+        mb: 3,
+        bgcolor: theme.palette.mode === 'dark' ? '#121212' : theme.palette.background.paper,
+        color: theme.palette.mode === 'dark' ? 'white' : theme.palette.text.primary
+      }}>
+        <Typography variant="h6" gutterBottom>REPORT SUMMARY</Typography>
+        <Typography variant="body2" sx={{ 
+          mb: 2, 
+          color: theme.palette.mode === 'dark' ? 'text.secondary' : alpha(theme.palette.text.primary, 0.7) 
+        }}>
+          Overview of report status and metrics
+        </Typography>
+        
+        <Divider sx={{ 
+          borderColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)', 
+          my: 2 
+        }} />
+        
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6} sx={{ mb: 2 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Typography variant="body2" color="text.secondary">Total Reports:</Typography>
+                <Typography variant="h6">{mockReports.length}</Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="body2" color="text.secondary">Pending Approval:</Typography>
+                <Typography variant="h6">
+                  {mockReports.filter(r => r.status === 'pending').length}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="body2" color="text.secondary">Last Generated:</Typography>
+                <Typography variant="h6">
+                  {new Date(Math.max(...mockReports.map(r => new Date(r.createdAt).getTime())))
+                    .toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="body2" color="text.secondary">Blockchain Verified:</Typography>
+                <Typography variant="h6">
+                  {mockReports.filter(r => r.blockchainHash).length}
+                </Typography>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
         
-        <Alert severity="warning" sx={{ my: 2 }}>
-          <Typography sx={{ fontWeight: 'semibold' }}>
-            MONTHLY SUPPLY ACTIVITY REPORT DUE: 3 DAYS REMAINING
-          </Typography>
-        </Alert>
-        
-        <Grid container spacing={3} sx={{ mt: 2 }}>
-          <Grid item xs={12} sm={6} md={3}>
-            <Paper sx={{ p: 2, textAlign: 'center' }}>
-              <Typography sx={{ fontWeight: 'medium' }}>Required Reports</Typography>
-              <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'warning.main' }}>2 pending</Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Paper sx={{ p: 2, textAlign: 'center' }}>
-              <Typography sx={{ fontWeight: 'medium' }}>Documents Generated</Typography>
-              <Typography variant="h5" sx={{ fontWeight: 'bold' }}>43 this month</Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Paper sx={{ p: 2, textAlign: 'center' }}>
-              <Typography sx={{ fontWeight: 'medium' }}>Digital Signatures Pending</Typography>
-              <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'warning.main' }}>4</Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Paper sx={{ p: 2, textAlign: 'center' }}>
-              <Typography sx={{ fontWeight: 'medium' }}>Blockchain Verified</Typography>
-              <Typography variant="h5" sx={{ fontWeight: 'bold' }}>231/287 (80%)</Typography>
-              <LinearProgress variant="determinate" value={80} sx={{ mt: 1 }} />
-            </Paper>
-          </Grid>
-        </Grid>
+        <Divider sx={{ 
+          borderColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)', 
+          my: 2 
+        }} />
+      </Paper>
+
+      {/* Tabs Navigation - Similar to SensitiveItems */}
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2, px: 1 }}>
+        <Tabs 
+          value={currentTab} 
+          onChange={handleTabChange}
+          variant="scrollable"
+          scrollButtons="auto"
+        >
+          <Tab label="All Reports" />
+          <Tab label="Pending Approval" />
+          <Tab label="Report Analytics" />
+          <Tab label="Scheduled Reports" />
+        </Tabs>
       </Box>
 
-      {/* Top Row Section */}
-      <Grid container spacing={4} sx={{ mb: 4 }}>
-        {/* Required Reports Card */}
-        <Grid item xs={12} lg={4}>
-          <Card sx={{ height: '100%' }}>
-            <CardHeader 
-              title="Required Reports" 
-              action={
-                <IconButton aria-label="settings">
-                  <MoreVertical size={20} />
-                </IconButton>
-              }
-            />
-            <CardContent>
-              <TableContainer component={Paper} sx={{ mb: 2, maxHeight: 240 }}>
-                <Table size="small" stickyHeader>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Report Type</TableCell>
-                      <TableCell>Due Date</TableCell>
-                      <TableCell>Status</TableCell>
-                      <TableCell>Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {requiredReports.map((report) => (
-                      <TableRow key={report.id} hover>
-                        <TableCell>{report.type}</TableCell>
-                        <TableCell>{report.dueDate}</TableCell>
-                        <TableCell>{getStatusChip(report.status)}</TableCell>
-                        <TableCell>
-                          <IconButton size="small">
-                            <MoreVertical size={16} />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Button 
-                  variant="outlined" 
-                  size="small" 
-                  startIcon={<FileText size={16} />}
-                  onClick={() => handleOpenGenerateModal('inventory')}
-                >
+      {/* Main Content Area */}
+      <TabPanel value={currentTab} index={0}>
+        <Grid container spacing={3}>
+          {/* Left Column - Status Cards and Filters */}
+          <Grid item xs={12} md={4} lg={3}>
+            <ReportMetricsCard title="Report Metrics" metrics={mockReportMetrics.inventory} />
+            
+            <Paper sx={paperSx(theme)}>
+              <Box sx={{ p: 2 }}>
+                <Typography sx={sectionHeaderSx}>
+                  Report Filters
+                </Typography>
+                <ReportFilters onFilterChange={handleFilterChange} />
+              </Box>
+            </Paper>
+            
+            <Paper sx={{...cardWithCornerSx(theme, theme.palette.warning.main), mt: 3}}>
+              <Box sx={{ p: 2 }}>
+                <Typography sx={sectionHeaderSx}>
                   Generate Report
-                </Button>
-                <Typography variant="caption" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
-                  AR 710-2, AR 735-5 compliant
                 </Typography>
+                <ReportGenerator onGenerate={(reportType: ReportType) => {
+                  setGenerateModalOpen(true);
+                }} />
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Document Generation Card */}
-        <Grid item xs={12} lg={4}>
-          <Card sx={{ height: '100%' }}>
-            <CardHeader 
-              title="Generate Standard Forms" 
-              action={
-                <IconButton aria-label="settings">
-                  <MoreVertical size={20} />
-                </IconButton>
-              }
-            />
-            <CardContent>
-              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'medium' }}>
-                Hand Receipt Forms
-              </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                <Chip label="DA Form 2062" variant="outlined" clickable />
-                <Chip label="DA Form 3161" variant="outlined" clickable />
-                <Chip label="DA Form 3749" variant="outlined" clickable />
-              </Box>
-              
-              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'medium' }}>
-                Maintenance Forms
-              </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                <Chip label="DA Form 5988-E" variant="outlined" clickable />
-                <Chip label="DA Form 2404" variant="outlined" clickable />
-                <Chip label="DA Form 2407" variant="outlined" clickable />
-              </Box>
-              
-              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'medium' }}>
-                Accountability Forms
-              </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                <Chip label="DD Form 200" variant="outlined" clickable />
-                <Chip label="DD Form 362" variant="outlined" clickable />
-                <Chip label="DA Form 4949" variant="outlined" clickable />
-              </Box>
-              
-              <Button 
-                variant="contained" 
-                sx={{ mt: 1 }} 
-                startIcon={<File size={16} />}
-              >
-                Generate Selected Form
-              </Button>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Document Signing Queue */}
-        <Grid item xs={12} lg={4}>
-          <Card sx={{ height: '100%' }}>
-            <CardHeader 
-              title={
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Badge badgeContent={4} color="error">
-                    <Typography variant="h6">Pending Signatures</Typography>
-                  </Badge>
+            </Paper>
+          </Grid>
+          
+          {/* Right Column - Reports List */}
+          <Grid item xs={12} md={8} lg={9}>
+            <Paper sx={paperSx(theme)}>
+              <Box sx={{ p: 2 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                  <Typography sx={sectionHeaderSx}>
+                    Reports List
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Button
+                      startIcon={<Filter size={16} />}
+                      size="small"
+                      sx={{ ...buttonSx, borderRadius: '4px' }}
+                    >
+                      Filter
+                    </Button>
+                    <Button
+                      startIcon={<Plus size={16} />}
+                      variant="contained"
+                      size="small"
+                      onClick={handleCreateNewReport}
+                      sx={{ ...buttonSx, borderRadius: '4px' }}
+                    >
+                      New Report
+                    </Button>
+                  </Box>
                 </Box>
-              }
-              action={
-                <IconButton aria-label="settings">
-                  <MoreVertical size={20} />
-                </IconButton>
-              }
-            />
-            <CardContent>
-              <TableContainer component={Paper} sx={{ mb: 2, maxHeight: 240 }}>
-                <Table size="small" stickyHeader>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Document</TableCell>
-                      <TableCell>Type</TableCell>
-                      <TableCell>Priority</TableCell>
-                      <TableCell>Due</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {pendingSignatures.map((doc) => (
-                      <TableRow key={doc.id} hover>
-                        <TableCell>{doc.document}</TableCell>
-                        <TableCell>{doc.type}</TableCell>
-                        <TableCell>
-                          <Chip 
-                            size="small" 
-                            label={doc.priority} 
-                            color={doc.priority === 'High' ? 'error' : 'warning'} 
-                          />
-                        </TableCell>
-                        <TableCell>{doc.due}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Button variant="contained" color="secondary" startIcon={<Edit size={16} />}>
-                  Digital Signature
-                </Button>
-                <Box>
-                  <Typography variant="caption" sx={{ display: 'block', textAlign: 'right', color: 'text.secondary' }}>
-                    Average signature time: 1.2 days
+                <ReportsList 
+                  reports={filteredReports}
+                  onView={handleViewReport}
+                  onDownload={handleDownloadReport}
+                  onEdit={handleEditReport}
+                  onMoreOptions={handleMoreOptions}
+                />
+              </Box>
+            </Paper>
+          </Grid>
+        </Grid>
+      </TabPanel>
+      
+      <TabPanel value={currentTab} index={1}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={8}>
+            <Paper sx={paperSx(theme)}>
+              <Box sx={{ p: 2 }}>
+                <Typography sx={sectionHeaderSx}>
+                  Pending Approvals
+                </Typography>
+                <PendingApprovals 
+                  reports={mockReports.filter(report => report.status === 'pending')}
+                  onApprove={handleApprove}
+                  onReject={handleReject}
+                  onView={handleViewReport}
+                />
+              </Box>
+            </Paper>
+          </Grid>
+          
+          <Grid item xs={12} md={4}>
+            <Paper sx={cardWithCornerSx(theme, theme.palette.info.main)}>
+              <Box sx={{ p: 2 }}>
+                <Typography sx={sectionHeaderSx}>
+                  Blockchain Verification
+                </Typography>
+                {selectedReport && (
+                  <ReportHistoryTimeline 
+                    history={selectedReport.blockchainRecords || []}
+                  />
+                )}
+                {!selectedReport && (
+                  <Typography variant="body2" color="text.secondary" sx={{ py: 3, textAlign: 'center' }}>
+                    Select a report to view its blockchain history
+                  </Typography>
+                )}
+              </Box>
+            </Paper>
+            
+            <Paper sx={{...paperSx(theme), mt: 3}}>
+              <Box sx={{ p: 2 }}>
+                <Typography sx={sectionHeaderSx}>
+                  Activity Tracker
+                </Typography>
+                <ActivityTracker activities={[]} />
+              </Box>
+            </Paper>
+          </Grid>
+        </Grid>
+      </TabPanel>
+      
+      <TabPanel value={currentTab} index={2}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={8}>
+            <Paper sx={paperSx(theme)}>
+              <Box sx={{ p: 2 }}>
+                <Typography sx={sectionHeaderSx}>
+                  Report Analytics
+                </Typography>
+                <ReportChart type="inventory" />
+              </Box>
+            </Paper>
+          </Grid>
+          
+          <Grid item xs={12} md={4}>
+            <Paper sx={paperSx(theme)}>
+              <Box sx={{ p: 2 }}>
+                <Typography sx={sectionHeaderSx}>
+                  Report Metrics
+                </Typography>
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                    Total Reports
+                  </Typography>
+                  <Typography variant="h3" color="primary.main">
+                    {mockReports.length}
                   </Typography>
                 </Box>
+                
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <Box>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Approved
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Avatar sx={{ 
+                          bgcolor: alpha(theme.palette.success.main, 0.2), 
+                          color: theme.palette.success.main,
+                          width: 32,
+                          height: 32,
+                          borderRadius: 1
+                        }}>
+                          <Check size={16} />
+                        </Avatar>
+                        <Typography variant="h5" color="success.main">
+                          {mockReports.filter(r => r.status === 'approved').length}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Box>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Pending
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Avatar sx={{ 
+                          bgcolor: alpha(theme.palette.warning.main, 0.2), 
+                          color: theme.palette.warning.main,
+                          width: 32,
+                          height: 32,
+                          borderRadius: 1
+                        }}>
+                          <AlertTriangle size={16} />
+                        </Avatar>
+                        <Typography variant="h5" color="warning.main">
+                          {mockReports.filter(r => r.status === 'pending').length}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Box>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Rejected
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Avatar sx={{ 
+                          bgcolor: alpha(theme.palette.error.main, 0.2), 
+                          color: theme.palette.error.main,
+                          width: 32,
+                          height: 32,
+                          borderRadius: 1
+                        }}>
+                          <AlertCircle size={16} />
+                        </Avatar>
+                        <Typography variant="h5" color="error.main">
+                          {mockReports.filter(r => r.status === 'rejected').length}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Box>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Draft
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Avatar sx={{ 
+                          bgcolor: alpha(theme.palette.info.main, 0.2), 
+                          color: theme.palette.info.main,
+                          width: 32,
+                          height: 32,
+                          borderRadius: 1
+                        }}>
+                          <Edit size={16} />
+                        </Avatar>
+                        <Typography variant="h5" color="info.main">
+                          {mockReports.filter(r => r.status === 'draft').length}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Grid>
+                </Grid>
               </Box>
-            </CardContent>
-          </Card>
+            </Paper>
+          </Grid>
         </Grid>
-      </Grid>
+      </TabPanel>
 
-      {/* Main Content Section */}
-      <Grid container spacing={4}>
-        <Grid item xs={12} lg={8}>
-          {/* Document Management Table */}
-          <Card sx={{ mb: 3 }}>
-            <CardHeader 
-              title="Document Management" 
-              action={
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Button variant="outlined" size="small" sx={{ mr: 2 }} startIcon={<Search size={16} />}>
-                    Search
-                  </Button>
-                  <IconButton>
-                    <MoreVertical size={20} />
-                  </IconButton>
-                </Box>
-              }
-            />
-            <Tabs
-              value={tabValue}
-              onChange={handleTabChange}
-              variant="scrollable"
-              scrollButtons="auto"
-              sx={{ px: 2 }}
-            >
-              <Tab label="All Documents" />
-              <Tab label="Hand Receipts" />
-              <Tab label="Transfers" />
-              <Tab label="FLIPLs" />
-              <Tab label="Reports" />
-            </Tabs>
-            <CardContent>
-              <TableContainer component={Paper} sx={{ mb: 2 }}>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Document #</TableCell>
-                      <TableCell>Type</TableCell>
-                      <TableCell>Title</TableCell>
-                      <TableCell>Created</TableCell>
-                      <TableCell>Status</TableCell>
-                      <TableCell>Verification</TableCell>
-                      <TableCell>Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {documents.map((doc) => (
-                      <TableRow 
-                        key={doc.id}
-                        hover
-                        onClick={() => handleDocumentSelect(doc)}
-                        selected={!!selectedDocument && selectedDocument.id === doc.id}
-                        sx={{ cursor: 'pointer' }}
-                      >
-                        <TableCell><Typography variant="body2">{doc.id}</Typography></TableCell>
-                        <TableCell><Typography variant="body2">{doc.type}</Typography></TableCell>
-                        <TableCell><Typography variant="body2">{doc.title}</Typography></TableCell>
-                        <TableCell><Typography variant="body2">{doc.created}</Typography></TableCell>
-                        <TableCell>{getStatusChip(doc.status)}</TableCell>
-                        <TableCell>{getStatusChip(doc.verification)}</TableCell>
-                        <TableCell>
-                          <IconButton size="small">
-                            <MoreVertical size={16} />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <Box sx={{ display: 'flex', gap: 2 }}>
-                <Button variant="outlined" size="small" startIcon={<Clipboard size={16} />}>
-                  Batch Print
-                </Button>
-                <Button variant="outlined" size="small" startIcon={<Download size={16} />}>
-                  Export Selected
-                </Button>
-              </Box>
-            </CardContent>
-          </Card>
-
-          {/* Document Viewer Panel */}
-          {selectedDocument && (
-            <Card sx={{ mb: 3 }}>
-              <CardHeader 
-                title={`Document Viewer: ${selectedDocument.title}`}
-                subheader={`Document ID: ${selectedDocument.id} | Type: ${selectedDocument.type}`}
-                action={
-                  <Box sx={{ display: 'flex' }}>
-                    <Button variant="outlined" size="small" sx={{ mr: 1 }} startIcon={<Download size={16} />}>
-                      Download
-                    </Button>
-                    <Button variant="outlined" size="small" sx={{ mr: 1 }} startIcon={<Edit size={16} />}>
-                      Edit
-                    </Button>
-                    <IconButton>
-                      <MoreVertical size={20} />
-                    </IconButton>
-                  </Box>
-                }
-              />
-              <CardContent>
-                <Box 
-                  sx={{ 
-                    display: 'flex', 
-                    justifyContent: 'center', 
-                    alignItems: 'center', 
-                    p: 6, 
-                    bgcolor: 'grey.100', 
-                    mb: 2 
+      <TabPanel value={currentTab} index={3}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={4}>
+            <Paper sx={cardWithCornerSx(theme, theme.palette.primary.main)}>
+              <Box sx={{ p: 2 }}>
+                <Typography sx={sectionHeaderSx}>
+                  Create Custom Report
+                </Typography>
+                <CustomReportForm
+                  onSubmit={(data: any) => {
+                    setNotification({
+                      open: true,
+                      message: `Custom report "${data.reportName}" has been created`,
+                      type: 'success'
+                    });
                   }}
-                >
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Document preview would appear here
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                    Last modified: {selectedDocument.lastModified} | Status: {selectedDocument.status}
-                  </Typography>
-                    <Chip 
-                      label="Blockchain Verified" 
-                      size="small" 
-                      color="success" 
-                      icon={<Check size={16} />} 
-                      variant={selectedDocument.verification === 'Verified' ? 'filled' : 'outlined'}
-                      onClick={handleOpenVerificationModal}
-                      sx={{ cursor: 'pointer' }}
-                    />
-                </Box>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Document Activity Log */}
-          <Card>
-            <CardHeader 
-              title="Document Activity Log" 
-              action={
-                <IconButton>
-                  <MoreVertical size={20} />
-                </IconButton>
-              }
-            />
-            <CardContent>
-              <TableContainer component={Paper} sx={{ mb: 2 }}>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Date</TableCell>
-                      <TableCell>Time</TableCell>
-                      <TableCell>Activity</TableCell>
-                      <TableCell>Document</TableCell>
-                      <TableCell>Personnel</TableCell>
-                      <TableCell>Status</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {activityLog.map((activity, index) => (
-                      <TableRow key={index} hover>
-                        <TableCell><Typography variant="body2">{activity.date}</Typography></TableCell>
-                        <TableCell><Typography variant="body2">{activity.time}</Typography></TableCell>
-                        <TableCell><Typography variant="body2">{activity.activity}</Typography></TableCell>
-                        <TableCell><Typography variant="body2">{activity.document}</Typography></TableCell>
-                        <TableCell><Typography variant="body2">{activity.personnel}</Typography></TableCell>
-                        <TableCell>{getStatusChip(activity.status)}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <Button variant="outlined" size="small" startIcon={<FileText size={16} />}>
-                View Complete Log
-              </Button>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Right Side Panel */}
-        <Grid item xs={12} lg={4}>
-          {/* Report Visualization Card */}
-          <Card sx={{ mb: 3 }}>
-            <CardHeader 
-              title="Report Visualizations" 
-              action={
-                <IconButton>
-                  <MoreVertical size={20} />
-                </IconButton>
-              }
-            />
-            <CardContent>
-              <ReportChart type="inventory" />
-            </CardContent>
-          </Card>
-
-          {/* Document Analytics Card */}
-          <Card sx={{ mb: 3 }}>
-            <CardHeader 
-              title="Documentation Metrics" 
-              action={
-                <IconButton>
-                  <MoreVertical size={20} />
-                </IconButton>
-              }
-            />
-            <CardContent>
-              <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-                <Paper sx={{ p: 2, flex: 1, textAlign: 'center' }}>
-                  <Typography variant="h5" sx={{ fontWeight: 'bold' }}>92%</Typography>
-                  <Typography variant="caption">Digital vs. Paper</Typography>
-                </Paper>
-                <Paper sx={{ p: 2, flex: 1, textAlign: 'center' }}>
-                  <Typography variant="h5" sx={{ fontWeight: 'bold' }}>1.3</Typography>
-                  <Typography variant="caption">Avg. Processing Days</Typography>
-                </Paper>
-                <Paper sx={{ p: 2, flex: 1, textAlign: 'center' }}>
-                  <Typography variant="h5" sx={{ fontWeight: 'bold' }}>94%</Typography>
-                  <Typography variant="caption">Error Reduction</Typography>
-                </Paper>
+                  onCancel={() => {}}
+                />
               </Box>
-              
-              <Box 
-                sx={{ 
-                  display: 'flex', 
-                  justifyContent: 'center', 
-                  alignItems: 'center', 
-                  p: 3, 
-                  bgcolor: 'grey.100', 
-                  mb: 2,
-                  height: 200
-                }}
-              >
-                <Box sx={{ textAlign: 'center' }}>
-                  <PieChartIcon size={60} color="#9e9e9e" style={{ opacity: 0.6 }} />
-                  <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
-                    Document volume by type chart
-                  </Typography>
-                </Box>
-              </Box>
-              
-              <Button 
-                variant="outlined" 
-                size="small" 
-                fullWidth 
-                startIcon={<BarChartIcon size={16} />}
-                onClick={handleOpenCustomReportForm}
-              >
-                Custom Analysis
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* FLIPL Tracker Card */}
-          <Card sx={{ mb: 3 }}>
-            <CardHeader 
-              title="Financial Liability Investigations" 
-              action={
-                <IconButton>
-                  <MoreVertical size={20} />
-                </IconButton>
-              }
-            />
-            <CardContent>
-              <Alert severity="info" sx={{ mb: 2 }}>
-                <Typography variant="body2">
-                  <strong>Open investigations:</strong> 2 | <strong>Total value:</strong> $5,450
+            </Paper>
+          </Grid>
+          
+          <Grid item xs={12} md={8}>
+            <Paper sx={paperSx(theme)}>
+              <Box sx={{ p: 2 }}>
+                <Typography sx={sectionHeaderSx}>
+                  Scheduled Reports
                 </Typography>
-              </Alert>
-              
-              <TableContainer component={Paper} sx={{ mb: 2 }}>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>FLIPL #</TableCell>
-                      <TableCell>Item(s)</TableCell>
-                      <TableCell>Value</TableCell>
-                      <TableCell>Stage</TableCell>
-                      <TableCell>Due Date</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {fliplData.map((flipl) => (
-                      <TableRow key={flipl.id} hover>
-                        <TableCell><Typography variant="body2">{flipl.id}</Typography></TableCell>
-                        <TableCell><Typography variant="body2">{flipl.items}</Typography></TableCell>
-                        <TableCell><Typography variant="body2">{flipl.value}</Typography></TableCell>
-                        <TableCell><Chip size="small" label={flipl.stage} /></TableCell>
-                        <TableCell><Typography variant="body2">{flipl.dueDate}</Typography></TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              
-              <Button 
-                variant="contained" 
-                color="warning" 
-                size="small" 
-                fullWidth 
-                startIcon={<AlertCircle size={16} />}
-              >
-                Initiate FLIPL
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Army Systems Integration Card */}
-          <Card>
-            <CardHeader 
-              title="External Systems Integration" 
-              action={
-                <IconButton>
-                  <MoreVertical size={20} />
-                </IconButton>
-              }
-            />
-            <CardContent>
-              <Box sx={{ mb: 3 }}>
-                <Typography variant="subtitle2" sx={{ mb: 1 }}>Integration Status</Typography>
-                <Paper sx={{ p: 2, mb: 1, bgcolor: 'success.light' }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography variant="body2">GCSS-Army</Typography>
-                    <Chip label="Connected" size="small" color="success" icon={<Check size={16} />} />
-                  </Box>
-                </Paper>
-                <Paper sx={{ p: 2, mb: 1, bgcolor: 'success.light' }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography variant="body2">PBUSE Property Records</Typography>
-                    <Chip label="Connected" size="small" color="success" icon={<Check size={16} />} />
-                  </Box>
-                </Paper>
-                <Paper sx={{ p: 2, mb: 1, bgcolor: 'warning.light' }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography variant="body2">Army Electronic Forms</Typography>
-                    <Chip label="Sync Pending" size="small" color="warning" />
-                  </Box>
-                </Paper>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                  View and manage your scheduled report generation
+                </Typography>
+                
+                {/* Content would go here */}
+                <Typography variant="body1" sx={{ textAlign: 'center', py: 8, color: 'text.secondary' }}>
+                  Scheduled reports feature coming soon
+                </Typography>
               </Box>
-              
-              <Typography 
-                variant="caption" 
-                sx={{ display: 'block', color: 'text.secondary', mb: 1 }}
-              >
-                Last Successful Sync: 25FEB2025 0842 | Documents Pending Upload: 3
-              </Typography>
-              
-              <Button variant="outlined" size="small" fullWidth>
-                Force Sync
-              </Button>
-            </CardContent>
-          </Card>
+            </Paper>
+          </Grid>
         </Grid>
-      </Grid>
+      </TabPanel>
+
+      {/* Context Menu */}
+      <Menu
+        anchorEl={menuAnchorEl}
+        open={Boolean(menuAnchorEl)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={handleApprove}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Check size={16} />
+            <Typography>Approve</Typography>
+          </Box>
+        </MenuItem>
+        <MenuItem onClick={handleReject}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <AlertTriangle size={16} />
+            <Typography>Reject</Typography>
+          </Box>
+        </MenuItem>
+        <MenuItem onClick={handleVerifyBlockchain}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <FileCheck size={16} />
+            <Typography>Verify on Blockchain</Typography>
+          </Box>
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={handleDelete}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, color: 'error.main' }}>
+            <AlertCircle size={16} />
+            <Typography>Delete</Typography>
+          </Box>
+        </MenuItem>
+      </Menu>
 
       {/* Modals */}
-      <GenerateReportModal
-        open={openGenerateModal}
-        onClose={handleCloseGenerateModal}
-        onGenerate={handleGenerateReport}
-      />
-
-      {openVerificationModal && selectedDocument && (
+      {selectedReport && (
         <BlockchainVerificationModal
-          open={openVerificationModal}
-          onClose={handleCloseVerificationModal}
+          open={verificationModalOpen}
+          onClose={() => setVerificationModalOpen(false)}
           report={{
-            id: selectedDocument.id,
-            type: selectedDocument.type,
-            title: selectedDocument.title,
-            createdAt: selectedDocument.created,
+            id: selectedReport.id,
+            title: selectedReport.title,
+            description: selectedReport.description,
+            type: selectedReport.type,
+            status: selectedReport.status === 'published' ? 'approved' : selectedReport.status,
+            createdAt: selectedReport.createdAt,
+            updatedAt: selectedReport.updatedAt || selectedReport.createdAt,
             createdBy: {
-              name: 'CPT John Doe',
-              rank: 'CPT',
-              unit: 'B Company, 2-87 Infantry'
-            },
-            lastGenerated: selectedDocument.lastModified,
-            format: 'PDF',
-            status: selectedDocument.status.toLowerCase() as any,
-            blockchainHash: '0x7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b',
-            blockchainRecords: [
-              {
-                transactionId: '0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b',
-                action: 'REPORT_CREATED',
-                timestamp: selectedDocument.created,
-                personnel: {
-                  name: 'CPT John Doe',
-                  rank: 'CPT',
-                  unit: 'B Company, 2-87 Infantry'
-                },
-                details: {
-                  operation: 'Document Generation',
-                  system: 'Property Book System'
-                }
-              },
-              {
-                transactionId: '0x2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c',
-                action: 'REPORT_UPDATED',
-                timestamp: selectedDocument.lastModified,
-                personnel: {
-                  name: 'CPT John Doe',
-                  rank: 'CPT',
-                  unit: 'B Company, 2-87 Infantry'
-                },
-                details: {
-                  operation: 'Document Verification',
-                  system: 'Blockchain Verification System'
-                }
-              }
-            ]
+              id: '1',
+              name: selectedReport.createdBy.name
+            }
           }}
         />
       )}
+      
+      <GenerateReportModal
+        open={generateModalOpen}
+        onClose={() => setGenerateModalOpen(false)}
+        onGenerate={(config: any) => {
+          setNotification({
+            open: true,
+            message: `New ${config.reportType} report is being generated`,
+            type: 'success'
+          });
+          setGenerateModalOpen(false);
+        }}
+      />
 
-      {/* Custom Report Form Dialog */}
-      <Dialog
-        open={openCustomReportForm}
-        onClose={handleCloseCustomReportForm}
-        maxWidth="md"
-        fullWidth
+      {/* Notifications and Dialogs */}
+      <Snackbar
+        open={notification.open}
+        autoHideDuration={6000}
+        onClose={handleCloseNotification}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <DialogTitle>Create Custom Report</DialogTitle>
+        <Alert 
+          onClose={handleCloseNotification} 
+          severity={notification.type} 
+          sx={{ width: '100%' }}
+        >
+          {notification.message}
+        </Alert>
+      </Snackbar>
+
+      <Dialog
+        open={dialog.open}
+        onClose={handleCloseDialog}
+      >
+        <DialogTitle>{dialog.title}</DialogTitle>
         <DialogContent>
-          <Box sx={{ py: 2 }}>
-            <CustomReportForm
-              onGenerate={() => {
-                handleCloseCustomReportForm();
-              }}
-            />
-          </Box>
+          {typeof dialog.content === 'string' ? (
+            <Typography>{dialog.content}</Typography>
+          ) : (
+            dialog.content
+          )}
         </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+          {dialog.action && (
+            <Button onClick={dialog.action} variant="contained">
+              {dialog.actionText || 'Confirm'}
+            </Button>
+          )}
+        </DialogActions>
       </Dialog>
-    </Container>
+    </PageContainer>
   );
 };
 

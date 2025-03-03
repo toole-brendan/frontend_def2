@@ -200,8 +200,7 @@ const Dashboard = () => {
     <PageContainer
       header={
         <PageHeader 
-          title="Commander's Dashboard"
-          subtitle="Battalion Operations Status Overview"
+          title="Dashboard"
           actions={headerActions}
         />
       }
@@ -247,7 +246,7 @@ const Dashboard = () => {
       
       {/* Dashboard Header */}
       <DashboardHeader 
-        title="Commander's Dashboard"
+        title="Dashboard"
         user="CPT Rodriguez"
         totalValue="$4.2M"
         equipmentItems={721}

@@ -104,18 +104,6 @@ const InventoriesPage: React.FC = () => {
         />
       }
     >
-      {/* Welcome Header */}
-      <Box sx={{ mb: 3 }}>
-        <InventoriesHeader 
-          title="B Company, 2-87 Infantry"
-          sensitiveItemsDue="27FEB2025 (2 days)"
-          cyclicInventoryProgress="68% Complete (Due 28FEB)"
-          lastFullInventoryDate="15JAN2025"
-          csdpStatus="In Compliance"
-          lastUpdated={currentDateTime}
-        />
-      </Box>
-
       {/* Top Row - Calendar and Progress */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
         <Grid item xs={12} md={4}>

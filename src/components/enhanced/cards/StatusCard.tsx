@@ -10,6 +10,7 @@ import {
   SxProps, 
   Theme 
 } from '@mui/material';
+import { cardSx } from '../../../theme/patterns';
 
 // Create CSS for the industrial pattern background
 // This creates a subtle technical grid background
@@ -122,78 +123,30 @@ export const StatusCard: React.FC<StatusCardProps> = ({
   borderColor,
 }) => {
   const theme = useTheme();
+  const color = borderColor || theme.palette.primary.main;
   
-  // Determine border styling based on position
-  const getBorderStyle = () => {
-    if (borderPosition === 'none') return {};
-    
-    const color = borderColor || theme.palette.primary.main;
-    
-    switch (borderPosition) {
-      case 'top':
-        return { borderTop: `3px solid ${color}` };
-      case 'left':
-        return { borderLeft: `3px solid ${color}` };
-      case 'right':
-        return { borderRight: `3px solid ${color}` };
-      case 'bottom':
-        return { borderBottom: `3px solid ${color}` };
-      default:
-        return {};
-    }
-  };
+  // Get the border style based on position
+  let borderStyle = {};
+  if (borderPosition === 'top') {
+    borderStyle = { borderTop: `3px solid ${color}` };
+  } else if (borderPosition === 'left') {
+    borderStyle = { borderLeft: `3px solid ${color}` };
+  } else if (borderPosition === 'right') {
+    borderStyle = { borderRight: `3px solid ${color}` };
+  } else if (borderPosition === 'bottom') {
+    borderStyle = { borderBottom: `3px solid ${color}` };
+  }
+  
+  const baseStyles = cardSx(theme, undefined, withPattern);
   
   return (
     <Card
       elevation={0}
       className={withPattern ? 'industrial-pattern' : undefined}
       sx={{
-        height: '100%',
-        position: 'relative',
-        overflow: 'hidden',
-        border: `1px solid ${theme.palette.divider}`,
-        borderRadius: 1, // Slightly rounded corners
-        backgroundColor: theme.palette.background.paper,
-        transition: 'all 0.2s ease-in-out',
-        '&:hover': {
-          borderColor: theme.palette.mode === 'dark'
-            ? 'rgba(255, 255, 255, 0.2)'
-            : 'rgba(0, 0, 0, 0.2)',
-        },
-        // Corner markers for technical look
-        '&::before, &::after': {
-          content: '""',
-          position: 'absolute',
-          width: 6,
-          height: 6,
-          backgroundColor: 'transparent',
-          borderColor: theme.palette.mode === 'dark'
-            ? 'rgba(255, 255, 255, 0.2)'
-            : 'rgba(0, 0, 0, 0.1)',
-          zIndex: 1,
-        },
-        '&::before': {
-          top: 0,
-          left: 0,
-          borderTop: `1px solid ${theme.palette.mode === 'dark'
-            ? 'rgba(255, 255, 255, 0.2)'
-            : 'rgba(0, 0, 0, 0.1)'}`,
-          borderLeft: `1px solid ${theme.palette.mode === 'dark'
-            ? 'rgba(255, 255, 255, 0.2)'
-            : 'rgba(0, 0, 0, 0.1)'}`,
-        },
-        '&::after': {
-          top: 0,
-          right: 0,
-          borderTop: `1px solid ${theme.palette.mode === 'dark'
-            ? 'rgba(255, 255, 255, 0.2)'
-            : 'rgba(0, 0, 0, 0.1)'}`,
-          borderRight: `1px solid ${theme.palette.mode === 'dark'
-            ? 'rgba(255, 255, 255, 0.2)'
-            : 'rgba(0, 0, 0, 0.1)'}`,
-        },
-        ...getBorderStyle(),
-        ...sx,
+        ...baseStyles,
+        ...borderStyle,
+        ...(sx || {})
       }}
     >
       <EnhancedCardHeader title={title} action={action} />

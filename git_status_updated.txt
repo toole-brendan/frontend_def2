@@ -1,0 +1,22 @@
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	new file:   src/pages/PropertyBook/components/ActionsToolbar.tsx
+	new file:   src/pages/PropertyBook/components/AddItemModal.tsx
+	new file:   src/pages/PropertyBook/components/DA2062Modal.tsx
+	new file:   src/pages/PropertyBook/components/FilterPanel.tsx
+	new file:   src/pages/PropertyBook/components/InventoryModal.tsx
+	new file:   src/pages/PropertyBook/components/ItemDetailsModal.tsx
+	new file:   src/pages/PropertyBook/components/PropertyBookPanel.tsx
+	new file:   src/pages/PropertyBook/components/PropertyTable.tsx
+	new file:   src/pages/PropertyBook/components/TransferModal.tsx
+	new file:   src/pages/PropertyBook/context/PropertyBookContext.tsx
+	modified:   src/pages/PropertyBook/index.tsx
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	git_status_output.txt
+	git_status_updated.txt
+

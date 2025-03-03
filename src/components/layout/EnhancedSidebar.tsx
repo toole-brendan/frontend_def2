@@ -4,8 +4,14 @@ import {
   Drawer,
   Box,
   useTheme,
-  alpha
+  alpha,
+  Tooltip,
+  IconButton
 } from '@mui/material';
+import {
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon
+} from '@mui/icons-material';
 import { NAV_ITEMS, SYSTEM_STATUS } from '../../app/routes';
 import {
   SidebarContainer,
@@ -186,6 +192,42 @@ const EnhancedSidebar: React.FC<SidebarProps> = ({
                 onNavigate={handleNavigation}
               />
             ))}
+            
+            {/* Collapse/Expand Button */}
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              mt: 2, 
+              mb: 1,
+              px: 1
+            }}>
+              <Box sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                width: '100%'
+              }}>
+                <Tooltip title={collapsed ? "Expand sidebar" : "Collapse sidebar"}>
+                  <IconButton 
+                    onClick={handleToggleCollapse} 
+                    aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+                    sx={{
+                      border: `2px solid ${alpha(theme.palette.primary.main, 0.8)}`,
+                      borderRadius: 0,
+                      backgroundColor: alpha(theme.palette.primary.main, collapsed ? 0.2 : 0.15),
+                      color: theme.palette.primary.main,
+                      width: collapsed ? 46 : 36,
+                      height: 36,
+                      '&:hover': {
+                        backgroundColor: alpha(theme.palette.primary.main, collapsed ? 0.3 : 0.25),
+                        borderColor: theme.palette.primary.main,
+                      },
+                    }}
+                  >
+                    {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            </Box>
           </SidebarNavSection>
           
           {/* Spacer to push buttons to bottom */}

@@ -317,9 +317,11 @@ export const AppBarContent: React.FC<AppBarContentProps> = ({
         <IconButton
           size="large"
           aria-label="toggle theme"
-          color="inherit"
           onClick={toggleTheme}
           sx={{
+            color: theme.palette.mode === 'dark' 
+              ? theme.palette.common.white 
+              : theme.palette.common.black,
             '&:hover': {
               backgroundColor: theme.palette.action.hover,
             },
@@ -333,8 +335,10 @@ export const AppBarContent: React.FC<AppBarContentProps> = ({
       <IconButton
         size="large"
         aria-label="show notifications"
-        color="inherit"
         sx={{
+          color: theme.palette.mode === 'dark' 
+            ? theme.palette.common.white 
+            : theme.palette.common.black,
           '&:hover': {
             backgroundColor: theme.palette.action.hover,
           },
@@ -365,6 +369,9 @@ export const AppBarContent: React.FC<AppBarContentProps> = ({
             sx={{ 
               fontWeight: 600,
               letterSpacing: '0.02em',
+              color: theme.palette.mode === 'dark' 
+                ? theme.palette.common.white 
+                : theme.palette.common.black,
             }}
           >
             {userDisplayName}
@@ -372,11 +379,13 @@ export const AppBarContent: React.FC<AppBarContentProps> = ({
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
             <Typography 
               variant="body2" 
-              color="text.secondary" 
               noWrap
               sx={{ 
                 fontSize: '0.75rem',
                 letterSpacing: '0.01em',
+                color: theme.palette.mode === 'dark'
+                  ? alpha(theme.palette.common.white, 0.7)
+                  : alpha(theme.palette.common.black, 0.7),
               }}
             >
               B Co, 2-87 IN BN

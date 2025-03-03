@@ -19,7 +19,7 @@ const TransferStatsCards: React.FC<TransferStatsCardsProps> = ({ stats }) => {
   const theme = useTheme();
   
   return (
-    <Grid container spacing={2} sx={{ mx: 1 }}>
+    <Grid container spacing={3}>
       <Grid item xs={12} md={3}>
         <KpiStatsCard
           icon={<TruckIcon fontSize="small" />}

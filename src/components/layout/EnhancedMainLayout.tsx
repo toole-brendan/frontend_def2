@@ -36,6 +36,13 @@ const EnhancedMainLayout: React.FC<EnhancedMainLayoutProps> = ({ children }) => 
     localStorage.setItem('sidebarCollapsed', JSON.stringify(newCollapsedState));
   };
 
+  // Content area sizing based on sidebar state
+  const contentMargin = () => {
+    if (isMobile) return '0px';
+    if (sidebarCollapsed) return '64px';
+    return '240px';
+  };
+
   return (
     <Box sx={{ display: 'flex', position: 'relative' }}>
       
@@ -61,7 +68,7 @@ const EnhancedMainLayout: React.FC<EnhancedMainLayoutProps> = ({ children }) => 
           flexGrow: 1,
           p: { xs: 1, sm: 2, md: 3 },
           mt: 8, // Height of AppBar
-          backgroundColor: 'transparent',
+          backgroundColor: theme.palette.background.default,
           minHeight: '100vh',
           width: '100%',
           display: 'flex',
@@ -69,36 +76,41 @@ const EnhancedMainLayout: React.FC<EnhancedMainLayoutProps> = ({ children }) => 
           overflow: 'auto',
           transition: theme.transitions.create(['margin'], {
             easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
+            duration: theme.transitions.duration.leavingScreen,
           }),
-          // Spacing adjustment for sidebar
-          ...(sidebarOpen && !isMobile && {
-            marginLeft: sidebarCollapsed ? 8 : 24,
-          }),
-          // Add subtle grid pattern for Defense Industrial Modern Design
-          ...(theme.palette.mode === 'light' && {
-            backgroundImage: 'linear-gradient(rgba(203, 213, 224, 0.05) 1px, transparent 1px), linear-gradient(to right, rgba(203, 213, 224, 0.05) 1px, transparent 1px)',
-            backgroundSize: '40px 40px',
-          }),
-          ...(theme.palette.mode === 'dark' && {
-            backgroundImage: 'linear-gradient(rgba(226, 232, 240, 0.03) 1px, transparent 1px), linear-gradient(to right, rgba(226, 232, 240, 0.03) 1px, transparent 1px)',
-            backgroundSize: '40px 40px',
-          }),
-          // Subtle border effect
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: '72px',
-            left: 0,
-            right: 0,
-            height: '1px',
-            background: 'linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0) 100%)',
-            opacity: theme.palette.mode === 'dark' ? 0.3 : 0.1,
-            pointerEvents: 'none',
-          },
+          ml: contentMargin(),
+          // Technical grid background for entire app
+          backgroundImage: theme.palette.mode === 'light'
+            ? `linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px), 
+               linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px)`
+            : `linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), 
+               linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px)`,
+          backgroundSize: '40px 40px', // Larger grid for app background
         }}
       >
         {children}
+        
+        {/* Footer with technical and industrial styling */}
+        <Box
+          component="footer"
+          sx={{
+            mt: 'auto',
+            pt: 2,
+            pb: 1,
+            px: 3,
+            borderTop: `1px solid ${theme.palette.divider}`,
+            textAlign: 'center',
+            opacity: 0.7,
+            // Technical striped pattern
+            backgroundImage: theme.palette.mode === 'light'
+              ? 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0, 0, 0, 0.03) 10px, rgba(0, 0, 0, 0.03) 20px)'
+              : 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 255, 255, 0.02) 10px, rgba(255, 255, 255, 0.02) 20px)',
+          }}
+        >
+          <Box component="small">
+            Defense Industrial Modern Design • {new Date().getFullYear()}
+          </Box>
+        </Box>
       </Box>
     </Box>
   );

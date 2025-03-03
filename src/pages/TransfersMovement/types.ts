@@ -1,9 +1,11 @@
 // Types for TransfersMovement
 
+export type TransferDocType = 'HANDRECEIPT' | 'DA3161' | 'LATERAL' | 'INVENTORY' | 'OTHER';
+
 // Transfer item in the main transfer table
 export interface TransferItem {
   id: string;
-  type: string;
+  type: TransferDocType;
   items: string;
   from: string;
   to: string;
@@ -16,10 +18,14 @@ export interface TransferItem {
 // Priority transfer item in the high priority transfers section
 export interface PriorityTransfer {
   id: string;
-  type: string;
+  type: TransferDocType;
+  docNumber: string;
+  unit: string;
   items: string;
   fromTo: string;
   due: string;
+  dueDate: string;
+  daysLeft: string;
   status: string;
   action: string;
 }
@@ -46,7 +52,8 @@ export interface ActionCardProps {
 
 // Props for the TypeChip component
 export interface TypeChipProps {
-  type: string;
+  type: TransferDocType;
+  size?: 'small' | 'medium';
 }
 
 // Props for the TransferPipeline component

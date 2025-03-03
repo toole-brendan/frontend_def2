@@ -15,7 +15,8 @@ import {
   Assignment as WorkOrderIcon,
   Timeline as MetricsIcon
 } from '@mui/icons-material';
-import { paperSx, sectionHeaderSx } from '../styles';
+import { paperSx } from '../styles';
+import { titleTypographySx } from '../../../theme/patterns';
 
 export const MaintenanceActionsCard: React.FC = () => {
   const theme = useTheme();
@@ -42,7 +43,13 @@ export const MaintenanceActionsCard: React.FC = () => {
       <Box sx={{ p: 3 }}>
         <Typography 
           variant="h6" 
-          sx={sectionHeaderSx}
+          component="div"
+          sx={{
+            ...titleTypographySx(theme, 'medium'),
+            fontSize: '1.25rem', 
+            fontWeight: 600,
+            letterSpacing: '0.01em'
+          }}
         >
           Maintenance Actions
         </Typography>

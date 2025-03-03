@@ -8,6 +8,7 @@ import {
   SwapHoriz as TransfersIcon,
   Assignment as InventoriesIcon,
   Build as MaintenanceIcon,
+  Handyman as RepairIcon,
   Description as ReportsIcon,
   Settings as SettingsIcon,
   AdminPanelSettings as AdminIcon,
@@ -19,6 +20,7 @@ const PropertyBook = React.lazy(() => import('../pages/PropertyBook/index'));
 const Inventories = React.lazy(() => import('../pages/Inventories/index'));
 const TransfersMovement = React.lazy(() => import('../pages/TransfersMovement/index'));
 const EquipmentReadiness = React.lazy(() => import('../pages/EquipmentReadiness/index'));
+const Maintenance = React.lazy(() => import('../pages/Maintenance/index'));
 const Reports = React.lazy(() => import('../pages/Reports/index'));
 const SensitiveItems = React.lazy(() => import('../pages/SensitiveItems/index'));
 
@@ -62,14 +64,21 @@ export const ROUTES = {
   MISSION_IMPACT: '/equipment-readiness/mission-impact',
   OPERATOR_QUALIFICATIONS: '/equipment-readiness/qualifications',
   
-  // 7. Reports & Documentation
+  // 7. Maintenance
+  MAINTENANCE: '/maintenance',
+  WORK_ORDERS: '/maintenance/work-orders',
+  SERVICE_SCHEDULE: '/maintenance/service-schedule',
+  PARTS_MANAGEMENT: '/maintenance/parts',
+  REPAIR_HISTORY: '/maintenance/history',
+  
+  // 8. Reports & Documentation
   REPORTS: '/reports',
   STANDARD_FORMS: '/reports/forms',
   COMMAND_REPORTS: '/reports/command',
   FLIPL: '/reports/flipl',
   DOCUMENT_ARCHIVE: '/reports/archive',
   
-  // 8. Admin & Settings
+  // 9. Admin & Settings
   ADMIN: '/admin',
   USER_MANAGEMENT: '/admin/users',
   UNIT_CONFIGURATION: '/admin/unit',
@@ -85,7 +94,6 @@ export const NAV_ITEMS = [
     title: 'Dashboard',
     path: ROUTES.DASHBOARD,
     icon: DashboardIcon,
-    notificationCount: 3,
     description: 'Command-level accountability status and critical actions'
   },
   
@@ -109,7 +117,6 @@ export const NAV_ITEMS = [
     path: ROUTES.SENSITIVE_ITEMS,
     icon: SensitiveItemsIcon,
     description: 'Dedicated tracking of high-value, sensitive equipment',
-    notificationCount: 1,
     subItems: [
       { title: 'Daily/Weekly Inventory', path: ROUTES.SENSITIVE_INVENTORY },
       { title: 'Sensitive Item Dashboard', path: ROUTES.SENSITIVE_DASHBOARD },
@@ -120,7 +127,7 @@ export const NAV_ITEMS = [
   
   // 4. Transfers & Movement
   {
-    title: 'Transfers & Movement',
+    title: 'Transfers',
     path: ROUTES.TRANSFERS,
     icon: TransfersIcon,
     description: 'Equipment transfer documentation and processing',
@@ -136,7 +143,7 @@ export const NAV_ITEMS = [
   
   // 5. Inventories & Inspections
   {
-    title: 'Inventories & Inspections',
+    title: 'Inventories',
     path: ROUTES.INVENTORIES,
     icon: InventoriesIcon,
     description: 'Planning and conducting required inventories',
@@ -150,11 +157,10 @@ export const NAV_ITEMS = [
   
   // 6. Equipment Readiness
   {
-    title: 'Equipment Readiness',
+    title: 'Readiness',
     path: ROUTES.EQUIPMENT_READINESS,
     icon: MaintenanceIcon,
     description: 'Maintenance status and mission capability',
-    notificationCount: 8,
     subItems: [
       { title: 'Readiness Dashboard', path: ROUTES.READINESS_DASHBOARD },
       { title: 'Maintenance Management', path: ROUTES.MAINTENANCE_MANAGEMENT },
@@ -163,9 +169,23 @@ export const NAV_ITEMS = [
     ]
   },
   
-  // 7. Reports & Documentation
+  // 7. Maintenance Management
   {
-    title: 'Reports & Documentation',
+    title: 'Maintenance',
+    path: ROUTES.MAINTENANCE,
+    icon: RepairIcon,
+    description: 'Track work orders and equipment maintenance',
+    subItems: [
+      { title: 'Work Orders', path: ROUTES.WORK_ORDERS },
+      { title: 'Service Schedule', path: ROUTES.SERVICE_SCHEDULE },
+      { title: 'Parts Management', path: ROUTES.PARTS_MANAGEMENT },
+      { title: 'Repair History', path: ROUTES.REPAIR_HISTORY }
+    ]
+  },
+  
+  // 8. Reports & Documentation
+  {
+    title: 'Reports',
     path: ROUTES.REPORTS,
     icon: ReportsIcon,
     description: 'Generate required military property documentation',
@@ -177,9 +197,9 @@ export const NAV_ITEMS = [
     ]
   },
   
-  // 8. Admin & Settings
+  // 9. Admin & Settings
   {
-    title: 'Admin & Settings',
+    title: 'Admin',
     path: ROUTES.ADMIN,
     icon: AdminIcon,
     description: 'System configuration and unit management',
@@ -244,6 +264,13 @@ const AppRoutes: React.FC = () => {
         <Route path={ROUTES.MAINTENANCE_MANAGEMENT} element={<EquipmentReadiness />} />
         <Route path={ROUTES.MISSION_IMPACT} element={<EquipmentReadiness />} />
         <Route path={ROUTES.OPERATOR_QUALIFICATIONS} element={<EquipmentReadiness />} />
+        
+        {/* Maintenance routes */}
+        <Route path={ROUTES.MAINTENANCE} element={<Maintenance />} />
+        <Route path={ROUTES.WORK_ORDERS} element={<Maintenance />} />
+        <Route path={ROUTES.SERVICE_SCHEDULE} element={<Maintenance />} />
+        <Route path={ROUTES.PARTS_MANAGEMENT} element={<Maintenance />} />
+        <Route path={ROUTES.REPAIR_HISTORY} element={<Maintenance />} />
         
         {/* Reports routes */}
         <Route path={ROUTES.REPORTS} element={<Reports />} />

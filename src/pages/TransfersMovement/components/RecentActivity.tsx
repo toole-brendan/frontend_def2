@@ -44,175 +44,82 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ activities }) => {
 
   return (
     <Paper sx={{ 
-      p: 0, 
-      borderRadius: 0,
-      border: '2px solid rgba(140, 140, 160, 0.12)',
-      boxShadow: theme.palette.mode === 'dark' 
-        ? '0 0 0 1px rgba(226, 232, 240, 0.05), 0 2px 4px rgba(0, 0, 0, 0.2)'
-        : '0 0 0 1px rgba(74, 85, 104, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1)',
-      position: 'relative',
-      overflow: 'hidden',
-      '&::after': {
-        content: '""',
-        position: 'absolute',
-        top: 0,
-        right: 0,
-        width: 16,
-        height: 16,
-        borderStyle: 'solid',
-        borderWidth: '0 16px 16px 0',
-        borderColor: `transparent ${alpha(theme.palette.info.main, theme.palette.mode === 'dark' ? 0.3 : 0.2)} transparent transparent`,
-        zIndex: 1,
-      }
+      p: 2,
+      height: '100%',
+      borderRadius: 1,
+      boxShadow: theme.shadows[1],
+      border: `1px solid ${theme.palette.divider}`,
+      borderLeft: `3px solid ${theme.palette.info.main}`,
     }}>
       <CardHeader 
         title="Recent Transfer Activity"
         subtitle="Latest actions and status updates"
         action={
-          <Button
-            variant="outlined"
+          <Button 
+            startIcon={<HistoryIcon />}
             size="small"
-            startIcon={<HistoryIcon fontSize="small" />}
             sx={{ 
-              color: 'text.secondary', 
-              borderRadius: 0,
-              borderColor: 'rgba(140, 140, 160, 0.2)',
+              fontSize: '0.75rem',
+              fontWeight: 'medium',
             }}
           >
-            View full history
+            View All
           </Button>
         }
       />
       
-      <TableContainer>
-        <Table size="small">
+      <TableContainer sx={{ maxHeight: 400 }}>
+        <Table>
           <TableHead>
-            <TableRow>
-              <TableCell sx={{ 
-                textTransform: 'uppercase', 
-                fontWeight: 'medium', 
-                fontSize: '0.75rem', 
-                letterSpacing: '0.05em',
-                backgroundColor: alpha(theme.palette.info.main, 0.05) 
-              }}>
-                DATE
-              </TableCell>
-              <TableCell sx={{ 
-                textTransform: 'uppercase', 
-                fontWeight: 'medium', 
-                fontSize: '0.75rem', 
-                letterSpacing: '0.05em',
-                backgroundColor: alpha(theme.palette.info.main, 0.05) 
-              }}>
-                TIME
-              </TableCell>
-              <TableCell sx={{ 
-                textTransform: 'uppercase', 
-                fontWeight: 'medium', 
-                fontSize: '0.75rem', 
-                letterSpacing: '0.05em',
-                backgroundColor: alpha(theme.palette.info.main, 0.05) 
-              }}>
-                ACTIVITY
-              </TableCell>
-              <TableCell sx={{ 
-                textTransform: 'uppercase', 
-                fontWeight: 'medium', 
-                fontSize: '0.75rem', 
-                letterSpacing: '0.05em',
-                backgroundColor: alpha(theme.palette.info.main, 0.05) 
-              }}>
-                DOC #
-              </TableCell>
-              <TableCell sx={{ 
-                textTransform: 'uppercase', 
-                fontWeight: 'medium', 
-                fontSize: '0.75rem', 
-                letterSpacing: '0.05em',
-                backgroundColor: alpha(theme.palette.info.main, 0.05) 
-              }}>
-                PERSONNEL
-              </TableCell>
-              <TableCell sx={{ 
-                textTransform: 'uppercase', 
-                fontWeight: 'medium', 
-                fontSize: '0.75rem', 
-                letterSpacing: '0.05em',
-                backgroundColor: alpha(theme.palette.info.main, 0.05) 
-              }}>
-                ITEMS
-              </TableCell>
-              <TableCell sx={{ 
-                textTransform: 'uppercase', 
-                fontWeight: 'medium', 
-                fontSize: '0.75rem', 
-                letterSpacing: '0.05em',
-                backgroundColor: alpha(theme.palette.info.main, 0.05) 
-              }}>
-                STATUS
-              </TableCell>
+            <TableRow sx={{ 
+              bgcolor: alpha(theme.palette.background.default, 0.5),
+              '& th': { fontWeight: 600, padding: '10px 16px' }
+            }}>
+              <TableCell sx={{ width: '25%', p: 2 }}>Time</TableCell>
+              <TableCell sx={{ width: '25%', p: 2 }}>Activity</TableCell>
+              <TableCell sx={{ width: '25%', p: 2 }}>Document</TableCell>
+              <TableCell sx={{ width: '25%', p: 2 }}>Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {activities.map((activity, index) => (
-              <TableRow 
-                key={index} 
-                hover
-                sx={{
-                  '&:hover': { bgcolor: 'action.hover' }
-                }}
-              >
-                <TableCell sx={{ fontFamily: 'monospace', fontSize: '0.75rem', letterSpacing: '0.05em' }}>{activity.date}</TableCell>
-                <TableCell sx={{ fontFamily: 'monospace', fontSize: '0.75rem', letterSpacing: '0.05em' }}>{activity.time}</TableCell>
-                <TableCell sx={{ fontSize: '0.75rem', fontWeight: 'medium' }}>{activity.activity}</TableCell>
-                <TableCell sx={{ fontFamily: 'monospace', fontSize: '0.75rem', letterSpacing: '0.05em' }}>{activity.id}</TableCell>
-                <TableCell sx={{ fontSize: '0.75rem' }}>{activity.personnel}</TableCell>
-                <TableCell sx={{ fontSize: '0.75rem' }}>{activity.items}</TableCell>
-                <TableCell>
+              <TableRow key={index} sx={{ '&:hover': { bgcolor: alpha(theme.palette.background.default, 0.3) } }}>
+                <TableCell sx={{ p: 2 }}>
+                  <Typography variant="body2" fontWeight="medium">
+                    {activity.date}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {activity.time}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ p: 2 }}>
+                  <Typography variant="body2">
+                    {activity.activity}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {activity.personnel}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ p: 2 }}>
+                  <Typography variant="body2" fontWeight="medium">
+                    {activity.id}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary" noWrap>
+                    {activity.items}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ p: 2 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     {getStatusIcon(activity.status)}
-                    <StatusChip 
-                      label={activity.status} 
-                      status={activity.status}
-                    />
+                    <Typography variant="body2" fontWeight={activity.status === 'COMPLETE' ? 'medium' : 'normal'}>
+                      {activity.status}
+                    </Typography>
                   </Box>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
-        <Box 
-          sx={{ 
-            p: 1.5, 
-            borderTop: '1px solid rgba(140, 140, 160, 0.12)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            bgcolor: theme.palette.mode === 'dark' ? alpha(theme.palette.info.main, 0.03) : alpha(theme.palette.grey[100], 0.5),
-          }}
-        >
-          <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.75rem', fontWeight: 'medium' }}>
-            Showing recent {activities.length} activities
-          </Typography>
-          <Typography 
-            variant="body2" 
-            sx={{ 
-              color: theme.palette.info.main,
-              cursor: 'pointer',
-              fontSize: '0.75rem',
-              fontWeight: 'medium',
-              letterSpacing: '0.03em',
-              display: 'flex', 
-              alignItems: 'center',
-              '&:hover': { 
-                textDecoration: 'underline',
-                color: alpha(theme.palette.info.main, 0.8),
-              }
-            }}
-          >
-            <HistoryIcon sx={{ fontSize: 14, mr: 0.5 }} />
-            See activity log
-          </Typography>
-        </Box>
       </TableContainer>
     </Paper>
   );
