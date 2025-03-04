@@ -101,7 +101,11 @@ const activityData = [
   }
 ];
 
-export const InventoryActivityLog: React.FC = () => {
+interface InventoryActivityLogProps {
+  simplified?: boolean;
+}
+
+export const InventoryActivityLog: React.FC<InventoryActivityLogProps> = ({ simplified = false }) => {
   const theme = useTheme();
 
   // Function to determine icon based on activity type

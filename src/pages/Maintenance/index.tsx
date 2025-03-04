@@ -1,49 +1,158 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Box, 
   Typography, 
-  Paper, 
   Grid, 
+  Button,
+  Stack,
   useTheme 
 } from '@mui/material';
+import { 
+  Add as AddIcon,
+  QrCode as QrCodeIcon,
+  Print as PrintIcon
+} from '@mui/icons-material';
 import { PageContainer, PageHeader } from '../../components/layout';
+import MaintenanceStatusOverview from './components/MaintenanceStatusOverview';
+import MaintenanceRequestNavigator from './components/MaintenanceRequestNavigator';
+import RequestFilters from './components/RequestFilters';
+import MaintenanceRequestTable from './components/MaintenanceRequestTable';
+import PartsManagementCard from './components/PartsManagementCard';
+import { actionButtonSx } from './styles';
 
 const Maintenance: React.FC = () => {
   const theme = useTheme();
+  const [selectedCategory, setSelectedCategory] = useState<string>('my-requests');
+  const [filters, setFilters] = useState<Record<string, string>>({});
+  
+  // Modal state
+  const [qrScannerOpen, setQrScannerOpen] = useState(false);
+  const [newRequestOpen, setNewRequestOpen] = useState(false);
+  const [requestDetailOpen, setRequestDetailOpen] = useState(false);
+  const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
+  
+  const handleScanQrCode = () => {
+    setQrScannerOpen(true);
+  };
+  
+  const handleCreateNewRequest = () => {
+    setNewRequestOpen(true);
+  };
+  
+  const handleViewRequest = (requestId: string) => {
+    setSelectedRequestId(requestId);
+    setRequestDetailOpen(true);
+  };
+  
+  const handleCategorySelect = (category: string) => {
+    setSelectedCategory(category);
+  };
+  
+  const handleFilterChange = (newFilters: Record<string, string>) => {
+    setFilters(newFilters);
+  };
+  
+  const handleTrackPart = (partId: string) => {
+    console.log('Tracking part:', partId);
+    // Implement part tracking functionality
+  };
+  
+  const handleExpeditePart = (partId: string) => {
+    console.log('Expediting part:', partId);
+    // Implement part expedite functionality
+  };
 
-  // Placeholder page for Maintenance
   return (
     <PageContainer
       header={
         <PageHeader 
           title="Maintenance"
+          children={
+            <Stack direction="row" spacing={3} alignItems="center" sx={{ mt: 2 }}>
+              <Box>
+                <Typography variant="body2" color="text.secondary">
+                  Active Requests
+                </Typography>
+                <Typography variant="h6">23</Typography>
+              </Box>
+              <Box>
+                <Typography variant="body2" color="text.secondary">
+                  Awaiting Parts
+                </Typography>
+                <Typography variant="h6">9</Typography>
+              </Box>
+              <Box>
+                <Typography variant="body2" color="text.secondary">
+                  Completed (Last 30 Days)
+                </Typography>
+                <Typography variant="h6">42</Typography>
+              </Box>
+            </Stack>
+          }
+          actions={
+            <Stack direction="row" spacing={1}>
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={handleCreateNewRequest}
+                sx={actionButtonSx(theme)}
+              >
+                Submit New Request
+              </Button>
+              <Button
+                variant="outlined"
+                startIcon={<QrCodeIcon />}
+                onClick={handleScanQrCode}
+                sx={actionButtonSx(theme)}
+              >
+                Scan QR Code
+              </Button>
+              <Button
+                variant="outlined"
+                startIcon={<PrintIcon />}
+                sx={actionButtonSx(theme)}
+              >
+                Print DA Form 5988-E
+              </Button>
+            </Stack>
+          }
         />
       }
     >
       <Grid container spacing={3}>
+        {/* Top Section - Status Overview */}
         <Grid item xs={12}>
-          <Paper sx={{ p: 3, mb: 3 }}>
-            <Typography variant="h5" gutterBottom>
-              Maintenance Dashboard
-            </Typography>
-            <Typography variant="body1" paragraph>
-              This is a placeholder for the Maintenance management page. This section will provide tools and functionality 
-              for tracking maintenance actions, work orders, and equipment service records.
-            </Typography>
-            <Box sx={{ mt: 4, mb: 2 }}>
-              <Typography variant="h6" gutterBottom>
-                Coming Features:
-              </Typography>
-              <ul>
-                <li>Maintenance tracking for all equipment</li>
-                <li>Service history records</li>
-                <li>Work order management</li>
-                <li>Parts requisition and tracking</li>
-                <li>Maintenance due notifications</li>
-                <li>Equipment service life tracking</li>
-              </ul>
-            </Box>
-          </Paper>
+          <MaintenanceStatusOverview onScanQrCode={handleScanQrCode} />
+        </Grid>
+        
+        {/* Main Content Area - Three-Panel Layout */}
+        <Grid container item xs={12} spacing={3}>
+          {/* Left Panel */}
+          <Grid item xs={12} md={3}>
+            <Stack spacing={3}>
+              <MaintenanceRequestNavigator onCategorySelect={handleCategorySelect} />
+              <RequestFilters onFilterChange={handleFilterChange} />
+            </Stack>
+          </Grid>
+          
+          {/* Center Panel */}
+          <Grid item xs={12} md={6}>
+            <MaintenanceRequestTable 
+              category={selectedCategory} 
+              onViewRequest={handleViewRequest} 
+            />
+          </Grid>
+          
+          {/* Right Panel */}
+          <Grid item xs={12} md={3}>
+            <PartsManagementCard 
+              onTrackPart={handleTrackPart}
+              onExpeditePart={handleExpeditePart}
+              onOrderParts={() => console.log('Order parts')}
+              onTrackShipments={() => console.log('Track shipments')}
+              onManageInventory={() => console.log('Manage inventory')}
+            />
+          </Grid>
         </Grid>
       </Grid>
     </PageContainer>

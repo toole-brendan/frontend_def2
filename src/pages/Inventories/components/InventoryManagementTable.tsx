@@ -26,12 +26,21 @@ import { inventoryRows } from './mockData';
 
 interface InventoryManagementTableProps {
   onStartInventory: (inventoryId: string) => void;
+  onSelectInventory?: (inventoryId: string) => void;
+  selectedInventory?: string | null;
+  searchQuery?: string;
+  filterType?: string | null;
 }
 
-export const InventoryManagementTable: React.FC<InventoryManagementTableProps> = ({ onStartInventory }) => {
+export const InventoryManagementTable: React.FC<InventoryManagementTableProps> = ({ 
+  onStartInventory,
+  onSelectInventory,
+  selectedInventory,
+  searchQuery = '',
+  filterType = null
+}) => {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [selectedInventory, setSelectedInventory] = React.useState<string | null>(null);
   const [activeTab, setActiveTab] = React.useState(0);
   
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -40,7 +49,6 @@ export const InventoryManagementTable: React.FC<InventoryManagementTableProps> =
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>, inventoryId: string) => {
     setAnchorEl(event.currentTarget);
-    setSelectedInventory(inventoryId);
   };
 
   const handleMenuClose = () => {
@@ -207,6 +215,13 @@ export const InventoryManagementTable: React.FC<InventoryManagementTableProps> =
     );
   };
 
+  // Add handling for row selection if onSelectInventory is provided
+  const handleRowClick = (inventoryId: string) => {
+    if (onSelectInventory) {
+      onSelectInventory(inventoryId);
+    }
+  };
+
   // Define columns for the DataGrid
   const columns: GridColDef[] = [
     { 
@@ -344,36 +359,33 @@ export const InventoryManagementTable: React.FC<InventoryManagementTableProps> =
           rows={inventoryRows}
           columns={columns}
           initialState={{
-            sorting: {
-              sortModel: [{ field: 'dueDate', sort: 'asc' }],
+            pagination: {
+              paginationModel: { pageSize: 5 },
             },
           }}
-          pageSizeOptions={[5, 10]}
-          disableRowSelectionOnClick
+          pageSizeOptions={[5, 10, 25]}
           checkboxSelection
-          disableColumnMenu
+          disableRowSelectionOnClick
           sx={{
-            '& .MuiDataGrid-cell:focus': {
-              outline: 'none',
-            },
             border: 'none',
             '& .MuiDataGrid-columnHeaders': {
-              backgroundColor: alpha(theme.palette.primary.main, 0.05),
-              borderBottom: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
-            },
-            '& .MuiDataGrid-columnHeaderTitle': {
-              fontWeight: 'medium',
-              fontSize: '0.75rem',
-              letterSpacing: '0.05em',
-            },
-            '& .MuiDataGrid-row:hover': {
-              backgroundColor: alpha(theme.palette.primary.main, 0.02),
+              backgroundColor: alpha(theme.palette.primary.main, 0.04),
+              borderRadius: 0
             },
             '& .MuiDataGrid-cell': {
-              borderBottom: `1px solid ${alpha(theme.palette.divider, 0.5)}`,
+              borderColor: alpha(theme.palette.divider, 0.1)
             },
             '& .MuiCheckbox-root': {
               borderRadius: 0,
+            },
+            '& .MuiDataGrid-row': {
+              cursor: onSelectInventory ? 'pointer' : 'default',
+              '&.Mui-selected, &.Mui-selected:hover': {
+                backgroundColor: alpha(theme.palette.primary.main, 0.08)
+              },
+              '&:hover': {
+                backgroundColor: alpha(theme.palette.primary.main, 0.04)
+              }
             }
           }}
         />

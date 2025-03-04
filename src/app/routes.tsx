@@ -12,6 +12,7 @@ import {
   Description as ReportsIcon,
   Settings as SettingsIcon,
   AdminPanelSettings as AdminIcon,
+  QrCode as QrCodeIcon,
 } from '@mui/icons-material';
 
 // Lazy load pages
@@ -21,6 +22,7 @@ const Inventories = React.lazy(() => import('../pages/Inventories/index'));
 const TransfersMovement = React.lazy(() => import('../pages/TransfersMovement/index'));
 const EquipmentReadiness = React.lazy(() => import('../pages/EquipmentReadiness/index'));
 const Maintenance = React.lazy(() => import('../pages/Maintenance/index'));
+const QrManagement = React.lazy(() => import('../pages/QrManagement/index'));
 const Reports = React.lazy(() => import('../pages/Reports/index'));
 const SensitiveItems = React.lazy(() => import('../pages/SensitiveItems/index'));
 
@@ -71,14 +73,20 @@ export const ROUTES = {
   PARTS_MANAGEMENT: '/maintenance/parts',
   REPAIR_HISTORY: '/maintenance/history',
   
-  // 8. Reports & Documentation
+  // 8. QR Management
+  QR_MANAGEMENT: '/qr-management',
+  QR_GENERATOR: '/qr-management/generator',
+  QR_SCANNER: '/qr-management/scanner',
+  QR_LIBRARY: '/qr-management/library',
+  
+  // 9. Reports & Documentation
   REPORTS: '/reports',
   STANDARD_FORMS: '/reports/forms',
   COMMAND_REPORTS: '/reports/command',
   FLIPL: '/reports/flipl',
   DOCUMENT_ARCHIVE: '/reports/archive',
   
-  // 9. Admin & Settings
+  // 10. Admin & Settings
   ADMIN: '/admin',
   USER_MANAGEMENT: '/admin/users',
   UNIT_CONFIGURATION: '/admin/unit',
@@ -183,7 +191,20 @@ export const NAV_ITEMS = [
     ]
   },
   
-  // 8. Reports & Documentation
+  // 8. QR Management
+  {
+    title: 'QR Management',
+    path: ROUTES.QR_MANAGEMENT,
+    icon: QrCodeIcon,
+    description: 'Generate and manage QR codes for equipment tracking',
+    subItems: [
+      { title: 'QR Generator', path: ROUTES.QR_GENERATOR },
+      { title: 'QR Scanner', path: ROUTES.QR_SCANNER },
+      { title: 'QR Code Library', path: ROUTES.QR_LIBRARY }
+    ]
+  },
+  
+  // 9. Reports & Documentation
   {
     title: 'Reports',
     path: ROUTES.REPORTS,
@@ -197,7 +218,7 @@ export const NAV_ITEMS = [
     ]
   },
   
-  // 9. Admin & Settings
+  // 10. Admin & Settings
   {
     title: 'Admin',
     path: ROUTES.ADMIN,
@@ -271,6 +292,12 @@ const AppRoutes: React.FC = () => {
         <Route path={ROUTES.SERVICE_SCHEDULE} element={<Maintenance />} />
         <Route path={ROUTES.PARTS_MANAGEMENT} element={<Maintenance />} />
         <Route path={ROUTES.REPAIR_HISTORY} element={<Maintenance />} />
+        
+        {/* QR Management routes */}
+        <Route path={ROUTES.QR_MANAGEMENT} element={<QrManagement />} />
+        <Route path={ROUTES.QR_GENERATOR} element={<QrManagement />} />
+        <Route path={ROUTES.QR_SCANNER} element={<QrManagement />} />
+        <Route path={ROUTES.QR_LIBRARY} element={<QrManagement />} />
         
         {/* Reports routes */}
         <Route path={ROUTES.REPORTS} element={<Reports />} />

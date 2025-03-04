@@ -1,20 +1,25 @@
 import React from 'react';
 import { 
   Box, 
-  Grid, 
   Button, 
-  Stack, 
   IconButton, 
+  Tabs,
+  Tab,
+  Paper,
   Typography,
-  alpha,
-  useTheme
+  useTheme,
+  alpha
 } from '@mui/material';
 import { PageContainer, PageHeader } from '../../components/layout';
 import {
   RefreshOutlined as RefreshIcon,
-  CalendarMonth as CalendarIcon,
   QrCode as QrCodeIcon,
   CloudDownload as DownloadIcon,
+  Dashboard as DashboardIcon,
+  PlaylistAddCheck as ActiveInventoriesIcon,
+  CalendarMonth as ScheduleIcon,
+  Verified as ComplianceIcon,
+  Build as ToolsIcon
 } from '@mui/icons-material';
 import {
   InventoriesHeader,
@@ -31,29 +36,60 @@ import {
   InventoryActivityLog
 } from './components';
 
+// Import new tab components (we'll create these later)
+import InventoryOverviewTab from './tabs/InventoryOverviewTab';
+import ActiveInventoriesTab from './tabs/ActiveInventoriesTab';
+import SchedulePlanningTab from './tabs/SchedulePlanningTab';
+import ComplianceReportsTab from './tabs/ComplianceReportsTab';
+import ToolsResourcesTab from './tabs/ToolsResourcesTab';
+
+// Create TabPanel component for rendering tab content
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`inventory-tabpanel-${index}`}
+      aria-labelledby={`inventory-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ py: 3 }}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index: number) {
+  return {
+    id: `inventory-tab-${index}`,
+    'aria-controls': `inventory-tabpanel-${index}`,
+  };
+}
+
 const InventoriesPage: React.FC = () => {
   const theme = useTheme();
+  const [activeTab, setActiveTab] = React.useState(0);
   const [activeInventory, setActiveInventory] = React.useState<string | null>(null);
-  const [showDiscrepancies, setShowDiscrepancies] = React.useState(false);
-  const [currentDateTime, setCurrentDateTime] = React.useState(new Date().toLocaleString('en-US', { 
-    hour: 'numeric', 
-    minute: 'numeric', 
-    hour12: false,
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric'
-  }));
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
+  };
 
   const handleStartInventory = (inventoryId: string) => {
     setActiveInventory(inventoryId);
-  };
-
-  const handleCloseExecutionPanel = () => {
-    setActiveInventory(null);
-  };
-
-  const handleToggleDiscrepancies = () => {
-    setShowDiscrepancies(prev => !prev);
+    // Switch to the Active Inventories tab
+    setActiveTab(1);
   };
 
   // Header actions for the PageHeader
@@ -104,59 +140,84 @@ const InventoriesPage: React.FC = () => {
         />
       }
     >
-      {/* Top Row - Calendar and Progress */}
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={4}>
-          <InventoryScheduleCard />
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <InventoryComplianceCard />
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <InventoryProgressTracker />
-        </Grid>
-      </Grid>
+      {/* Tabs Navigation */}
+      <Paper 
+        elevation={0} 
+        sx={{ 
+          mb: 3, 
+          borderBottom: 1, 
+          borderColor: 'divider',
+          backgroundColor: alpha(theme.palette.background.paper, 0.6),
+          borderRadius: 0
+        }}
+      >
+        <Tabs 
+          value={activeTab} 
+          onChange={handleTabChange} 
+          aria-label="inventory tabs"
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{
+            '& .MuiTab-root': {
+              textTransform: 'none',
+              fontWeight: 'medium',
+              minHeight: 48,
+              fontSize: '0.9rem',
+            }
+          }}
+        >
+          <Tab 
+            icon={<DashboardIcon fontSize="small" />} 
+            iconPosition="start" 
+            label="Inventory Overview" 
+            {...a11yProps(0)} 
+          />
+          <Tab 
+            icon={<ActiveInventoriesIcon fontSize="small" />} 
+            iconPosition="start" 
+            label="Active Inventories" 
+            {...a11yProps(1)} 
+          />
+          <Tab 
+            icon={<ScheduleIcon fontSize="small" />} 
+            iconPosition="start" 
+            label="Schedule & Planning" 
+            {...a11yProps(2)} 
+          />
+          <Tab 
+            icon={<ComplianceIcon fontSize="small" />} 
+            iconPosition="start" 
+            label="Compliance & Reports" 
+            {...a11yProps(3)} 
+          />
+          <Tab 
+            icon={<ToolsIcon fontSize="small" />} 
+            iconPosition="start" 
+            label="Tools & Resources" 
+            {...a11yProps(4)} 
+          />
+        </Tabs>
+      </Paper>
 
-      {/* Main Content */}
-      <Grid container spacing={3}>
-        {/* Main Inventory Management Table */}
-        <Grid item xs={12} lg={8}>
-          {activeInventory ? (
-            <InventoryExecutionPanel 
-              inventoryId={activeInventory}
-              onClose={handleCloseExecutionPanel}
-            />
-          ) : (
-            <InventoryManagementTable onStartInventory={handleStartInventory} />
-          )}
-
-          {/* Discrepancy Management Panel */}
-          {showDiscrepancies && (
-            <Box sx={{ mt: 3 }}>
-              <DiscrepancyManagementPanel />
-            </Box>
-          )}
-        </Grid>
-
-        {/* Right Side Panel */}
-        <Grid item xs={12} lg={4}>
-          <Stack spacing={3}>
-            <InventoryToolsCard />
-            <InventoryAnalyticsCard />
-            <ChangeOfCommandPlanner />
-          </Stack>
-        </Grid>
-      </Grid>
-
-      {/* Bottom Section */}
-      <Grid container spacing={3} sx={{ mt: 2 }}>
-        <Grid item xs={12} md={6}>
-          <InspectionPreparationCard />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <InventoryActivityLog />
-        </Grid>
-      </Grid>
+      {/* Tab Content */}
+      <TabPanel value={activeTab} index={0}>
+        <InventoryOverviewTab onStartInventory={handleStartInventory} />
+      </TabPanel>
+      <TabPanel value={activeTab} index={1}>
+        <ActiveInventoriesTab 
+          activeInventory={activeInventory} 
+          onStartInventory={handleStartInventory} 
+        />
+      </TabPanel>
+      <TabPanel value={activeTab} index={2}>
+        <SchedulePlanningTab />
+      </TabPanel>
+      <TabPanel value={activeTab} index={3}>
+        <ComplianceReportsTab />
+      </TabPanel>
+      <TabPanel value={activeTab} index={4}>
+        <ToolsResourcesTab />
+      </TabPanel>
     </PageContainer>
   );
 };

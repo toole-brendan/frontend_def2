@@ -28,7 +28,11 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import BookIcon from '@mui/icons-material/Book';
 
-export const ChangeOfCommandPlanner: React.FC = () => {
+interface ChangeOfCommandPlannerProps {
+  simplified?: boolean;
+}
+
+export const ChangeOfCommandPlanner: React.FC<ChangeOfCommandPlannerProps> = ({ simplified = false }) => {
   const theme = useTheme();
   const [activeTab, setActiveTab] = React.useState(0);
 
