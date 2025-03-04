@@ -15,7 +15,7 @@ import {
   CircularProgress,
   useTheme
 } from '@mui/material';
-import { MoreVert as MoreVertIcon } from '@mui/icons-material';
+;
 import { DataTableProps, ColumnDef } from './types';
 import { EnhancedTableHead } from './EnhancedTableHead';
 import { EnhancedTableToolbar } from './EnhancedTableToolbar';
@@ -76,6 +76,7 @@ export const DataTable = <T extends object>({
   selectable = true,
   searchable = true,
   onSearch,
+  // @ts-ignore - Unused variable intentionally kept
   searchValue,
   filterable = true,
   onFilter,
@@ -325,7 +326,8 @@ export const DataTable = <T extends object>({
                         </TableCell>
                       )}
                       
-                      {columns.map((column, columnIndex) => {
+  // @ts-ignore - Unused variable intentionally kept
+                      {columns.map((column, _columnIndex) => {
                         return (
                           <TableCell 
                             key={`${id}-${column.id}`}

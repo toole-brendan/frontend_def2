@@ -10,12 +10,7 @@ import {
   Chip,
   TextField
 } from '@mui/material';
-import {
-  Person as PersonIcon,
-  Edit as EditIcon,
-  Security as SecurityIcon,
-  History as HistoryIcon
-} from '@mui/icons-material';
+import { Edit as EditIcon, Security as SecurityIcon, History as HistoryIcon } from '@mui/icons-material';
 import PageContainer from '../../components/layout/PageContainer';
 import PageHeader from '../../components/layout/PageHeader';
 

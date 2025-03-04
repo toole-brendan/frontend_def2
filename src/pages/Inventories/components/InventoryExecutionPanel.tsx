@@ -15,10 +15,6 @@ import {
   Grid
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import InventoryIcon from '@mui/icons-material/Inventory';
-import AssignmentIcon from '@mui/icons-material/Assignment';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';

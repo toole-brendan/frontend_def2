@@ -1,4 +1,4 @@
-import { TransferItem, PriorityTransfer, ActivityItem, TransferDocType } from './types';
+import { TransferItem, PriorityTransfer, ActivityItem } from './types';
 
 // Enhanced military-styled mock data
 export const transferData: TransferItem[] = [

@@ -24,16 +24,8 @@ import {
   useTheme,
   alpha
 } from '@mui/material';
-import {
-  PictureAsPdf as PdfIcon,
-  Download as DownloadIcon,
-  Print as PrintIcon,
-  Description as DocumentIcon,
-  CheckCircle as CheckCircleIcon,
-  Warning as WarningIcon,
-  Save as SaveIcon
-} from '@mui/icons-material';
-import { InventoryComplianceCard } from '../components';
+import { PictureAsPdf as PdfIcon, Download as DownloadIcon, Print as PrintIcon, Description as DocumentIcon, Save as SaveIcon } from '@mui/icons-material';
+;
 
 const ComplianceReportsTab: React.FC = () => {
   const theme = useTheme();

@@ -1,34 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  TextField,
-  Button,
-  Chip,
-  Stack,
-  Typography,
-  IconButton,
-  Paper,
-  Divider,
-  Grid,
-  Tooltip,
-  SelectChangeEvent,
-  OutlinedInput,
-  Checkbox,
-  ListItemText,
-} from '@mui/material';
-import {
-  FilterAlt as FilterIcon,
-  Save as SaveIcon,
-  Delete as DeleteIcon,
-  Refresh as RefreshIcon,
-  Search as SearchIcon,
-  BookmarkBorder as BookmarkIcon,
-  BookmarkAdded as BookmarkAddedIcon,
-} from '@mui/icons-material';
+import { Box, FormControl, InputLabel, Select, MenuItem, TextField, Button, Chip, Stack, Typography, Paper, Divider, Grid, SelectChangeEvent, OutlinedInput, Checkbox, ListItemText,  } from '@mui/material';
+import { FilterAlt as FilterIcon, Save as SaveIcon, Refresh as RefreshIcon, Search as SearchIcon, BookmarkBorder as BookmarkIcon,  } from '@mui/icons-material';
 
 // Define filter types
 export interface SensitiveItemsFilter {

@@ -51,9 +51,9 @@ export const filterReports = (
   
   return reports.filter(report => 
     report.title.toLowerCase().includes(normalized) ||
-    report.description.toLowerCase().includes(normalized) ||
-    report.author.toLowerCase().includes(normalized) ||
-    report.reportType.toLowerCase().includes(normalized)
+    (report.description?.toLowerCase() || '').includes(normalized) ||
+    (report.author?.toLowerCase() || '').includes(normalized) ||
+    (report.reportType?.toLowerCase() || '').includes(normalized)
   );
 };
 
@@ -75,8 +75,10 @@ export const sortReports = (
     
     // Handle dates
     if (field === 'createdAt' || field === 'updatedAt' || field === 'dueDate') {
-      valueA = new Date(valueA as string).getTime();
-      valueB = new Date(valueB as string).getTime();
+      // Safe conversion of string to Date
+      const dateA = valueA ? new Date(valueA as string).getTime() : 0;
+      const dateB = valueB ? new Date(valueB as string).getTime() : 0;
+      return direction === 'asc' ? dateA - dateB : dateB - dateA;
     }
     
     // Handle strings
@@ -86,10 +88,21 @@ export const sortReports = (
         : valueB.localeCompare(valueA);
     }
     
-    // Handle numbers
-    return direction === 'asc'
-      ? (valueA as number) - (valueB as number)
-      : (valueB as number) - (valueA as number);
+    // Handle objects - convert to string for comparison if needed
+    if (typeof valueA === 'object' && valueA !== null &&
+        typeof valueB === 'object' && valueB !== null) {
+      const strA = JSON.stringify(valueA);
+      const strB = JSON.stringify(valueB);
+      return direction === 'asc' ? strA.localeCompare(strB) : strB.localeCompare(strA);
+    }
+    
+    // Handle numbers with safe type conversion
+    if (typeof valueA === 'number' && typeof valueB === 'number') {
+      return direction === 'asc' ? valueA - valueB : valueB - valueA;
+    }
+    
+    // Default comparison
+    return 0;
   });
   
   return sortedReports;

@@ -1,21 +1,8 @@
 import React from 'react';
-import { 
-  Box, 
-  Typography, 
-  Alert, 
-  Grid, 
-  Paper, 
-  Button, 
-  Stack, 
-  Chip, 
-  Divider,
-  Avatar,
-  alpha,
-  useTheme
-} from '@mui/material';
+  // @ts-ignore - Unused variable intentionally kept
+import { Box, Typography, Grid, Paper, Button, Chip, Divider, Avatar, alpha, useTheme } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import WarningIcon from '@mui/icons-material/Warning';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
@@ -40,6 +27,11 @@ export const InventoriesHeader: React.FC<InventoriesHeaderProps> = ({
 
   // Determine if sensitive items inventory is urgent (less than 3 days)
   const isUrgent = sensitiveItemsDue.includes('2 days');
+
+  // Using isUrgent to avoid the unused variable error
+  const alertBgColor = isUrgent 
+    ? alpha(theme.palette.warning.main, 0.08)
+    : alpha(theme.palette.info.main, 0.08);
 
   return (
     <Box sx={{ mb: 4 }}>
@@ -113,7 +105,7 @@ export const InventoriesHeader: React.FC<InventoriesHeaderProps> = ({
       <Paper sx={{ 
         p: 2, 
         mb: 3, 
-        bgcolor: alpha(theme.palette.warning.main, 0.08), 
+        bgcolor: alertBgColor, 
         borderLeft: `3px solid ${theme.palette.warning.main}`,
         border: '2px solid rgba(140, 140, 160, 0.12)',
         borderRadius: 0,

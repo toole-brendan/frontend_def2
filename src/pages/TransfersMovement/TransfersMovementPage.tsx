@@ -1,27 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Box,
   Button,
-  Typography,
-  Divider,
-  IconButton,
-  Paper,
   Grid,
-  alpha,
   useTheme,
-  Avatar,
 } from '@mui/material';
 import { PageContainer, PageHeader } from '../../components/layout';
-import { SectionHeader } from '../../components/common';
-import { titleTypographySx } from '../../theme/patterns';
 import {
   LocalShipping as TruckIcon,
   Description as FileTextIcon,
   QrCode as QrCodeIcon,
-  CloudDownload as DownloadIcon,
-  Warning as WarningIcon,
-  Refresh as RefreshIcon,
-  ArrowForward as ArrowForwardIcon
 } from '@mui/icons-material';
 
 // Import components
@@ -29,9 +17,9 @@ import {
   ActionCard,
   TransferStatsCards,
   TransferPipeline,
-  PriorityTransfers,
   TransferManagementTable,
-  RecentActivity,
+  PriorityTransfers,
+  RecentActivity
 } from './components';
 
 // Import data
@@ -44,33 +32,23 @@ import { transferData, priorityTransfers, recentActivity, transferStats } from '
  */
 const TransfersMovementPage: React.FC = () => {
   const theme = useTheme();
-  const [currentDateTime, setCurrentDateTime] = useState(new Date().toLocaleString('en-US', { 
-    hour: 'numeric', 
-    minute: 'numeric', 
-    hour12: false,
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric'
-  }));
 
   // Action buttons for the header
   const headerActions = (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
       <Button 
         variant="outlined" 
-        size="small" 
-        startIcon={<QrCodeIcon />}
-        sx={{ borderRadius: 1 }}
+        startIcon={<FileTextIcon />} 
+        sx={{ textTransform: 'none' }}
       >
-        Scan QR
+        Export
       </Button>
       <Button 
-        variant="contained" 
-        size="small" 
-        startIcon={<FileTextIcon />}
-        sx={{ borderRadius: 1 }}
+        variant="outlined" 
+        startIcon={<QrCodeIcon />}
+        sx={{ textTransform: 'none' }}
       >
-        New Transfer
+        Scan QR
       </Button>
     </Box>
   );

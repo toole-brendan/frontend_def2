@@ -13,13 +13,14 @@ import { SidebarNavItemProps } from './types';
 
 const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
   item,
+  // @ts-ignore - Unused variable intentionally kept
   index,
   collapsed,
   isActive,
   onNavigate
 }) => {
   const theme = useTheme();
-  const itemId = item.title.toLowerCase().replace(/\s+/g, '-');
+  
 
   return (
     <ListItem 

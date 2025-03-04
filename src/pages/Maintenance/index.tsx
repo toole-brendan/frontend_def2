@@ -21,13 +21,13 @@ import { actionButtonSx } from './styles';
 const Maintenance: React.FC = () => {
   const theme = useTheme();
   const [selectedCategory, setSelectedCategory] = useState<string>('my-requests');
-  const [filters, setFilters] = useState<Record<string, string>>({});
+  const [, setFilters] = useState<Record<string, string>>({});
   
   // Modal state
-  const [qrScannerOpen, setQrScannerOpen] = useState(false);
-  const [newRequestOpen, setNewRequestOpen] = useState(false);
-  const [requestDetailOpen, setRequestDetailOpen] = useState(false);
-  const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
+  const [, setQrScannerOpen] = useState(false);
+  const [, setNewRequestOpen] = useState(false);
+  const [, setRequestDetailOpen] = useState(false);
+  const [, setSelectedRequestId] = useState<string | null>(null);
   
   const handleScanQrCode = () => {
     setQrScannerOpen(true);

@@ -1,20 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  Paper,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  Button,
-  Tooltip,
-  Chip,
-  Divider,
-  IconButton,
-  useTheme,
-  alpha
-} from '@mui/material';
+import { Box, Paper, Typography, List, ListItem, ListItemText, ListItemSecondaryAction, Tooltip, Chip, Divider, IconButton, useTheme, alpha } from '@mui/material';
 import { 
   Check as CheckIcon, 
   Close as CloseIcon,
@@ -22,7 +7,7 @@ import {
 } from '@mui/icons-material';
 import { FileText, Clock, User } from 'lucide-react';
 import { ReportData } from '../types';
-import { paperSx, buttonSx } from '../styles';
+import { paperSx } from '../styles';
 import { formatReportDate } from '../utils';
 
 interface PendingApprovalsProps {

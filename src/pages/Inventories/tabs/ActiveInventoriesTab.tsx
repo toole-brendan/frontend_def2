@@ -14,10 +14,8 @@ import {
 } from '@mui/material';
 import {
   Search as SearchIcon,
-  FilterList as FilterListIcon,
   Add as AddIcon,
   PlayArrow as PlayArrowIcon,
-  ChevronRight as ChevronRightIcon,
   Article as ArticleIcon,
   Close as CloseIcon
 } from '@mui/icons-material';

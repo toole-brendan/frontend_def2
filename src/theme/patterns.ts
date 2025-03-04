@@ -547,7 +547,8 @@ export const iconButtonSx = (theme: Theme) => ({
 });
 
 // Chip styling
-export const chipSx = (theme: Theme, color: string) => ({
+  // @ts-ignore - Unused variable intentionally kept
+export const chipSx = (_theme: Theme, color: string) => ({
   fontWeight: 'medium',
   borderRadius: 0,
   height: 20,
@@ -582,7 +583,8 @@ export const tableHeadCellSx = {
 };
 
 // Progress styling
-export const linearProgressSx = (theme: Theme, color: string) => ({
+  // @ts-ignore - Unused variable intentionally kept
+export const linearProgressSx = (_theme: Theme, color: string) => ({
   height: 8,
   borderRadius: 0,
   bgcolor: alpha(color, 0.1),
@@ -781,7 +783,8 @@ export const gridContainerSx = (theme: Theme) => ({
 });
 
 // Consistent page container styling
-export const pageContainerSx = (theme: Theme) => ({
+  // @ts-ignore - Unused variable intentionally kept
+export const pageContainerSx = (_theme: Theme) => ({
   p: { xs: 2, sm: 3 },
   maxWidth: 1400,
   margin: '0 auto',

@@ -1,12 +1,5 @@
 import React from 'react';
-import { 
-  Box, 
-  Typography, 
-  Stack, 
-  useTheme, 
-  alpha, 
-  Chip
-} from '@mui/material';
+import { Box, Stack, useTheme, alpha, Chip } from '@mui/material';
 import { 
   QrCode as QrCodeIcon,
   TaskAlt as TaskAltIcon,

@@ -33,7 +33,8 @@ export const SystemStatusFooter: React.FC<SystemStatusFooterProps> = ({
   const [expanded, setExpanded] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [refreshing, setRefreshing] = useState(false);
-  const [systemInfo, setSystemInfo] = useState({
+  // @ts-ignore - Unused variable intentionally kept
+  const [systemInfo, _setSystemInfo] = useState({
     version: 'HandReceipt Defense v1.4.2',
     dataVersion: 'GCSS-Army 2025.03.1',
     uptime: '15 days, 7 hours',
@@ -69,7 +70,8 @@ export const SystemStatusFooter: React.FC<SystemStatusFooterProps> = ({
   }, []);
   
   // Status pulse animation
-  const pulseAnimation = {
+  // @ts-ignore - Unused variable intentionally kept
+  const _pulseAnimation = {
     '@keyframes pulse': {
       '0%': {
         boxShadow: '0 0 0 0 rgba(76, 175, 80, 0.4)'

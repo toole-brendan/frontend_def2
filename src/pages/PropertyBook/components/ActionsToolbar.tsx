@@ -6,22 +6,17 @@ import {
   Typography,
   Divider,
   useTheme,
-  alpha,
 } from '@mui/material';
 import {
   SwapHoriz as TransferIcon,
   Inventory2 as InventoryIcon,
   Print as PrintIcon,
-  Delete as DeleteIcon,
-  Update as UpdateIcon,
   Add as AddIcon,
   FileDownload as ExportIcon,
-  Edit as EditIcon,
   Description as DocumentIcon,
 } from '@mui/icons-material';
 import { usePropertyBook } from '../context/PropertyBookContext';
 import { 
-  buttonSx, 
   actionButtonSx,
   toolbarContainerSx,
   selectionIndicatorSx 

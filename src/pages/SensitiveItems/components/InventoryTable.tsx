@@ -1,30 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  Typography,
-  TextField,
-  InputAdornment,
-  Button,
-  Chip,
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TablePagination,
-  Menu,
-  MenuItem,
-  FormControl,
-  Select,
-  InputLabel,
-  Avatar,
-  Paper,
-  ListItemIcon,
-  ListItemText,
-  SelectChangeEvent
-} from '@mui/material';
+import { Box, Typography, TextField, InputAdornment, Button, Chip, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Menu, MenuItem, FormControl, Select, InputLabel, Avatar, ListItemIcon, ListItemText, SelectChangeEvent } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import {
   Search as SearchIcon,
@@ -84,6 +59,7 @@ const InventoryTable: React.FC<InventoryTableProps> = ({
   handleChangeRowsPerPage,
   handleItemDetailsOpen,
   actionAnchorEl,
+  // @ts-ignore - Unused variable intentionally kept
   actionItem,
   handleActionMenuOpen,
   handleActionMenuClose,

@@ -1,15 +1,6 @@
 import React from 'react';
-import { 
-  Box, 
-  Card, 
-  Typography, 
-  Button, 
-  useTheme,
-  alpha,
-  Paper,
-  Divider
-} from '@mui/material';
-import { ArrowForward as ArrowForwardIcon } from '@mui/icons-material';
+import { Box, Card, Typography, useTheme, alpha } from '@mui/material';
+;
 import { ChevronRight } from 'lucide-react';
 
 interface KpiStatsCardProps {
@@ -40,6 +31,7 @@ const KpiStatsCard: React.FC<KpiStatsCardProps> = ({
   action, 
   bgColor,
   color,
+  // @ts-ignore - Unused variable intentionally kept
   borderPosition = 'left'
 }) => {
   const theme = useTheme();

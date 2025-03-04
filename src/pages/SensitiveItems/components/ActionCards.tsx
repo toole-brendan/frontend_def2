@@ -1,4 +1,5 @@
 import React from 'react';
+  // @ts-ignore - Unused variable intentionally kept
 import { Box, Typography, Button, Card, CardContent, Avatar, useTheme } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { ActionCardProps } from '../../../types/sensitiveItems';
@@ -14,7 +15,7 @@ const ActionCard: React.FC<ActionCardProps> = ({
   color, 
   onClick
 }) => {
-  const theme = useTheme();
+  
   
   return (
     <Card sx={{ 

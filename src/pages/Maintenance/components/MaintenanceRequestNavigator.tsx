@@ -1,16 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Paper,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Collapse,
-  useTheme,
-  Divider
-} from '@mui/material';
+import { Box, Typography, Paper, List, ListItemButton, ListItemIcon, ListItemText, Collapse, useTheme } from '@mui/material';
 import {
   ExpandLess,
   ExpandMore,

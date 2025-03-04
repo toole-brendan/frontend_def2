@@ -1,19 +1,5 @@
 import React from 'react';
-import {
-  Paper,
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-  Box,
-  Chip,
-  alpha,
-  useTheme,
-} from '@mui/material';
+import { Paper, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Box, alpha, useTheme,  } from '@mui/material';
 import { CardHeader, StatusChip } from '../../../components/common';
 import { TransferManagementTableProps } from '../types';
 import TypeChip from './TypeChip';
@@ -96,7 +82,8 @@ const TransferManagementTable: React.FC<TransferManagementTableProps> = ({ trans
             </TableRow>
           </TableHead>
           <TableBody>
-            {transfers.map((transfer, index) => (
+  // @ts-ignore - Unused variable intentionally kept
+            {transfers.map((transfer, _index) => (
               <TableRow key={transfer.id} sx={{ '&:hover': { bgcolor: alpha(theme.palette.background.default, 0.3) } }}>
                 <TableCell sx={{ p: 2 }}>
                   <Typography variant="body2" fontWeight="medium">

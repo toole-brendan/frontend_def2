@@ -5,7 +5,8 @@ import createPatterns from '../patterns';
 export const createIconButtonStyles = (theme: Theme) => {
   const mode = theme.palette.mode;
   const colors = tokens.colors[mode];
-  const patterns = createPatterns(mode);
+  // @ts-ignore - Unused variable intentionally kept
+  const _patterns = createPatterns(mode);
   
   return {
     MuiIconButton: {

@@ -9,13 +9,24 @@ import {
 
 const initialState: PropertyState = {
   summary: {
-    totalItems: 0,
-    serviceableItems: 0,
-    upcomingInspections: {
-      next7Days: 0,
-      next30Days: 0,
+    unitInfo: {
+      unit: '',
+      uic: '',
+      primaryHandReceiptHolder: '',
     },
-    disputedItems: 0,
+    mtoeAuthorization: {
+      totalLines: 0,
+      fillPercentage: 0,
+    },
+    sensitiveItems: {
+      total: 0,
+      accounted: 0,
+      lastInventoryDate: '',
+    },
+    value: '0',
+    shortageAnnexes: 0,
+    lastUpdated: '',
+    csdpStatus: 'GREEN',
   },
   equipmentList: [],
   selectedItemId: null,
@@ -45,6 +56,28 @@ const initialState: PropertyState = {
   },
   error: {},
   view: 'table',
+  subHandReceipts: [],
+  sensitiveItemsAccountability: {
+    dailyItems: {
+      total: 0,
+      verified: 0,
+      reportComplete: false,
+    },
+    weeklyItems: {
+      total: 0,
+      verified: 0,
+      dayComplete: '',
+    },
+    nextMonthlyInventory: '',
+    openTracers: 0,
+    openSIRs: 0,
+  },
+  recentSupplyActivity: [],
+  deploymentSupport: {
+    ntcReadiness: '',
+    jrpatStatus: '',
+    tatRatPlanning: '',
+  },
 };
 
 const propertySlice = createSlice({
@@ -106,7 +139,15 @@ const propertySlice = createSlice({
     });
     builder.addCase(fetchItemDetails.fulfilled, (state: PropertyState, action) => {
       state.loading.itemDetails = false;
-      state.selectedItemDetails = action.payload;
+      if (action.payload && action.payload.item) {
+        state.selectedItemDetails = {
+          item: action.payload.item as any,
+          custodyHistory: action.payload.custodyHistory || [],
+          maintenanceLogs: action.payload.maintenanceLogs || [],
+          inspectionChecklists: action.payload.inspectionChecklists || [],
+          attachments: action.payload.attachments || [],
+        };
+      }
     });
     builder.addCase(fetchItemDetails.rejected, (state: PropertyState, action) => {
       state.loading.itemDetails = false;

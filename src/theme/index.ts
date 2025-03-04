@@ -1,7 +1,8 @@
+  // @ts-ignore - Unused variable intentionally kept
 import { Theme as MuiTheme, createTheme as muiCreateTheme, ThemeOptions } from '@mui/material/styles';
 import tokens from './tokens';
 import { darkColorTokens, lightColorTokens, statusColorTokens } from './defenseColorTokens';
-import createComponentStyles from './components';
+;
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -81,7 +82,7 @@ export const createTheme = (mode: 'light' | 'dark' = 'dark') => {
   };
   
   // Make special status tokens available
-  const operationalStatus = statusColorTokens;
+  
   
   // Create the base theme
   const baseTheme = muiCreateTheme({
@@ -409,8 +410,9 @@ export const createTheme = (mode: 'light' | 'dark' = 'dark') => {
 };
 
 // For backward compatibility
-export const BaseTheme = createTheme('dark');
+// Note: Removed empty export
 
+// Consolidated type definition
 export type Theme = MuiTheme & {
   semantic: {
     background: {

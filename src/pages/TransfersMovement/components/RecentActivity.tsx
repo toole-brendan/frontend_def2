@@ -13,7 +13,7 @@ import {
   alpha,
   useTheme,
 } from '@mui/material';
-import { CardHeader, StatusChip } from '../../../components/common';
+import { CardHeader } from '../../../components/common';
 import { RecentActivityProps } from '../types';
 
 import {

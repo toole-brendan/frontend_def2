@@ -1,22 +1,6 @@
 import React from 'react';
-import {
-  Box,
-  Typography,
-  Grid,
-  Chip,
-  IconButton,
-  Divider,
-  Button
-} from '@mui/material';
-import {
-  Security as SecurityIcon,
-  Person as PersonIcon,
-  Description as DescriptionIcon,
-  AccessTime as AccessTimeIcon,
-  ContactPhone as ContactPhoneIcon,
-  History as HistoryIcon,
-  MenuBook as MenuBookIcon
-} from '@mui/icons-material';
+import { Box, Typography, Grid, Chip, Button } from '@mui/material';
+import { Security as SecurityIcon, ContactPhone as ContactPhoneIcon, History as HistoryIcon, MenuBook as MenuBookIcon } from '@mui/icons-material';
 
 export interface ArmsRoomStatusCardProps {
   location: string;
@@ -46,7 +30,9 @@ const ArmsRoomStatusCard: React.FC<ArmsRoomStatusCardProps> = ({
   lastAccessRole,
   currentCustodian,
   custodianAppointedDate,
+  // @ts-ignore - Unused variable intentionally kept
   sopStatus,
+  // @ts-ignore - Unused variable intentionally kept
   sopRevisionDate,
   weaponsStored,
   weaponsTotal,

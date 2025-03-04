@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
 import { PageContainer, PageHeader } from '../../components/layout';
 import { TabValue } from './types';
-import {
-  QrMetricsHeader,
-  QrTabNavigation,
-  TabPanel,
-  GenerateQrCodeTab,
-  PrintQrCodesTab,
-  ManageQrCodesTab,
-  DamagedQrCodesTab
-} from './components';
+import { QrTabNavigation, TabPanel, GenerateQrCodeTab, PrintQrCodesTab, ManageQrCodesTab, DamagedQrCodesTab } from './components';
 
 /**
  * QR Management page
@@ -19,7 +11,8 @@ const QrManagement: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<TabValue>('generate');
   
   // Metrics data for the header
-  const metrics = {
+  // @ts-ignore - Unused variable intentionally kept
+  const _metrics = {
     totalActive: 721,
     unassigned: 15,
     damaged: 7

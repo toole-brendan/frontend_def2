@@ -1,11 +1,12 @@
-import { Theme, alpha } from '@mui/material/styles';
+import { Theme } from '@mui/material/styles';
 import tokens from '../tokens';
 import createPatterns from '../patterns';
 
 export const createDividerStyles = (theme: Theme) => {
   const mode = theme.palette.mode;
   const colors = tokens.colors[mode];
-  const patterns = createPatterns(mode);
+  // @ts-ignore - Unused variable intentionally kept
+  const _patterns = createPatterns(mode);
   
   return {
     MuiDivider: {

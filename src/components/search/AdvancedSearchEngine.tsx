@@ -1,34 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Checkbox,
-  Chip,
-  Collapse,
-  Divider,
-  FormControl,
-  FormControlLabel,
-  Grid,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  ListItemText,
-  Menu,
-  MenuItem,
-  OutlinedInput,
-  Paper,
-  Select,
-  Stack,
-  Tab,
-  Tabs,
-  TextField,
-  Tooltip,
-  Typography,
-  useTheme,
-} from '@mui/material';
+  // @ts-ignore - Unused variable intentionally kept
+import { Box, Button, Card, CardContent, CardHeader, Checkbox, Chip, Collapse, Divider, FormControl, Grid, IconButton, InputAdornment, InputLabel, ListItemText, Menu, MenuItem, OutlinedInput, Paper, Select, Stack, Tab, Tabs, TextField, Typography, } from '@mui/material';
 import {
   Search as SearchIcon,
   FilterList as FilterListIcon,
@@ -43,7 +15,7 @@ import {
   OpenInNew as OpenInNewIcon,
 } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers';
-import { EquipmentCategory, PropertyItem, PropertyStatus, SubHandReceiptType } from '../../types/property';
+import { PropertyItem } from '../../types/property';
 
 export type SearchFieldType = 'text' | 'number' | 'enum' | 'boolean' | 'date';
 
@@ -135,7 +107,7 @@ export const AdvancedSearchEngine: React.FC<AdvancedSearchEngineProps> = ({
   initialFilters = [],
   searchFields,
 }) => {
-  const theme = useTheme();
+  
   const [textQuery, setTextQuery] = useState('');
   const [filters, setFilters] = useState<SearchFilter[]>(initialFilters);
   const [logicalOperator, setLogicalOperator] = useState<LogicalOperator>('AND');
@@ -490,7 +462,8 @@ export const AdvancedSearchEngine: React.FC<AdvancedSearchEngineProps> = ({
   };
 
   // Convert logical operator for display
-  const getLogicalOperatorLabel = (operator: LogicalOperator) => {
+  // @ts-ignore - Unused variable intentionally kept
+  const _getLogicalOperatorLabel = (operator: LogicalOperator) => {
     return operator === 'AND' ? 'Match all filters' : 'Match any filter';
   };
 

@@ -14,6 +14,7 @@ import {
   InputLabel,
   Grid,
   CircularProgress,
+  // @ts-ignore - Unused variable intentionally kept
   useTheme
 } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -30,7 +31,7 @@ const GenerateReportModal: React.FC<GenerateReportModalProps> = ({
   onClose,
   onGenerate
 }) => {
-  const theme = useTheme();
+  
   const [reportType, setReportType] = React.useState('');
   const [dateRange, setDateRange] = React.useState<{start: Date | null, end: Date | null}>({
     start: null,

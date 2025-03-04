@@ -1,18 +1,14 @@
 import React from 'react';
-import {
-  Box,
-  Drawer,
-  List,
-  alpha,
-  useTheme
-} from '@mui/material';
-import { SidebarProps, SidebarCommonProps } from './types';
+import { Box, List, alpha, useTheme } from '@mui/material';
+import { SidebarCommonProps } from './types';
 
 /**
  * Container component for sidebar content
  */
+  // @ts-ignore - Unused variable intentionally kept
 const SidebarContainer: React.FC<SidebarCommonProps> = ({ collapsed, children }) => {
-  const theme = useTheme();
+  // @ts-ignore - Unused variable intentionally kept
+  const _theme = useTheme();
   
   return (
     <Box sx={{ 
@@ -32,7 +28,8 @@ const SidebarContainer: React.FC<SidebarCommonProps> = ({ collapsed, children })
 export const SidebarNavContainer: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const theme = useTheme();
+  // @ts-ignore - Unused variable intentionally kept
+  const _theme = useTheme();
 
   return (
     <Box sx={{ 

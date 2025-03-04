@@ -1,25 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Paper, 
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Chip,
-  Tooltip,
-  IconButton,
-  Button,
-  ButtonGroup,
-  useTheme,
-  alpha,
-  CircularProgress,
-  TextField,
-  InputAdornment
-} from '@mui/material';
+import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Tooltip, Button, ButtonGroup, useTheme, alpha, CircularProgress, TextField, InputAdornment } from '@mui/material';
 import { Search as SearchIcon, Info as InfoIcon } from '@mui/icons-material';
 import { CriticalEquipmentStatusTableProps } from '../types';
 

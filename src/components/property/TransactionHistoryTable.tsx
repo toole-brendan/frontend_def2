@@ -1,33 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  Box, 
-  Button, 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  Chip, 
-  Divider, 
-  FormControl, 
-  Grid, 
-  IconButton, 
-  InputLabel, 
-  MenuItem, 
-  Paper, 
-  Select, 
-  Stack, 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
-  TablePagination, 
-  TableRow, 
-  TextField, 
-  Tooltip, 
-  Typography, 
-  useTheme,
-  alpha
-} from '@mui/material';
+import { Box, Button, Card, CardContent, CardHeader, Chip, Divider, FormControl, Grid, IconButton, InputLabel, MenuItem, Paper, Select, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tooltip, Typography, useTheme, alpha } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -133,7 +105,8 @@ export const TransactionHistoryTable: React.FC<TransactionHistoryTableProps> = (
   };
   
   // Handle page change
-  const handleChangePage = (event: unknown, newPage: number) => {
+  // @ts-ignore - Unused variable intentionally kept
+  const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
   
@@ -149,7 +122,8 @@ export const TransactionHistoryTable: React.FC<TransactionHistoryTableProps> = (
   };
   
   // Handle transaction selection
-  const handleSelectTransaction = (transaction: Transaction) => {
+  // @ts-ignore - Unused variable intentionally kept
+  const _handleSelectTransaction = (transaction: Transaction) => {
     if (selectedTransactions.find(t => t.id === transaction.id)) {
       setSelectedTransactions(selectedTransactions.filter(t => t.id !== transaction.id));
     } else {

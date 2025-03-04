@@ -19,7 +19,6 @@ import {
 import HistoryIcon from '@mui/icons-material/History';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -105,7 +104,7 @@ interface InventoryActivityLogProps {
   simplified?: boolean;
 }
 
-export const InventoryActivityLog: React.FC<InventoryActivityLogProps> = ({ simplified = false }) => {
+export const InventoryActivityLog: React.FC<InventoryActivityLogProps> = () => {
   const theme = useTheme();
 
   // Function to determine icon based on activity type

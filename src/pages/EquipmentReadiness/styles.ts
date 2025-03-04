@@ -5,9 +5,13 @@ import {
   sectionHeaderSx,
   buttonSx,
   chipSx,
+  // @ts-ignore - Unused variable intentionally kept
   statusFMCSx,
+  // @ts-ignore - Unused variable intentionally kept
   statusPMCSx,
+  // @ts-ignore - Unused variable intentionally kept
   statusNMCSx,
+  // @ts-ignore - Unused variable intentionally kept
   statusAdminSx
 } from '../../theme/patterns';
 
@@ -47,10 +51,6 @@ export const notReadyIconContainerSx = (theme: Theme) => ({
 });
 
 // Readiness status chips
-export const fmcChipSx = statusFMCSx;
-export const pmcChipSx = statusPMCSx;
-export const nmcChipSx = statusNMCSx;
-export const adminChipSx = statusAdminSx;
 
 // Readiness statistic box
 export const readinessStatBoxSx = (theme: Theme) => ({

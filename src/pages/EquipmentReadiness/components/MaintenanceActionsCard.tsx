@@ -8,13 +8,7 @@ import {
   alpha,
   useTheme
 } from '@mui/material';
-import { 
-  BuildCircle as MaintenanceIcon,
-  CheckCircleOutline as ReadyIcon,
-  CalendarMonth as ScheduleIcon,
-  Assignment as WorkOrderIcon,
-  Timeline as MetricsIcon
-} from '@mui/icons-material';
+import { CheckCircleOutline as ReadyIcon, CalendarMonth as ScheduleIcon, Assignment as WorkOrderIcon, Timeline as MetricsIcon } from '@mui/icons-material';
 import { paperSx } from '../styles';
 import { titleTypographySx } from '../../../theme/patterns';
 

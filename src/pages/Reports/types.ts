@@ -41,6 +41,7 @@ export interface ReportMetrics {
 }
 
 export interface Personnel {
+  id?: string;
   name: string;
   rank: string;
   unit: string;
@@ -66,15 +67,17 @@ export interface Report {
 
 export interface BlockchainRecord {
   transactionId: string;
-  blockNumber: number;
+  blockNumber?: number;
   timestamp: string;
   action: 'REPORT_CREATED' | 'REPORT_UPDATED' | 'REPORT_APPROVED' | 'REPORT_REJECTED';
-  reportId: string;
-  personnel: {
-    id: string;
-    name: string;
+  reportId?: string;
+  personnel: Personnel;
+  signature?: string;
+  details?: {
+    ipfsHash?: string;
+    changedFields?: string[];
+    comments?: string;
   };
-  signature: string;
 }
 
 export interface ReportData {

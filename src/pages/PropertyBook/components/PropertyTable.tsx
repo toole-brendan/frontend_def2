@@ -19,10 +19,7 @@ import {
 } from '@mui/material';
 import {
   Info as InfoIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
 } from '@mui/icons-material';
-import { PropertyItem } from '../types';
 import { usePropertyBook } from '../context/PropertyBookContext';
 import { StatusChip } from '../../../components/common';
 
@@ -46,7 +43,7 @@ export const PropertyTable: React.FC<PropertyTableProps> = ({ disablePaper = fal
   } = usePropertyBook();
 
   // Handle pagination
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
   };
 

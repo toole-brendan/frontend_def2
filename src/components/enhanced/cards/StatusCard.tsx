@@ -1,16 +1,7 @@
 import React from 'react';
-import { 
-  Box, 
-  Card, 
-  CardHeader as MuiCardHeader, 
-  CardHeaderProps as MuiCardHeaderProps,
-  CardContent, 
-  Typography, 
-  useTheme, 
-  SxProps, 
-  Theme 
-} from '@mui/material';
+import { Card, CardHeader as MuiCardHeader, CardHeaderProps as MuiCardHeaderProps, CardContent, Typography, useTheme, SxProps, Theme } from '@mui/material';
 import { cardSx } from '../../../theme/patterns';
+import { SxProps as MuiSystemSxProps } from '@mui/system';
 
 // Create CSS for the industrial pattern background
 // This creates a subtle technical grid background
@@ -147,7 +138,7 @@ export const StatusCard: React.FC<StatusCardProps> = ({
         ...baseStyles,
         ...borderStyle,
         ...(sx || {})
-      }}
+      } as MuiSystemSxProps<Theme>}
     >
       <EnhancedCardHeader title={title} action={action} />
       

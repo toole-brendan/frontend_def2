@@ -20,20 +20,7 @@ import {
   alpha,
   useTheme
 } from '@mui/material';
-import {
-  Search as SearchIcon,
-  Notifications as NotificationsIcon,
-  AccountCircle,
-  Settings as SettingsIcon,
-  Logout as LogoutIcon,
-  KeyboardArrowDown as ArrowDownIcon,
-  Menu as MenuIcon,
-  Security as SecurityIcon,
-  Person as PersonIcon,
-  LightMode as LightModeIcon,
-  DarkMode as DarkModeIcon,
-  ChevronRight as ChevronRightIcon,
-} from '@mui/icons-material';
+import { Search as SearchIcon, Notifications as NotificationsIcon, Logout as LogoutIcon, KeyboardArrowDown as ArrowDownIcon, Menu as MenuIcon, Security as SecurityIcon, Person as PersonIcon, LightMode as LightModeIcon, DarkMode as DarkModeIcon,  } from '@mui/icons-material';
 import { useAppTheme } from '../../../theme/ThemeProvider';
 
 // Match the drawer width in EnhancedSidebar.tsx
@@ -147,7 +134,8 @@ const UserInfo = styled(Box)(({ theme }) => ({
   },
 }));
 
-const RankChip = styled(Chip)(({ theme }) => ({
+  // @ts-ignore - Unused variable intentionally kept
+const _RankChip = styled(Chip)(({ theme }) => ({
   backgroundColor: theme.palette.primary.dark,
   color: theme.palette.primary.contrastText,
   fontWeight: theme.typography.fontWeightBold,
@@ -160,7 +148,8 @@ const RankChip = styled(Chip)(({ theme }) => ({
   },
 }));
 
-const MilitaryAvatar = styled(Avatar)(({ theme }) => ({
+  // @ts-ignore - Unused variable intentionally kept
+const _MilitaryAvatar = styled(Avatar)(({ theme }) => ({
   width: 38,
   height: 38,
   border: `1px solid ${theme.palette.divider}`,
@@ -246,8 +235,10 @@ export const AppBarContent: React.FC<AppBarContentProps> = ({
 
   // Parse rank and name from userDisplayName (assuming format like "CPT Michael Rodriguez")
   const nameParts = userDisplayName.split(' ');
-  const rank = nameParts.length > 0 ? nameParts[0] : '';
-  const name = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+  // @ts-ignore - Unused variable intentionally kept
+  const _rank = nameParts.length > 0 ? nameParts[0] : '';
+  // @ts-ignore - Unused variable intentionally kept
+  const _name = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

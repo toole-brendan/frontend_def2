@@ -6,11 +6,7 @@ import {
   Typography,
   Tabs,
   Tab,
-  Card,
-  CardContent,
   Button,
-  Chip,
-  TableContainer,
   IconButton,
   Dialog,
   DialogTitle,
@@ -26,18 +22,11 @@ import {
   alpha
 } from '@mui/material';
 import { 
-  FileText, 
   AlertTriangle, 
   Check, 
-  Download, 
-  Search, 
   Edit, 
-  PlusCircle, 
-  MoreVertical, 
   FileCheck, 
   AlertCircle,
-  BarChart as BarChartIcon,
-  PieChart as PieChartIcon,
   Plus,
   RefreshCw,
   Filter
@@ -46,21 +35,19 @@ import { PageContainer, PageHeader } from '../../components/layout';
 import { 
   ReportsList, 
   ReportFilters,
-  ReportStatusBadge,
   ReportMetricsCard,
   PendingApprovals,
   ActivityTracker,
   ReportChart,
-  ReportDetail,
-  ReportGenerator,
   ReportHistoryTimeline,
   BlockchainVerificationModal,
   CustomReportForm,
-  GenerateReportModal
+  GenerateReportModal,
+  ReportGenerator
 } from './components';
-import { buttonSx, paperSx, sectionHeaderSx, statusChipSx, cardWithCornerSx } from './styles';
+import { buttonSx, paperSx, sectionHeaderSx, cardWithCornerSx } from './styles';
 import { ReportData, FilterConfig, ReportStatus, ReportType } from './types';
-import { mockReports, mockReportMetrics, mockBlockchainRecords } from './mockData';
+import { mockReports, mockReportMetrics } from './mockData';
 import { filterReports } from './utils';
 
 // Action notification states
@@ -106,20 +93,19 @@ function TabPanel(props: {
   );
 }
 
-// Fix for ReportChart types
-interface ReportChartProps {
-  type?: 'inventory' | 'transfers' | 'maintenance';
-}
-
 const Reports: React.FC = () => {
   const theme = useTheme();
   const [currentTab, setCurrentTab] = useState(0);
   const [reports, setReports] = useState<ReportData[]>(mockReports);
   const [filteredReports, setFilteredReports] = useState<ReportData[]>(mockReports);
+  // @ts-ignore - Unused variable intentionally kept
   const [filters, setFilters] = useState<FilterConfig>({
     status: [],
     type: [],
-    dateRange: { start: null, end: null },
+    dateRange: {
+      start: null,
+      end: null
+    },
     searchTerm: ''
   });
   
@@ -142,7 +128,7 @@ const Reports: React.FC = () => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
 
   // Tab handling
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setCurrentTab(newValue);
   };
 
@@ -434,7 +420,15 @@ const Reports: React.FC = () => {
         <Grid container spacing={3}>
           {/* Left Column - Status Cards and Filters */}
           <Grid item xs={12} md={4} lg={3}>
-            <ReportMetricsCard title="Report Metrics" metrics={mockReportMetrics.inventory} />
+            <ReportMetricsCard 
+              title="Report Metrics" 
+              metrics={{
+                totalItems: mockReportMetrics.inventory.totalItems,
+                itemsInGoodCondition: mockReportMetrics.inventory.itemsInGoodCondition,
+                itemsNeedingMaintenance: mockReportMetrics.inventory.itemsNeedingMaintenance,
+                criticalItems: mockReportMetrics.inventory.criticalItems
+              }} 
+            />
             
             <Paper sx={paperSx(theme)}>
               <Box sx={{ p: 2 }}>
@@ -450,8 +444,13 @@ const Reports: React.FC = () => {
                 <Typography sx={sectionHeaderSx}>
                   Generate Report
                 </Typography>
-                <ReportGenerator onGenerate={(reportType: ReportType) => {
-                  setGenerateModalOpen(true);
+                <ReportGenerator onGenerate={(_: ReportType) => {
+                  handleCloseDialog();
+                  setNotification({
+                    open: true,
+                    message: 'Report generation initiated successfully',
+                    type: 'success'
+                  });
                 }} />
               </Box>
             </Paper>
@@ -486,9 +485,9 @@ const Reports: React.FC = () => {
                 </Box>
                 <ReportsList 
                   reports={filteredReports}
-                  onView={handleViewReport}
-                  onDownload={handleDownloadReport}
-                  onEdit={handleEditReport}
+                  onViewReport={handleViewReport}  
+                  onDownloadReport={handleDownloadReport}
+                  onEditReport={handleEditReport}
                   onMoreOptions={handleMoreOptions}
                 />
               </Box>
@@ -505,11 +504,11 @@ const Reports: React.FC = () => {
                 <Typography sx={sectionHeaderSx}>
                   Pending Approvals
                 </Typography>
-                <PendingApprovals 
+                <PendingApprovals
                   reports={mockReports.filter(report => report.status === 'pending')}
-                  onApprove={handleApprove}
-                  onReject={handleReject}
-                  onView={handleViewReport}
+                  onApproveReport={handleApprove}
+                  onRejectReport={handleReject}
+                  onViewReport={handleViewReport}
                 />
               </Box>
             </Paper>

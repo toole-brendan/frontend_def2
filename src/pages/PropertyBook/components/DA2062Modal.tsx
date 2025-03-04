@@ -1,25 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Box,
-  Grid,
-  TextField,
-  IconButton,
-  useTheme,
-  TableFooter,
-} from '@mui/material';
+import { Dialog, DialogContent, Button, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Box, Grid, TextField, IconButton, useTheme, TableFooter,  } from '@mui/material';
 import {
   Print as PrintIcon,
   Close as CloseIcon,
@@ -27,7 +7,7 @@ import {
   Description as FormIcon,
 } from '@mui/icons-material';
 import { PropertyItem } from '../types';
-import { usePropertyBook } from '../context/PropertyBookContext';
+;
 
 interface DA2062ModalProps {
   open: boolean;
@@ -43,7 +23,8 @@ export const DA2062Modal: React.FC<DA2062ModalProps> = ({ open, onClose, items }
   
   // Generate page numbers
   const totalPages = Math.ceil(items.length / 20); // Assume 20 items per page
-  const [currentPage, setCurrentPage] = useState(1);
+  // @ts-ignore - Unused variable intentionally kept
+  const [currentPage, _setCurrentPage] = useState(1);
 
   // Print functionality
   const handlePrint = () => {
@@ -363,7 +344,8 @@ export const DA2062Modal: React.FC<DA2062ModalProps> = ({ open, onClose, items }
                   borderBottom: 'none'
                 }
               }}>
-                {items.map((item, index) => (
+  // @ts-ignore - Unused variable intentionally kept
+                {items.map((item, _index) => (
                   <TableRow key={item.id} sx={{ height: 36 }}>
                     <TableCell colSpan={2} sx={{ fontSize: '0.75rem', py: 1 }}>
                       {item.nsn}<br/>

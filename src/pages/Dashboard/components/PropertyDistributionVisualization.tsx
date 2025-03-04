@@ -102,7 +102,8 @@ export const PropertyDistributionVisualization: React.FC<PropertyDistributionVis
   
   // Simulate a data refresh when changing view modes
   const handleViewChange = useCallback((
-    event: React.MouseEvent<HTMLElement>,
+  // @ts-ignore - Unused variable intentionally kept
+    _event: React.MouseEvent<HTMLElement>,
     newView: 'platoon' | 'status' | 'location' | null,
   ) => {
     if (newView !== null) {

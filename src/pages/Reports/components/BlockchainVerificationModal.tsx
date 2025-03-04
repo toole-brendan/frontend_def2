@@ -13,6 +13,7 @@ import {
   ListItem,
   ListItemText,
   CircularProgress,
+  // @ts-ignore - Unused variable intentionally kept
   useTheme
 } from '@mui/material';
 import VerifiedIcon from '@mui/icons-material/Verified';
@@ -29,7 +30,7 @@ const BlockchainVerificationModal: React.FC<BlockchainVerificationModalProps> = 
   onClose,
   report
 }) => {
-  const theme = useTheme();
+  
   const [verifying, setVerifying] = React.useState(false);
   const [verified, setVerified] = React.useState(false);
   

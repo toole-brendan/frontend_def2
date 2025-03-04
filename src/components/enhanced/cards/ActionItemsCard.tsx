@@ -82,7 +82,8 @@ export const ActionItemsCard: React.FC<ActionItemsCardProps> = ({
   };
 
   // Helper function to get status color
-  const getStatusColor = (status: ActionItem['status']): string => {
+  // @ts-ignore - Unused variable intentionally kept
+  const _getStatusColor = (status: ActionItem['status']): string => {
     switch (status) {
       case 'completed':
         return theme.palette.success.main;

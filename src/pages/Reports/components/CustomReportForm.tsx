@@ -11,6 +11,7 @@ import {
   InputLabel,
   Select,
   Divider,
+  // @ts-ignore - Unused variable intentionally kept
   useTheme
 } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -25,7 +26,7 @@ const CustomReportForm: React.FC<CustomReportFormProps> = ({
   onSubmit,
   onCancel
 }) => {
-  const theme = useTheme();
+  
   const [formData, setFormData] = React.useState({
     reportName: '',
     reportType: '',

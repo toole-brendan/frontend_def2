@@ -13,15 +13,7 @@ import {
   useTheme,
   alpha
 } from '@mui/material';
-import {
-  FilePlus,
-  FileEdit,
-  FileCheck,
-  FileX,
-  Download,
-  Clock,
-  User
-} from 'lucide-react';
+import { FilePlus, FileEdit, FileCheck, FileX, Clock, User } from 'lucide-react';
 import { BlockchainRecord } from '../types';
 import { paperSx } from '../styles';
 import { formatReportDate } from '../utils';
@@ -140,7 +132,7 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({
                   }
                   secondary={
                     <Typography variant="body2" color="text.primary">
-                      {activity.details.comments || 
+                      {activity.details?.comments || 
                         `Transaction ID: ${activity.transactionId.substring(0, 10)}...`}
                     </Typography>
                   }

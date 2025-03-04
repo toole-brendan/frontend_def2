@@ -1,19 +1,6 @@
 import React from 'react';
-import {
-  Paper,
-  Chip,
-  Typography,
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  alpha,
-  useTheme,
-} from '@mui/material';
-import { CardHeader, SectionHeader } from '../../../components/common';
+import { Paper, Chip, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, alpha, useTheme,  } from '@mui/material';
+import { CardHeader } from '../../../components/common';
 import { PriorityTransfersProps } from '../types';
 import TypeChip from './TypeChip';
 

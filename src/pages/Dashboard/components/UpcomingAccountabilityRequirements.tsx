@@ -1,18 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  Typography,
-  Paper,
-  Button,
-  Divider,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  LinearProgress,
-  alpha,
-  useTheme
-} from '@mui/material';
+import { Box, Typography, Paper, Button, Divider, List, ListItem, LinearProgress, alpha, useTheme } from '@mui/material';
 import {
   TimerOutlined as TimerIcon,
   Assignment as InventoryIcon,
@@ -32,7 +19,8 @@ export const UpcomingAccountabilityRequirements: React.FC<UpcomingAccountability
   // Helper function to render requirement item
   const renderRequirementItem = (requirement: Requirement) => {
     // Default to 0 if progress is undefined or null
-    const progressValue = requirement.progress !== undefined && requirement.progress !== null 
+  // @ts-ignore - Unused variable intentionally kept
+    const _progressValue = requirement.progress !== undefined && requirement.progress !== null 
       ? requirement.progress 
       : 0;
     

@@ -1,6 +1,6 @@
-import React from 'react';
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
-import AssignmentIcon from '@mui/icons-material/Assignment';
+;
+;
+;
 import { 
   InventoryData, 
   DiscrepancyData, 

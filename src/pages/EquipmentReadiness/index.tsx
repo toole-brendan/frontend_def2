@@ -1,5 +1,6 @@
 import React from 'react';
-import { Grid, Button, useTheme, alpha } from '@mui/material';
+  // @ts-ignore - Unused variable intentionally kept
+import { Grid, Button, useTheme } from '@mui/material';
 import { PageContainer, PageHeader } from '../../components/layout';
 import { BuildCircle as MaintenanceIcon, Timeline as MetricsIcon } from '@mui/icons-material';
 import { readinessData } from './mockData';
@@ -12,7 +13,7 @@ import {
 } from './components';
 
 const EquipmentReadiness: React.FC = () => {
-  const theme = useTheme();
+  
 
   // Header action buttons
   const headerActions = (

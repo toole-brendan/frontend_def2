@@ -11,7 +11,7 @@ import {
   ListItemIcon,
   ListItemText
 } from '@mui/material';
-import { QrCode as QrCodeIcon, Check as CheckIcon } from '@mui/icons-material';
+import { QrCode as QrCodeIcon } from '@mui/icons-material';
 
 const QrCodePreview: React.FC = () => {
   const theme = useTheme();

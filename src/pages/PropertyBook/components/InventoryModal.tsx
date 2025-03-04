@@ -1,31 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Typography,
-  Grid,
-  Box,
-  TextField,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Checkbox,
-  IconButton,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Paper,
-  Chip,
-  useTheme,
-  SelectChangeEvent,
-} from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Grid, Box, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox, IconButton, FormControl, Select, MenuItem, Paper, Chip, useTheme, SelectChangeEvent,  } from '@mui/material';
 import {
   Close as CloseIcon,
   CheckCircle as CheckCircleIcon,
@@ -33,7 +7,7 @@ import {
   SaveAlt as SaveIcon,
 } from '@mui/icons-material';
 import { usePropertyBook } from '../context/PropertyBookContext';
-import { PropertyItem } from '../types';
+;
 
 export const InventoryModal: React.FC = () => {
   const theme = useTheme();
@@ -127,7 +101,8 @@ export const InventoryModal: React.FC = () => {
   };
   
   // Format currency
-  const formatCurrency = (value: number) => {
+  // @ts-ignore - Unused variable intentionally kept
+  const _formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',

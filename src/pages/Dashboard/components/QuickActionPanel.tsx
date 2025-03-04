@@ -1,14 +1,5 @@
 import React from 'react';
-import { 
-  Box, 
-  Typography, 
-  Paper, 
-  Grid,
-  Card,
-  CardContent,
-  Button,
-  useTheme
-} from '@mui/material';
+import { Box, Typography, Paper, Grid, Button, useTheme } from '@mui/material';
 import { QuickActionPanelProps } from '../types';
 
 export const QuickActionPanel: React.FC<QuickActionPanelProps> = ({
@@ -16,10 +7,34 @@ export const QuickActionPanel: React.FC<QuickActionPanelProps> = ({
 }) => {
   const theme = useTheme();
   
+  // Helper function to handle action click
+  const handleActionClick = (action: string | (() => void)) => {
+    if (typeof action === 'function') {
+      action();
+    } else if (typeof action === 'string') {
+      // Handle string actions, such as navigation
+      console.log('String action:', action);
+      // You might implement navigation or other string-based actions here
+    }
+  };
+  
   return (
-    <Paper elevation={2} sx={{ height: '100%', p: 2, borderRadius: 2 }}>
+    <Paper 
+      elevation={2} 
+      sx={{ 
+        height: '100%', 
+        p: 2, 
+        borderRadius: 2,
+        backgroundColor: theme.palette.background.paper
+      }}
+    >
       {/* Card Header */}
-      <Typography variant="h6" fontWeight="bold" gutterBottom>
+      <Typography 
+        variant="h6" 
+        fontWeight="bold" 
+        gutterBottom 
+        color={theme.palette.text.primary}
+      >
         Commander's Quick Actions
       </Typography>
       
@@ -32,7 +47,7 @@ export const QuickActionPanel: React.FC<QuickActionPanelProps> = ({
               color="primary"
               fullWidth
               size="large"
-              onClick={action.action}
+              onClick={() => handleActionClick(action.action)}
               sx={{
                 p: 2,
                 height: '100%',

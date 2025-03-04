@@ -17,6 +17,7 @@ import {
   FormControlLabel,
   IconButton,
   FormHelperText,
+  // @ts-ignore - Unused variable intentionally kept
   useTheme,
   SelectChangeEvent,
 } from '@mui/material';
@@ -25,7 +26,7 @@ import { usePropertyBook } from '../context/PropertyBookContext';
 import { PropertyItem } from '../types';
 
 export const AddItemModal: React.FC = () => {
-  const theme = useTheme();
+  
   const { addItemModalOpen, closeAddItemModal, requestAddition, categories } = usePropertyBook();
   
   // Form state

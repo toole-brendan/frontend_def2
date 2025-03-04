@@ -1,5 +1,5 @@
 import React from 'react';
-import { Chip, useTheme, alpha } from '@mui/material';
+import { Chip, useTheme } from '@mui/material';
 import { chipSx } from '../../../theme/patterns';
 
 interface TypeChipProps {

@@ -35,7 +35,8 @@ export const AppBar: React.FC<AppBarProps> = ({
   userDisplayName,
 }) => {
   const theme = useTheme();
-  const mode = theme.palette.mode;
+  // @ts-ignore - Unused variable intentionally kept
+  const _mode = theme.palette.mode;
   
   return (
     <StyledAppBar

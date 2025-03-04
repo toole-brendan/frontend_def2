@@ -1,4 +1,4 @@
-export type PropertyStatus = 'FMC' | 'NMC' | 'NMCS' | 'NMCM';
+export type PropertyStatus = 'FMC' | 'NMC' | 'NMCS' | 'NMCM' | 'PMC';
 export type SubHandReceiptType = 'PRIMARY' | '1PLT' | '2PLT' | '3PLT' | 'HQ PLT';
 export type EquipmentCategory = 'WEAPONS' | 'ROLLING_STOCK' | 'COMMS_CCI' | 'OPTICS_NVGS' | 'TPE_ITEMS' | 'COEI_BII' | 'CTA_50';
 export type FLIPLStatus = 'OPEN' | 'CLOSED' | 'PENDING';

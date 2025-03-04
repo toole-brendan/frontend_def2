@@ -1,26 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  Paper,
-  Typography,
-  Button,
-  Grid,
-  Card,
-  CardContent,
-  CardHeader,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Divider,
-  TextField,
-  InputAdornment,
-  Tab,
-  Tabs,
-  Chip,
-  useTheme,
-  alpha
-} from '@mui/material';
+import { Box, Paper, Typography, Button, Grid, Card, CardContent, List, ListItem, ListItemText, ListItemIcon, Divider, TextField, InputAdornment, Tab, Tabs, Chip, useTheme, alpha } from '@mui/material';
 import {
   Search as SearchIcon,
   ChecklistRtl as ChecklistIcon,
@@ -36,7 +15,7 @@ import {
   Build as BuildIcon,
   VideoLibrary as VideoIcon
 } from '@mui/icons-material';
-import { InventoryToolsCard } from '../components';
+;
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -69,7 +48,7 @@ const ToolsResourcesTab: React.FC = () => {
   const [activeTab, setActiveTab] = React.useState(0);
   const [searchQuery, setSearchQuery] = React.useState('');
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
 

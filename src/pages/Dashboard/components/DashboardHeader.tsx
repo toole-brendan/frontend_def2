@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  Typography,
-  Paper,
-  Chip,
-  Avatar,
-  Grid,
-  Divider,
-  Stack
-} from '@mui/material';
+import { Box, Typography, Paper, Chip, Avatar, Grid, Stack } from '@mui/material';
 import { DashboardHeaderProps } from '../types';
 
 // Format currency for display

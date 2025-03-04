@@ -1,24 +1,12 @@
 import React from 'react';
-import {
-  Box,
-  Typography,
-  Button,
-  IconButton,
-  Stack,
-  Tooltip,
-  alpha,
-  useTheme
-} from '@mui/material';
-import {
-  ChevronLeft as ChevronLeftIcon,
-  ChevronRight as ChevronRightIcon,
-  Logout as LogoutIcon
-} from '@mui/icons-material';
+import { Box, Typography, Button, IconButton, Stack, alpha, useTheme } from '@mui/material';
+import { Logout as LogoutIcon } from '@mui/icons-material';
 import { SidebarFooterProps } from './types';
 
 const SidebarFooter: React.FC<SidebarFooterProps> = ({
   collapsed,
   systemStatus,
+  // @ts-ignore - Unused variable intentionally kept
   handleToggleCollapse,
   handleLogout
 }) => {

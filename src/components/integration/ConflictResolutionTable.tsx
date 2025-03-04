@@ -59,7 +59,7 @@ export const ConflictResolutionTable: React.FC<ConflictResolutionTableProps> = (
     setResolvedConflicts(conflicts);
   }, [conflicts]);
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
@@ -184,7 +184,10 @@ export const ConflictResolutionTable: React.FC<ConflictResolutionTableProps> = (
                 size="small"
                 startIcon={<CheckIcon />}
                 onClick={() => {
-                  const updated = resolvedConflicts.map(c => ({ ...c, resolution: 'local' }));
+                  const updated = resolvedConflicts.map(c => ({ 
+                    ...c, 
+                    resolution: 'local' as 'local' | 'gcss' | 'merge' | 'manual'
+                  }));
                   setResolvedConflicts(updated);
                 }}
               >
@@ -197,7 +200,10 @@ export const ConflictResolutionTable: React.FC<ConflictResolutionTableProps> = (
                 size="small"
                 startIcon={<CheckIcon />}
                 onClick={() => {
-                  const updated = resolvedConflicts.map(c => ({ ...c, resolution: 'gcss' }));
+                  const updated = resolvedConflicts.map(c => ({ 
+                    ...c, 
+                    resolution: 'gcss' as 'local' | 'gcss' | 'merge' | 'manual'
+                  }));
                   setResolvedConflicts(updated);
                 }}
               >
@@ -210,7 +216,10 @@ export const ConflictResolutionTable: React.FC<ConflictResolutionTableProps> = (
                 size="small"
                 startIcon={<MergeIcon />}
                 onClick={() => {
-                  const updated = resolvedConflicts.map(c => ({ ...c, resolution: 'merge' }));
+                  const updated = resolvedConflicts.map(c => ({ 
+                    ...c, 
+                    resolution: 'merge' as 'local' | 'gcss' | 'merge' | 'manual'
+                  }));
                   setResolvedConflicts(updated);
                 }}
               >

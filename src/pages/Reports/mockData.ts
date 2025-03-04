@@ -9,11 +9,11 @@ import {
 
 // Mock personnel data
 export const mockPersonnel: Personnel[] = [
-  { name: 'John Smith', rank: 'Captain', unit: 'Alpha Company' },
-  { name: 'Sarah Johnson', rank: 'Lieutenant', unit: 'Bravo Company' },
-  { name: 'Michael Chen', rank: 'Sergeant', unit: 'Charlie Company' },
-  { name: 'David Wilson', rank: 'Major', unit: 'HQ' },
-  { name: 'Jessica Martinez', rank: 'Specialist', unit: 'Delta Company' },
+  { id: 'p001', name: 'John Smith', rank: 'Captain', unit: 'Alpha Company' },
+  { id: 'p002', name: 'Sarah Johnson', rank: 'Lieutenant', unit: 'Bravo Company' },
+  { id: 'p003', name: 'Michael Chen', rank: 'Sergeant', unit: 'Charlie Company' },
+  { id: 'p004', name: 'David Wilson', rank: 'Major', unit: 'HQ' },
+  { id: 'p005', name: 'Jessica Martinez', rank: 'Specialist', unit: 'Delta Company' },
 ];
 
 // Mock blockchain records

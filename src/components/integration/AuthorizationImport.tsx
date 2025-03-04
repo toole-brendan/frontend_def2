@@ -28,21 +28,10 @@ import {
   TextField,
   Tooltip,
   Typography,
+  // @ts-ignore - Unused variable intentionally kept
   useTheme,
 } from '@mui/material';
-import {
-  UploadFile as UploadFileIcon,
-  Download as DownloadIcon,
-  Delete as DeleteIcon,
-  Check as CheckIcon,
-  Info as InfoIcon,
-  Warning as WarningIcon,
-  Error as ErrorIcon,
-  Compare as CompareIcon,
-  ClearAll as ClearAllIcon,
-  Folder as FolderIcon,
-  Save as SaveIcon,
-} from '@mui/icons-material';
+import { UploadFile as UploadFileIcon, Download as DownloadIcon, Delete as DeleteIcon, Info as InfoIcon, Warning as WarningIcon, Error as ErrorIcon, Compare as CompareIcon, ClearAll as ClearAllIcon, Folder as FolderIcon, Save as SaveIcon,  } from '@mui/icons-material';
 import { EquipmentCategory } from '../../types/property';
 
 export type AuthorizationItem = {
@@ -105,7 +94,7 @@ export const AuthorizationImport: React.FC<AuthorizationImportProps> = ({
   onSaveImport,
   currentItems = [],
 }) => {
-  const theme = useTheme();
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeStep, setActiveStep] = useState(0);
   const [status, setStatus] = useState<ImportStatus>('idle');

@@ -51,18 +51,6 @@ const RequestFilters: React.FC<RequestFiltersProps> = ({ onFilterChange }) => {
     onFilterChange(updatedFilters);
   };
 
-  const handleRemoveFilter = (filterToRemove: string) => {
-    const [name] = filterToRemove.split(':');
-    const updatedFilters = { ...filters, [name]: 'all' };
-    
-    setFilters(updatedFilters);
-    
-    const active = activeFilters.filter(filter => filter !== filterToRemove);
-    setActiveFilters(active);
-    
-    onFilterChange(updatedFilters);
-  };
-
   const handleResetFilters = () => {
     const resetFilters = {
       requestType: 'all',

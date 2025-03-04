@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { PropertyItem, FilterState, Transaction, TransactionType } from '../types';
+import { PropertyItem, FilterState, Transaction } from '../types';
 import { mockPropertyItems } from '../mockData';
 
 // Default filter state
@@ -76,7 +76,8 @@ export const PropertyBookContext = createContext<PropertyBookContextType | undef
 // Provider component
 export const PropertyBookProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   // Data states
-  const [propertyItems, setPropertyItems] = useState<PropertyItem[]>(mockPropertyItems);
+  // @ts-ignore - Unused variable intentionally kept
+  const [propertyItems, _setPropertyItems] = useState<PropertyItem[]>(mockPropertyItems);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [filteredItems, setFilteredItems] = useState<PropertyItem[]>(mockPropertyItems);
   

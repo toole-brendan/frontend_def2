@@ -32,11 +32,13 @@ interface ChangeOfCommandPlannerProps {
   simplified?: boolean;
 }
 
+  // @ts-ignore - Unused variable intentionally kept
 export const ChangeOfCommandPlanner: React.FC<ChangeOfCommandPlannerProps> = ({ simplified = false }) => {
   const theme = useTheme();
   const [activeTab, setActiveTab] = React.useState(0);
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  // @ts-ignore - Unused variable intentionally kept
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
 

@@ -5,12 +5,10 @@ import {
   Paper, 
   Grid, 
   Badge,
-  Fab,
   useTheme 
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
-import { QrCode as QrCodeIcon } from '@mui/icons-material';
-import { workflowCardSx, qrButtonSx } from '../styles';
+import { workflowCardSx } from '../styles';
 import { ArrowRightCircle } from 'lucide-react';
 import { SectionHeader } from '../../../components/common';
 import StatusChip from '../../../components/common/StatusChip';
@@ -55,9 +53,10 @@ const statusStages = [
 ];
 
 interface MaintenanceStatusOverviewProps {
-  onScanQrCode: () => void;
+  onScanQrCode?: () => void;
 }
 
+  // @ts-ignore - Unused variable intentionally kept
 const MaintenanceStatusOverview: React.FC<MaintenanceStatusOverviewProps> = ({ onScanQrCode }) => {
   const theme = useTheme();
   
@@ -179,8 +178,6 @@ const MaintenanceStatusOverview: React.FC<MaintenanceStatusOverviewProps> = ({ o
             </React.Fragment>
           ))}
         </Grid>
-        
-        {/* QR code button removed */}
       </Box>
     </Paper>
   );

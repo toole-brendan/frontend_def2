@@ -1,4 +1,4 @@
-import { Theme, alpha } from '@mui/material/styles';
+import { Theme } from '@mui/material/styles';
 import tokens from '../tokens';
 import createPatterns from '../patterns';
 

@@ -23,6 +23,7 @@ import {
   TableRow,
   Tooltip,
   Typography,
+  // @ts-ignore - Unused variable intentionally kept
   useTheme,
 } from '@mui/material';
 import {
@@ -79,7 +80,7 @@ export const ReconciliationReport: React.FC<ReconciliationReportProps> = ({
   onPrintReport,
   onResolveConflicts,
 }) => {
-  const theme = useTheme();
+  
   const [selectedStatus, setSelectedStatus] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
 

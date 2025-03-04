@@ -1,16 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Toolbar,
-  Typography,
-  IconButton,
-  Button,
-  TextField,
-  InputAdornment,
-  Box,
-  alpha,
-  useTheme,
-  Stack
-} from '@mui/material';
+import { Toolbar, Typography, IconButton, Button, TextField, InputAdornment, Box, alpha, useTheme } from '@mui/material';
 import {
   Search as SearchIcon,
   FilterList as FilterListIcon

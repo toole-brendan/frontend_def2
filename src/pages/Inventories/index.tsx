@@ -6,7 +6,6 @@ import {
   Tabs,
   Tab,
   Paper,
-  Typography,
   useTheme,
   alpha
 } from '@mui/material';
@@ -21,20 +20,9 @@ import {
   Verified as ComplianceIcon,
   Build as ToolsIcon
 } from '@mui/icons-material';
-import {
-  InventoriesHeader,
-  InventoryScheduleCard,
-  InventoryComplianceCard,
-  InventoryProgressTracker,
-  InventoryManagementTable,
-  InventoryExecutionPanel,
-  DiscrepancyManagementPanel,
-  InventoryToolsCard,
-  InventoryAnalyticsCard,
-  ChangeOfCommandPlanner,
-  InspectionPreparationCard,
-  InventoryActivityLog
-} from './components';
+
+// Import only the components you'll use later in the file
+;
 
 // Import new tab components (we'll create these later)
 import InventoryOverviewTab from './tabs/InventoryOverviewTab';
@@ -82,7 +70,7 @@ const InventoriesPage: React.FC = () => {
   const [activeTab, setActiveTab] = React.useState(0);
   const [activeInventory, setActiveInventory] = React.useState<string | null>(null);
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
 

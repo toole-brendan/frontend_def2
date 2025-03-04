@@ -1,30 +1,6 @@
 import React, { useState } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Typography,
-  Grid,
-  Box,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Checkbox,
-  Divider,
-  IconButton,
-  useTheme,
-  FormHelperText,
-  Paper,
-  SelectChangeEvent,
-} from '@mui/material';
+  // @ts-ignore - Unused variable intentionally kept
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Grid, Box, TextField, FormControl, InputLabel, Select, MenuItem, List, ListItem, ListItemText, ListItemIcon, IconButton, FormHelperText, Paper, SelectChangeEvent,  } from '@mui/material';
 import {
   Close as CloseIcon,
   Send as SendIcon,
@@ -33,7 +9,7 @@ import {
 import { usePropertyBook } from '../context/PropertyBookContext';
 
 export const TransferModal: React.FC = () => {
-  const theme = useTheme();
+  
   const {
     transferModalOpen,
     closeTransferModal,

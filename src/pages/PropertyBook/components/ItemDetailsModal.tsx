@@ -12,19 +12,9 @@ import {
   alpha,
   Theme,
 } from '@mui/material';
-import {
-  Close as CloseIcon,
-  EditOutlined as EditIcon,
-  PrintOutlined as PrintIcon,
-  DeleteOutlined as DeleteIcon,
-  PhotoCamera as PhotoIcon,
-  LocationOn as LocationIcon,
-  LocalShipping as ShippingIcon,
-  History as HistoryIcon,
-  Build as MaintenanceIcon,
-} from '@mui/icons-material';
+import { Close as CloseIcon, EditOutlined as EditIcon, PrintOutlined as PrintIcon, LocationOn as LocationIcon, Build as MaintenanceIcon,  } from '@mui/icons-material';
 import { PropertyItem } from '../types';
-import { usePropertyBook } from '../context/PropertyBookContext';
+;
 import { 
   modalContainerSx, 
   modalHeaderSx, 

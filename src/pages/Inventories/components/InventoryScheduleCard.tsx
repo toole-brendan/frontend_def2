@@ -24,7 +24,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PrintIcon from '@mui/icons-material/Print';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import EventIcon from '@mui/icons-material/Event';
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+;
 import { upcomingRequirements, inventoryTypes, calendarEvents } from './mockData';
 
 export const InventoryScheduleCard: React.FC = () => {

@@ -16,6 +16,7 @@ import {
   MenuItem,
   Divider,
   CardHeader,
+  // @ts-ignore - Unused variable intentionally kept
   useTheme
 } from '@mui/material';
 import AssignmentLateIcon from '@mui/icons-material/AssignmentLate';
@@ -26,8 +27,9 @@ import HelpIcon from '@mui/icons-material/Help';
 import { discrepancyRows } from './mockData';
 
 export const DiscrepancyManagementPanel: React.FC = () => {
-  const theme = useTheme();
+  
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  // @ts-ignore - Unused variable intentionally kept
   const [selectedDiscrepancy, setSelectedDiscrepancy] = React.useState<string | null>(null);
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>, discrepancyId: string) => {

@@ -1,26 +1,8 @@
 import React from 'react';
-import {
-  Box,
-  Paper,
-  Typography,
-  Button,
-  Grid,
-  Divider,
-  alpha,
-  useTheme,
-  Avatar,
-} from '@mui/material';
-import { CardHeader, StatusChip } from '../../components/common';
+import { Box, Paper, Typography, Grid, Divider, alpha, useTheme, Avatar,  } from '@mui/material';
+;
 import { PageContainer, PageHeader } from '../../components/layout';
-import {
-  Print as PrintIcon,
-  FileDownload as ExportIcon,
-  Description as DocumentIcon,
-  Error as ErrorIcon,
-  CheckCircle as CheckCircleIcon,
-  KeyboardArrowRight as KeyboardArrowRightIcon,
-  Tune as TuneIcon,
-} from '@mui/icons-material';
+import { Error as ErrorIcon, CheckCircle as CheckCircleIcon,  } from '@mui/icons-material';
 
 // Import our components
 import { PropertyBookProvider, usePropertyBook } from './context/PropertyBookContext';

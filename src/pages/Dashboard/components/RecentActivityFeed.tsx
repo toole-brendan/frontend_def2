@@ -1,24 +1,13 @@
 import React from 'react';
-import { 
-  Box, 
-  Typography, 
-  Paper, 
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-  Chip,
-  Button,
-  useTheme,
-  Avatar
-} from '@mui/material';
+  // @ts-ignore - Unused variable intentionally kept
+import { Box, Typography, Paper, Chip, Button, useTheme } from '@mui/material';
 import { RecentActivityFeedProps } from '../types';
 
 export const RecentActivityFeed: React.FC<RecentActivityFeedProps> = ({
   activities,
   onViewAllActivity
 }) => {
-  const theme = useTheme();
+  
   
   // Helper function to get status chip color
   const getStatusColor = (status: string): 'success' | 'warning' | 'default' => {

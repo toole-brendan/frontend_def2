@@ -1,16 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { 
-  Box, 
-  Card, 
-  useTheme, 
-  IconButton, 
-  Menu, 
-  MenuItem, 
-  Tooltip, 
-  CircularProgress,
-  Typography,
-  alpha
-} from '@mui/material';
+import { Box, Card, useTheme, IconButton, Menu, MenuItem, Tooltip, CircularProgress, Typography } from '@mui/material';
 import { CardHeader } from '../../../components/common';
 import { MoreVertical } from 'lucide-react';
 import { InfoOutlined as InfoIcon } from '@mui/icons-material';

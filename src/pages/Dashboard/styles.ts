@@ -1,4 +1,4 @@
-import { alpha, Theme } from '@mui/material';
+import { Theme } from '@mui/material';
 import {
   paperSx,
   cardWithCornerSx,

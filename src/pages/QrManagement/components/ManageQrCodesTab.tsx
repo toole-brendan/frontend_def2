@@ -206,7 +206,8 @@ const ManageQrCodesTab: React.FC = () => {
               <TableBody>
                 {mockQrCodes
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, index) => {
+  // @ts-ignore - Unused variable intentionally kept
+                  .map((row, _index) => {
                     const isItemSelected = isSelected(row.id);
                     
                     return (

@@ -1,6 +1,6 @@
 import React from 'react';
-import Sidebar from './Sidebar';
-import { NavItemConfig } from '../../types/navigation';
+import SidebarComponent from './SidebarComponent';
+import { NavItemConfig, SystemStatusConfig } from '../../types/navigation';
 
 interface NavigationProps {
   isMobile: boolean;
@@ -9,15 +9,23 @@ interface NavigationProps {
   navItems: NavItemConfig[];
 }
 
+// Mock system status for development
+const mockSystemStatus: SystemStatusConfig = {
+  connectionStatus: 'connected',
+  lastSync: new Date().toISOString(),
+  version: '1.0.0'
+};
+
 const Navigation: React.FC<NavigationProps> = ({ isMobile, mobileOpen, onDrawerToggle, navItems }) => {
   return (
     <>
-      <Sidebar 
+      <SidebarComponent 
         variant={isMobile ? "temporary" : "permanent"} 
         isMobile={isMobile}
         open={mobileOpen}
         onClose={onDrawerToggle}
         navItems={navItems}
+        systemStatus={mockSystemStatus}
       />
     </>
   );

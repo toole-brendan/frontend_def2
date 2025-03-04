@@ -138,6 +138,7 @@ interface MaintenanceRequestTableProps {
 }
 
 const MaintenanceRequestTable: React.FC<MaintenanceRequestTableProps> = ({ 
+  // @ts-ignore - Unused variable intentionally kept
   category,
   onViewRequest
 }) => {

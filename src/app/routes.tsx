@@ -1,19 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import {
-  Dashboard as DashboardIcon,
-  MenuBook as PropertyBookIcon,
-  Inventory as InventoryIcon,
-  Security as SensitiveItemsIcon,
-  SwapHoriz as TransfersIcon,
-  Assignment as InventoriesIcon,
-  Build as MaintenanceIcon,
-  Handyman as RepairIcon,
-  Description as ReportsIcon,
-  Settings as SettingsIcon,
-  AdminPanelSettings as AdminIcon,
-  QrCode as QrCodeIcon,
-} from '@mui/icons-material';
+import { Dashboard as DashboardIcon, MenuBook as PropertyBookIcon, Security as SensitiveItemsIcon, SwapHoriz as TransfersIcon, Assignment as InventoriesIcon, Build as MaintenanceIcon, Handyman as RepairIcon, Description as ReportsIcon, AdminPanelSettings as AdminIcon, QrCode as QrCodeIcon,  } from '@mui/icons-material';
 
 // Lazy load pages
 const Dashboard = React.lazy(() => import('../pages/Dashboard/index'));

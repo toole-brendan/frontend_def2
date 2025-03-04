@@ -1,23 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Paper,
-  TextField,
-  InputAdornment,
-  Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Grid,
-  Typography,
-  Collapse,
-  IconButton,
-  Divider,
-  Chip,
-  useTheme,
-  SelectChangeEvent,
-} from '@mui/material';
+import { Box, Paper, TextField, InputAdornment, Button, FormControl, InputLabel, Select, MenuItem, Grid, Collapse, IconButton, Divider, Chip, useTheme, SelectChangeEvent,  } from '@mui/material';
 import {
   Search as SearchIcon,
   FilterList as FilterListIcon,

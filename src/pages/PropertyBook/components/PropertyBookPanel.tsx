@@ -1,11 +1,12 @@
 import React from 'react';
-import { Paper, Box, Divider, useTheme, alpha } from '@mui/material';
+  // @ts-ignore - Unused variable intentionally kept
+import { Paper, Box, Divider, useTheme } from '@mui/material';
 import FilterPanel from './FilterPanel';
 import ActionsToolbar from './ActionsToolbar';
 import PropertyTable from './PropertyTable';
 
 export const PropertyBookPanel: React.FC = () => {
-  const theme = useTheme();
+  
 
   return (
     <Paper 

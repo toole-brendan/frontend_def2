@@ -14,7 +14,8 @@ import {
   Chip, 
   Button, 
   useTheme,
-  CircularProgress 
+  CircularProgress,
+  alpha
 } from '@mui/material';
 import DescriptionIcon from '@mui/icons-material/Description';
 import VerifiedIcon from '@mui/icons-material/Verified';
@@ -22,6 +23,12 @@ import { complianceData } from './mockData';
 
 export const InventoryComplianceCard: React.FC = () => {
   const theme = useTheme();
+
+  // Using theme for styling purposes
+  const cardStyle = {
+    border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+    borderRadius: 0
+  };
 
   // Function to determine chip color based on status
   const getStatusColor = (status: string) => {
@@ -43,7 +50,7 @@ export const InventoryComplianceCard: React.FC = () => {
   const complianceScore = calculateComplianceScore();
 
   return (
-    <Card elevation={2} sx={{ height: '100%' }}>
+    <Card elevation={2} sx={cardStyle}>
       <CardHeader 
         title="Regulatory Compliance Status" 
         action={

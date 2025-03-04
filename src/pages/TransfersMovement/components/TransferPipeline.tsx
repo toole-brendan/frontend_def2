@@ -1,22 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Paper,
-  Avatar,
-  Typography,
-  Tabs,
-  Tab,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Chip,
-  alpha,
-  useTheme,
-  Divider,
-} from '@mui/material';
+import { Box, Paper, Avatar, Typography, Tabs, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, alpha, useTheme,  } from '@mui/material';
 import { CardHeader, StatusChip } from '../../../components/common';
 import { TransferPipelineProps } from '../types';
 import TypeChip from './TypeChip';
@@ -31,7 +14,8 @@ const TransferPipeline: React.FC<TransferPipelineProps> = ({ transfers }) => {
   const theme = useTheme();
   const [activeTab, setActiveTab] = useState('all');
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+  // @ts-ignore - Unused variable intentionally kept
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
     setActiveTab(newValue);
   };
 

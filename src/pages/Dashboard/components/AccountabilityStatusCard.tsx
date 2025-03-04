@@ -1,19 +1,5 @@
 import React from 'react';
-import { 
-  Box, 
-  Typography, 
-  Paper, 
-  Button, 
-  Divider, 
-  CircularProgress,
-  List,
-  ListItem,
-  ListItemText,
-  Alert,
-  Stack,
-  alpha,
-  useTheme
-} from '@mui/material';
+import { Box, Typography, Paper, Button, CircularProgress, List, ListItem, ListItemText, Stack, alpha, useTheme } from '@mui/material';
 import { AccountabilityStatusCardProps } from '../types';
 import { cardWithCornerSx, sectionHeaderSx, buttonSx, valueSx } from '../styles';
 import { getStatusColor } from '../utils';

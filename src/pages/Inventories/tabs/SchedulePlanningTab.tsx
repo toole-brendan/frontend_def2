@@ -27,14 +27,14 @@ import {
   PlaylistAddCheck as InventoryIcon,
   TransferWithinAStation as TransferIcon
 } from '@mui/icons-material';
-import { InventoryScheduleCard, ChangeOfCommandPlanner } from '../components';
+import { ChangeOfCommandPlanner } from '../components';
 
 const SchedulePlanningTab: React.FC = () => {
   const theme = useTheme();
   const [calendarView, setCalendarView] = React.useState<'month' | 'week'>('month');
 
   const handleCalendarViewChange = (
-    event: React.MouseEvent<HTMLElement>,
+    _: React.MouseEvent<HTMLElement>,
     newView: 'month' | 'week' | null,
   ) => {
     if (newView !== null) {

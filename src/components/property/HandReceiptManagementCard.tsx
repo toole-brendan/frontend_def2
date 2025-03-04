@@ -72,7 +72,8 @@ export const HandReceiptManagementCard: React.FC<HandReceiptManagementCardProps>
   };
   
   // Utility function to get status color
-  const getStatusColor = (status: SubHandReceiptInfo['signatureStatus'], daysRemaining?: number): string => {
+  // @ts-ignore - Unused variable intentionally kept
+  const _getStatusColor = (status: SubHandReceiptInfo['signatureStatus'], daysRemaining?: number): string => {
     switch (status) {
       case 'signed':
         return daysRemaining !== undefined && daysRemaining <= 15 

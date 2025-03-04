@@ -98,6 +98,8 @@ export const useProperty = () => {
     : null;
 
   const upcomingInspections = equipmentList.filter((item: PropertyItem) => {
+    if (!item.nextInspectionDue) return false;
+    
     const dueDate = new Date(item.nextInspectionDue);
     const now = new Date();
     const sevenDays = new Date();

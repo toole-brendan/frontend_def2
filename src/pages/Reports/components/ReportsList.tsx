@@ -21,7 +21,7 @@ import {
   MoreHoriz as MoreIcon
 } from '@mui/icons-material';
 import { ReportStatusBadge } from './';
-import { ReportData, TableColumn, SortConfig } from '../types';
+import { ReportData, TableColumn, SortConfig, Personnel } from '../types';
 import { formatReportDate } from '../utils';
 import { tableContainerSx } from '../styles';
 
@@ -52,13 +52,29 @@ const ReportsList: React.FC<ReportsListProps> = ({
     { id: 'title', label: 'Report Title', minWidth: 200 },
     { id: 'type', label: 'Type', minWidth: 120 },
     { id: 'status', label: 'Status', minWidth: 120 },
-    { id: 'createdAt', label: 'Created', minWidth: 120, format: (value) => formatReportDate(value) },
-    { id: 'lastGenerated', label: 'Generated', minWidth: 120, format: (value) => formatReportDate(value) },
-    { id: 'createdBy', label: 'Author', minWidth: 150, format: (value) => value.name },
+    { 
+      id: 'createdAt', 
+      label: 'Created', 
+      minWidth: 120, 
+      format: (value) => formatReportDate(value as string) 
+    },
+    { 
+      id: 'lastGenerated', 
+      label: 'Generated', 
+      minWidth: 120, 
+      format: (value) => formatReportDate(value as string) 
+    },
+    { 
+      id: 'createdBy', 
+      label: 'Author', 
+      minWidth: 150, 
+      format: (value) => (value as Personnel).name 
+    },
     { id: 'actions', label: 'Actions', minWidth: 120, align: 'right' }
   ];
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  // @ts-ignore - Unused variable intentionally kept
+  const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
@@ -199,7 +215,7 @@ const ReportsList: React.FC<ReportsListProps> = ({
                       <TableCell key={column.id} align={column.align}>
                         {column.format && value !== undefined
                           ? column.format(value)
-                          : value}
+                          : typeof value === 'object' ? JSON.stringify(value) : value}
                       </TableCell>
                     );
                   }

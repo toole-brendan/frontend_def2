@@ -1,18 +1,14 @@
 import React from 'react';
 import {
   Box,
-  Typography,
   Paper,
   Button,
   Grid,
   Tabs,
   Tab,
   IconButton,
-  Menu,
-  MenuItem,
   useTheme
 } from '@mui/material';
-import { alpha } from '@mui/material/styles';
 import {
   QrCodeScanner as QrCodeScannerIcon,
   Refresh as RefreshIcon,
@@ -23,7 +19,7 @@ import {
   Assignment as AssignmentIcon,
   Warning as WarningIcon
 } from '@mui/icons-material';
-import { CardHeader, KpiStatsCard, StatusChip } from '../../components/common';
+import { KpiStatsCard } from '../../components/common';
 import { PageContainer, PageHeader } from '../../components/layout';
 
 // Components
@@ -70,13 +66,9 @@ function TabPanel(props: {
  */
 const SensitiveItems: React.FC = () => {
   const theme = useTheme();
+  
   const {
-    // Loading states
-    isLoading,
-    setIsLoading,
-    isVerifying,
-    isExporting,
-    setIsExporting,
+    // UI state
     LoadingBackdrop,
     refreshData,
     
@@ -117,7 +109,6 @@ const SensitiveItems: React.FC = () => {
     handleItemDetailsOpen,
     handleItemDetailsClose,
     actionAnchorEl,
-    actionItem,
     handleActionMenuOpen,
     handleActionMenuClose,
     
@@ -128,21 +119,20 @@ const SensitiveItems: React.FC = () => {
     simulateScanComplete
   } = useSensitiveItems();
 
-  // Export to Excel function
-  const exportToExcel = () => {
+  /**
+   * Handle export to Excel
+   */
+  const handleExport = () => {
     console.log('Exporting sensitive items to Excel...');
-    // Show loading indicator
-    setIsExporting(true);
     
     // In a real implementation, this would use xlsx library:
-    // const worksheet = utils.json_to_sheet(filteredItems);
-    // const workbook = utils.book_new();
-    // utils.book_append_sheet(workbook, worksheet, 'Sensitive Items');
-    // writeFile(workbook, 'sensitive_items_inventory.xlsx');
+    // const workbook = XLSX.utils.book_new();
+    // const worksheet = XLSX.utils.json_to_sheet(filteredItems);
+    // XLSX.utils.book_append_sheet(workbook, worksheet, 'Sensitive Items');
+    // XLSX.writeFile(workbook, 'sensitive_items_inventory.xlsx');
     
     // Simulate export delay
     setTimeout(() => {
-      setIsExporting(false);
       // For now, we'll just mock the functionality
       alert('Exported sensitive_items_inventory.xlsx successfully!');
     }, 1500);
@@ -157,7 +147,7 @@ const SensitiveItems: React.FC = () => {
       <Button 
         variant="outlined" 
         startIcon={<FileDownloadIcon />}
-        onClick={exportToExcel}
+        onClick={handleExport}
         sx={{ borderRadius: 0 }}
       >
         Export Data
@@ -313,7 +303,7 @@ const SensitiveItems: React.FC = () => {
                 handleChangeRowsPerPage={handleChangeRowsPerPage}
                 handleItemDetailsOpen={handleItemDetailsOpen}
                 actionAnchorEl={actionAnchorEl}
-                actionItem={actionItem}
+                actionItem={selectedItem}
                 handleActionMenuOpen={handleActionMenuOpen}
                 handleActionMenuClose={handleActionMenuClose}
                 typeOptions={typeOptions}

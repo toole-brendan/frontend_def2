@@ -1,19 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { 
-  Fab, 
-  Grid,
-  Box,
-  Button,
-  useTheme,
-  alpha,
-  Snackbar,
-  Alert,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Typography
-} from '@mui/material';
+import { Fab, Grid, Box, Button, useTheme, Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions, Typography } from '@mui/material';
 import { KpiStatsCard } from '../../components/common';
 import { Plus, AlertCircle } from 'lucide-react';
 import { 
@@ -61,16 +47,7 @@ import {
 } from './components';
 
 // Import data
-import {
-  accountabilityData,
-  actionItems,
-  ntcReadiness,
-  criticalEquipment,
-  upcomingRequirements,
-  recentActivity,
-  distributionData,
-  readinessData
-} from './mockData';
+import { accountabilityData, actionItems, ntcReadiness, criticalEquipment, upcomingRequirements, recentActivity, readinessData } from './mockData';
 
 const Dashboard = () => {
   const theme = useTheme();
