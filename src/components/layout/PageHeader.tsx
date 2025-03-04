@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Typography, useTheme, alpha } from '@mui/material';
 import PageTitle from '../common/PageTitle';
 
 // We'll use the primary color from theme instead of hardcoding the color
@@ -44,7 +44,9 @@ const PageHeader: React.FC<PageHeaderProps> = ({
             variant="h4" 
             gutterBottom={!!subtitle}
             sx={{ 
-              color: theme.palette.primary.main, // Use the primary color from theme
+              color: theme.palette.mode === 'dark'
+                ? alpha(theme.palette.primary.main, 0.9) // Dark mode - match QR button color
+                : theme.palette.primary.main,            // Light mode - unchanged
               fontSize: { xs: '1.5rem', md: '1.75rem' }, // Smaller font size
             }}
           >

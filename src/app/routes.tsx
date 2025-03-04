@@ -25,6 +25,8 @@ const Maintenance = React.lazy(() => import('../pages/Maintenance/index'));
 const QrManagement = React.lazy(() => import('../pages/QrManagement/index'));
 const Reports = React.lazy(() => import('../pages/Reports/index'));
 const SensitiveItems = React.lazy(() => import('../pages/SensitiveItems/index'));
+const Admin = React.lazy(() => import('../pages/Admin/index'));
+const Profile = React.lazy(() => import('../pages/Profile/index'));
 
 export const ROUTES = {
   // 1. Dashboard
@@ -306,15 +308,15 @@ const AppRoutes: React.FC = () => {
         <Route path={ROUTES.FLIPL} element={<Reports />} />
         <Route path={ROUTES.DOCUMENT_ARCHIVE} element={<Reports />} />
         
-        {/* Admin routes - temporarily redirect to Dashboard since pages were deleted */}
-        <Route path={ROUTES.ADMIN} element={<Dashboard />} />
-        <Route path={ROUTES.USER_MANAGEMENT} element={<Dashboard />} />
-        <Route path={ROUTES.UNIT_CONFIGURATION} element={<Dashboard />} />
-        <Route path={ROUTES.SYSTEM_INTEGRATION} element={<Dashboard />} />
-        <Route path={ROUTES.SECURITY_SETTINGS} element={<Dashboard />} />
+        {/* Admin routes */}
+        <Route path={ROUTES.ADMIN} element={<Admin />} />
+        <Route path={ROUTES.USER_MANAGEMENT} element={<Admin />} />
+        <Route path={ROUTES.UNIT_CONFIGURATION} element={<Admin />} />
+        <Route path={ROUTES.SYSTEM_INTEGRATION} element={<Admin />} />
+        <Route path={ROUTES.SECURITY_SETTINGS} element={<Admin />} />
         
         {/* User Profile */}
-        <Route path={ROUTES.PROFILE} element={<Dashboard />} />
+        <Route path={ROUTES.PROFILE} element={<Profile />} />
         
         {/* Handle 404 */}
         <Route path="*" element={<Navigate to={ROUTES.DASHBOARD} replace />} />

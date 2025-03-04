@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { 
-  Box, 
-  Typography, 
   Grid, 
   Button,
   Stack,
@@ -67,28 +65,6 @@ const Maintenance: React.FC = () => {
       header={
         <PageHeader 
           title="Maintenance"
-          children={
-            <Stack direction="row" spacing={3} alignItems="center" sx={{ mt: 2 }}>
-              <Box>
-                <Typography variant="body2" color="text.secondary">
-                  Active Requests
-                </Typography>
-                <Typography variant="h6">23</Typography>
-              </Box>
-              <Box>
-                <Typography variant="body2" color="text.secondary">
-                  Awaiting Parts
-                </Typography>
-                <Typography variant="h6">9</Typography>
-              </Box>
-              <Box>
-                <Typography variant="body2" color="text.secondary">
-                  Completed (Last 30 Days)
-                </Typography>
-                <Typography variant="h6">42</Typography>
-              </Box>
-            </Stack>
-          }
           actions={
             <Stack direction="row" spacing={1}>
               <Button

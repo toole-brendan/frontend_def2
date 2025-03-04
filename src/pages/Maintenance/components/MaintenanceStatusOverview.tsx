@@ -113,7 +113,7 @@ const MaintenanceStatusOverview: React.FC<MaintenanceStatusOverviewProps> = ({ o
         <Grid container spacing={2} sx={{ position: 'relative', mt: 2 }}>
           {statusStages.map((stage, index) => (
             <React.Fragment key={stage.id}>
-              <Grid item xs={12} sm={6} md={2.2}>
+              <Grid item xs={12} sm={6} md={2}>
                 <Box 
                   sx={{ 
                     p: 2, 
@@ -169,7 +169,7 @@ const MaintenanceStatusOverview: React.FC<MaintenanceStatusOverviewProps> = ({ o
               </Grid>
               
               {index < statusStages.length - 1 && (
-                <Grid item xs={12} sm={6} md={0.5} sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'center' }}>
+                <Grid item xs={12} sm={6} md={0.4} sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'center' }}>
                   <ArrowRightCircle 
                     size={24} 
                     color={theme.palette.mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[400]} 
@@ -180,17 +180,10 @@ const MaintenanceStatusOverview: React.FC<MaintenanceStatusOverviewProps> = ({ o
           ))}
         </Grid>
         
-        <Fab 
-          color="primary" 
-          aria-label="scan QR code" 
-          sx={qrButtonSx(theme)}
-          onClick={onScanQrCode}
-        >
-          <QrCodeIcon />
-        </Fab>
+        {/* QR code button removed */}
       </Box>
     </Paper>
   );
 };
 
-export default MaintenanceStatusOverview; 
+export default MaintenanceStatusOverview;

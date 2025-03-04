@@ -34,7 +34,7 @@ const QrManagement: React.FC = () => {
       header={
         <PageHeader 
           title="QR Code Management"
-          children={<QrMetricsHeader metrics={metrics} />}
+          children={null}
         />
       }
     >
@@ -64,4 +64,4 @@ const QrManagement: React.FC = () => {
   );
 };
 
-export default QrManagement; 
+export default QrManagement;

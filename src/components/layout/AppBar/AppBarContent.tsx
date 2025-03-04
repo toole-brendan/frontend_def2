@@ -443,17 +443,11 @@ export const AppBarContent: React.FC<AppBarContentProps> = ({
           </Typography>
         </Box>
         <Divider />
-        <MenuItem component={Link} to="/defense/profile">
+        <MenuItem component={Link} to="/profile">
           <ListItemIcon>
             <PersonIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>My Profile</ListItemText>
-        </MenuItem>
-        <MenuItem component={Link} to="/defense/settings">
-          <ListItemIcon>
-            <SettingsIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Account Settings</ListItemText>
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleLogout}>
